@@ -1,0 +1,53 @@
+[20-Aug-2018 03:24:03 UTC] PHP Warning:  Unterminated comment starting line 4 in /home/wzyzjm74avny/public_html/hfdev/application/config/routes.php on line 4
+[30-Aug-2018 18:46:56 UTC] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/views/horses/register.php on line 61
+[30-Aug-2018 18:46:58 UTC] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/views/horses/register.php on line 61
+[30-Aug-2018 18:47:00 UTC] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/views/horses/register.php on line 61
+[01-Sep-2018 15:48:42 UTC] PHP Warning:  Unterminated comment starting line 140 in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 140
+[13-Sep-2018 16:50:24 UTC] PHP Warning:  Unterminated comment starting line 167 in /home/wzyzjm74avny/public_html/hfdev/application/models/Bank.php on line 167
+[14-Sep-2018 17:43:17 UTC] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/models/Bank.php on line 325
+[14-Sep-2018 17:43:19 UTC] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/models/Bank.php on line 325
+[14-Sep-2018 17:43:25 UTC] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/models/Bank.php on line 325
+[25-Sep-2018 16:44:43 UTC] PHP Fatal error:  Cannot declare class Cron, because the name is already in use in /home/wzyzjm74avny/public_html/hfdev/application/models/Crons.php on line 572
+[25-Sep-2018 16:44:44 UTC] PHP Fatal error:  Cannot declare class Cron, because the name is already in use in /home/wzyzjm74avny/public_html/hfdev/application/models/Crons.php on line 572
+[25-Sep-2018 16:45:08 UTC] PHP Fatal error:  Cannot declare class Cron, because the name is already in use in /home/wzyzjm74avny/public_html/hfdev/application/models/Crons.php on line 572
+[25-Sep-2018 16:45:42 UTC] PHP Fatal error:  Cannot declare class Cron, because the name is already in use in /home/wzyzjm74avny/public_html/hfdev/application/models/Crons.php on line 572
+[25-Sep-2018 16:45:55 UTC] PHP Fatal error:  Cannot declare class Cron, because the name is already in use in /home/wzyzjm74avny/public_html/hfdev/application/models/Crons.php on line 572
+[25-Sep-2018 16:46:10 UTC] PHP Fatal error:  Cannot declare class Cron, because the name is already in use in /home/wzyzjm74avny/public_html/hfdev/application/models/Crons.php on line 572
+[26-Sep-2018 14:43:05 UTC] PHP Fatal error:  Cannot redeclare Articles::get_article() in /home/wzyzjm74avny/public_html/hfdev/application/models/Articles.php on line 45
+[26-Sep-2018 14:43:06 UTC] PHP Fatal error:  Cannot redeclare Articles::get_article() in /home/wzyzjm74avny/public_html/hfdev/application/models/Articles.php on line 45
+[30-Sep-2018 16:18:44 UTC] PHP Fatal error:  Can't use method return value in write context in /home/wzyzjm74avny/public_html/hfdev/application/controllers/City.php on line 170
+[30-Sep-2018 16:18:45 UTC] PHP Fatal error:  Can't use method return value in write context in /home/wzyzjm74avny/public_html/hfdev/application/controllers/City.php on line 170
+[30-Sep-2018 18:50:37 UTC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/wzyzjm74avny/public_html/hfdev/system/libraries/Session/drivers/Session_files_driver.php on line 212
+[05-Oct-2018 17:37:27 UTC] PHP Warning:  Unterminated comment starting line 78 in /home/wzyzjm74avny/public_html/hfdev/application/models/Player.php on line 78
+[10-Oct-2018 16:38:13 UTC] PHP Fatal error:  Cannot redeclare Bank::admin_accept_application() in /home/wzyzjm74avny/public_html/hfdev/application/models/Bank.php on line 578
+[18-Sep-2019 13:56:40 America/Chicago] PHP Warning:  Unterminated comment starting line 181 in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 181
+[24-Sep-2019 10:21:58 America/Chicago] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 69632 bytes) in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 205
+[24-Sep-2019 10:21:59 America/Chicago] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 69632 bytes) in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 205
+[25-Sep-2019 08:58:42 America/Chicago] PHP Fatal error:  Constant expression contains invalid operations in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 132
+[25-Sep-2019 08:58:43 America/Chicago] PHP Fatal error:  Constant expression contains invalid operations in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 132
+[25-Sep-2019 08:58:55 America/Chicago] PHP Fatal error:  Constant expression contains invalid operations in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 132
+[25-Sep-2019 09:02:43 America/Chicago] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 262144 bytes) in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 147
+[25-Sep-2019 09:04:09 America/Chicago] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 20480 bytes) in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 155
+[25-Sep-2019 09:09:24 America/Chicago] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 262144 bytes) in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 145
+[25-Sep-2019 09:14:51 America/Chicago] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 172
+[25-Sep-2019 09:14:51 America/Chicago] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 172
+[25-Sep-2019 09:14:57 America/Chicago] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 172
+[25-Sep-2019 09:14:57 America/Chicago] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/controllers/Horses.php on line 172
+[25-Sep-2019 14:15:49 America/Chicago] PHP Warning:  Unterminated comment starting line 317 in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 317
+[25-Sep-2019 14:16:44 America/Chicago] PHP Warning:  Unterminated comment starting line 318 in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 318
+[25-Sep-2019 16:58:31 America/Chicago] PHP Warning:  Unterminated comment starting line 319 in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 319
+[25-Sep-2019 16:59:23 America/Chicago] PHP Warning:  Unterminated comment starting line 319 in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 319
+[25-Sep-2019 17:13:00 America/Chicago] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 204
+[25-Sep-2019 17:13:00 America/Chicago] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 204
+[25-Sep-2019 17:13:06 America/Chicago] PHP Fatal error:  Cannot use [] for reading in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 204
+[25-Sep-2019 17:14:11 America/Chicago] PHP Warning:  Unterminated comment starting line 324 in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 324
+[26-Sep-2019 06:12:27 America/Chicago] PHP Warning:  Unterminated comment starting line 325 in /home/wzyzjm74avny/public_html/hfdev/application/models/Horse.php on line 325
+[30-Sep-2019 13:26:18 America/Chicago] PHP Warning:  Unterminated comment starting line 327 in /home/wzyzjm74avny/public_html/hfdev/application/controllers/City.php on line 327
+[07-May-2021 00:01:01 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180
+[07-May-2021 00:02:01 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180
+[07-May-2021 00:03:01 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180
+[07-May-2021 00:05:01 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180
+[08-May-2021 00:01:01 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180
+[08-May-2021 00:02:01 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180
+[08-May-2021 00:03:01 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180
+[08-May-2021 00:05:02 America/Chicago] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /home1/hfshcpha/public_html/application/config/routes.php on line 180

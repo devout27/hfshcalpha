@@ -1,0 +1,80 @@
+
+<?
+$post = $this->session->flashdata('post');
+$errors = $this->session->flashdata('errors');
+?>
+
+ <div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+          	<h4 class="card-header">Links</h4>
+            <div class="card-body">
+            	<a href="/horses">Search Horses</a><br/>
+            	<a href="/horses/register">Register a Horse</a><br/>
+            	<!--<a href="/horses/export">Export a Horse</a><br/>-->
+            	<a href="/city/vet">Veterinarian</a><br/>
+            	<a href="/city/farrier">Farrier</a><br/>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card mb-4">
+          	<h4 class="card-header">Register a Horse</h4>
+            <div class="card-body">
+				<form method="post" action="/horses/register">
+				<div class="center">
+					You have <b><?= $player['players_credits_creation'] ?: '0' ?></b> creation credit(s).<br/>
+					You have <b><?= $player['players_credits_adoptathon'] ?: '0' ?></b> adoption credit(s).<br/>
+					<a href="/city/articles/13">Buy More</a>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<?= hf_input('horses_name', 'Name', $post, array(), $errors) ?>
+					</div>
+					<div class="col-sm-3">
+						<?= hf_dropdown('horses_gender', 'Gender', $post, array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
+					</div>
+					<div class="col-sm-3">
+						<?= hf_input('horses_birthyear', 'Birth Year', $post, array('placeholder' => '1984'), $errors) ?>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<?= hf_input('horses_sire', 'Sire', $post, array(), $errors) ?>
+					</div>
+					<div class="col-sm-6">
+						<?= hf_input('horses_dam', 'Dam', $post, array(), $errors) ?>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<?= hf_dropdown('horses_breed', 'Breed', $post, $breeds, array(), $errors, 1) ?>
+					</div>
+					<div class="col-sm-6">
+						<?= hf_input('horses_breed2', 'Secondary Breed/Pattern (optional)', $post, array(), $errors) ?>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<?= hf_dropdown('horses_color', 'Base Color', $post, $base_colors, array(), $errors, 1) ?>
+					</div>
+					<div class="col-sm-6">
+						<?= hf_dropdown('horses_pattern', 'Pattern Color', $post, $base_patterns, array(), $errors, 1) ?>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<?= hf_dropdown('horses_line', 'Line (optional)', $post, $lines, array(), $errors, 1) ?>
+					</div>
+					<div class="col-sm-6">
+						<?= hf_multiselect('disciplines[]', 'Discipline', $post['disciplines'], $disciplines, array(), $errors, 1) ?>
+					</div>
+				</div>
+            </div>
+            <div class="card-footer text-muted">
+				<?= hf_submit('create', 'Register Horse', array('class' => 'btn btn-primary col-sm-12')) ?>
+				</form>
+            </div>
+        </div>
+    </div>
+ </div>

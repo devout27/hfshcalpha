@@ -1,0 +1,6 @@
+
+
+
+<?= $article['articles_content'] ?>
+
+

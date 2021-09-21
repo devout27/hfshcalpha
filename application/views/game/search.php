@@ -17,7 +17,7 @@
 					</div>
 					<div class="col-sm-6">
 						<?= hf_input('stables_boarding_fee', 'Boarding Fee', $_POST, array(), $errors) ?>
-					</div>
+					</div>					
 				</div>
             </div>
             <div class="card-footer text-muted">

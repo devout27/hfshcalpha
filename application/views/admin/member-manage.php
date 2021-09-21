@@ -13,6 +13,9 @@
 				<div class="row">
 					<div class="col-sm-12 col-md-4 col-xl-3">
 						<?= hf_input('players_credits_creation', 'Creation Credits', $profile, array('placeholder' => '0'), $errors) ?>
+					</div>					
+					<div class="col-sm-12 col-md-4 col-xl-3">
+						<?= hf_input('per_day_credits', 'Daily Creation Credits Limit', $profile, array('placeholder' => '0'), $errors) ?>
 					</div>
 					<div class="col-sm-12 col-md-4 col-xl-3">
 						<?= hf_input('players_credits_adoptathon', 'Adoptathon Credits', $profile, array('placeholder' => '0'), $errors) ?>
@@ -20,6 +23,7 @@
 					<div class="col-sm-12 col-md-4 col-xl-3">
 						<?= hf_input('players_ami', 'AMI', $profile, array('placeholder' => '0'), $errors) ?>
 					</div>
+
 				</div>
             </div>
             <div class="card-footer text-muted">

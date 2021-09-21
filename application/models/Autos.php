@@ -135,14 +135,14 @@ class Autos extends CI_Model {
 						'transfer_from' => $winner['join_bank_id'],
 						'transfer_to' => $v['join_bank_id'],
 						'transfer_amount' => $winner['auctions_bids_amount'],
-						'transfer_memo' => 'Winning auction bid for Horse #' . $v['join_horses_id'],
+						'transfer_memo' => 'Winning auction bid for Horse #' . generateId($v['join_horses_id']),
 					);
 
 				$player = array('players_id' => $v['horse_owner']);
 				$this->db->query("INSERT INTO bank_checks(join_bank_id, bank_checks_to_id, bank_checks_amount, bank_checks_memo, bank_checks_status) VALUES(?,?,?,?,'Pending')", $transfer);
 
-				$winner_notice = "You placed a winning bid on <a href=/horses/view/" . $v['join_horses_id'] . ">" . $v['horses_name'] . " #" . $v['join_horses_id'] . "</a> for $" . number_format($winner['auctions_bids_amount']);
-				$seller_notice = "Player #" . $winner['join_players_id'] . " placed a winning bid on <a href=/horses/view/" . $v['join_horses_id'] . ">" . $v['horses_name'] . " #" . $v['join_horses_id'] . "</a> for $" . number_format($winner['auctions_bids_amount']) . ". Please accept the check and transfer the horse.";
+				$winner_notice = "You placed a winning bid on <a href=/horses/view/" . $v['join_horses_id'] . ">" . $v['horses_name'] . " #" . generateId($v['join_horses_id']) . "</a> for $" . number_format($winner['auctions_bids_amount']);
+				$seller_notice = "Player #" . $winner['join_players_id'] . " placed a winning bid on <a href=/horses/view/" . $v['join_horses_id'] . ">" . $v['horses_name'] . " #" . generateId($v['join_horses_id']) . "</a> for $" . number_format($winner['auctions_bids_amount']) . ". Please accept the check and transfer the horse.";
 				$this->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?), (?,?)", array($winner_notice, $winner['join_players_id'], $seller_notice, $v['horse_owner']));
 				$this->db->query("UPDATE auctions SET auctions_winning_bidder=?, auctions_winning_bid=?", array($winner['join_players_id'], $winner['auctions_bids_amount']));
 			}
@@ -272,7 +272,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize01']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize01'], $note, 1);
 						}
 					}elseif($count == 2){
@@ -283,7 +283,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize02']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize02'], $note, 1);
 						}
 					}elseif($count == 3){
@@ -294,7 +294,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize03']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize03'], $note, 1);
 						}
 					}elseif($count == 4){
@@ -305,7 +305,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize04']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize04'], $note, 1);
 						}
 					}elseif($count == 5){
@@ -316,7 +316,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize05']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize05'], $note, 1);
 						}
 					}elseif($count == 6){
@@ -327,7 +327,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize06']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize06'], $note, 1);
 						}
 					}elseif($count == 7){
@@ -338,7 +338,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize07']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize07'], $note, 1);
 						}
 					}elseif($count == 8){
@@ -349,7 +349,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize08']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize08'], $note, 1);
 						}
 					}elseif($count == 9){
@@ -360,7 +360,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize09']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize09'], $note, 1);
 						}
 					}elseif($count == 10){
@@ -371,7 +371,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize10']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize10'], $note, 1);
 						}
 					}elseif($count == 11){
@@ -382,7 +382,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize11']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize11'], $note, 1);
 						}
 					}elseif($count == 12){
@@ -393,7 +393,7 @@ class Autos extends CI_Model {
 
 						//do a bank transaction if there's a prize
 						if($class['events_x_classes_prize12']){
-							$note = "Event prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
+							$note = "Event prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Class #" . $class['events_x_classes_id'];
 							$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $class['events_x_classes_prize12'], $note, 1);
 						}
 					}
@@ -424,7 +424,7 @@ class Autos extends CI_Model {
 
 				if($count == 1 AND $e['classlists_divisions_prize01']){
 					$prize = $e['classlists_divisions_prize01'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize01'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize01'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize01'], $note, 1);
@@ -432,7 +432,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 2 AND $e['classlists_divisions_prize02']){
 					$prize = $e['classlists_divisions_prize02'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize02'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize02'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize02'], $note, 1);
@@ -440,7 +440,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 3 AND $e['classlists_divisions_prize03']){
 					$prize = $e['classlists_divisions_prize03'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize03'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize03'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize03'], $note, 1);
@@ -448,7 +448,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 4 AND $e['classlists_divisions_prize04']){
 					$prize = $e['classlists_divisions_prize04'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize04'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize04'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize04'], $note, 1);
@@ -456,7 +456,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 5 AND $e['classlists_divisions_prize05']){
 					$prize = $e['classlists_divisions_prize05'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize05'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize05'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize05'], $note, 1);
@@ -464,7 +464,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 6 AND $e['classlists_divisions_prize06']){
 					$prize = $e['classlists_divisions_prize06'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize06'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize06'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize06'], $note, 1);
@@ -472,7 +472,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 7 AND $e['classlists_divisions_prize07']){
 					$prize = $e['classlists_divisions_prize07'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize07'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize07'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize07'], $note, 1);
@@ -480,7 +480,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 8 AND $e['classlists_divisions_prize08']){
 					$prize = $e['classlists_divisions_prize08'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize08'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize08'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize08'], $note, 1);
@@ -488,7 +488,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 9 AND $e['classlists_divisions_prize09']){
 					$prize = $e['classlists_divisions_prize09'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize09'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize09'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize09'], $note, 1);
@@ -496,7 +496,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 10 AND $e['classlists_divisions_prize10']){
 					$prize = $e['classlists_divisions_prize10'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize10'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize10'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize10'], $note, 1);
@@ -504,7 +504,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 11 AND $e['classlists_divisions_prize11']){
 					$prize = $e['classlists_divisions_prize11'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize11'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize11'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize11'], $note, 1);
@@ -512,7 +512,7 @@ class Autos extends CI_Model {
 
 				}elseif($count == 12){
 					$prize = $e['classlists_divisions_prize12'];
-					$note = "Division prize: Horse #" . $e['join_horses_id'] ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize12'];
+					$note = "Division prize: Horse #" . generateId($e['join_horses_id']) ." placed #". $count ." in Division " . $e['classlists_divisions_name'] . " and won $". $e['classlists_divisions_prize12'];
 					$this->db->query('INSERT INTO horse_records(join_horses_id, horse_records_type, horse_records_notes) VALUES(?, ?, ?)', array($e['join_horses_id'], $event['events_type'], $note));
 					if($prize){
 						$transfer = Bank::instant_transfer($class['join_players_id'], $class['join_bank_id'], $e['bank_id'], $e['classlists_divisions_prize12'], $note, 1);

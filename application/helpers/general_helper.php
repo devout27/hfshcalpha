@@ -47,4 +47,19 @@ if(!function_exists('pre')){
 
 		return($check);
 	}
+	function generateId($id)
+	{
+		if(strlen($id) < 6){
+			$zero = "";
+			$l = 5-strlen($id);			
+			for($i=1;$i<=$l;$i++)
+			{				
+				$zero .= '0';
+			}
+			return $zero.$id;
+		}else
+		{
+			return $id;
+		}
+	}
 }

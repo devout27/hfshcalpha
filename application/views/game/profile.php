@@ -109,17 +109,17 @@
 <div class="row">
         <div class="col-lg-12">
 
-          <div class="card mb-4">
+          <!-- <div class="card mb-4">
             <div class="card-body">
               <h2 class="card-title">Stables</h2>
               <p class="card-text">
-				<? $this->load->view('partials/stables-table', array('stables' => $profile['stables'], 'title' => 'search')); ?>
-			</p>
+				        <? $this->load->view('partials/stables-table', array('stables' => $profile['stables'], 'title' => 'search')); ?>
+			        </p>
             </div>
             <div class="card-footer text-muted">
             	<?= count($profile['stables']) ?> Stable(s) Owned
             </div>
-          </div>
+          </div> -->
 
           <div class="card mb-4">
             <div class="card-body">
@@ -145,14 +145,13 @@
             </div>
           </div>
 
-          <div class="card mb-4">
+          <!-- <div class="card mb-4">
             <div class="card-body">
               <h2 class="card-title">Horses</h2>
               <p class="card-text">
-
-				<? $this->load->view('partials/horse-table-narrow', array('horses' => $profile['horses'], 'title' => 'search')); ?>
+				      <? //$this->load->view('partials/horse-table-narrow', array('horses' => $profile['horses'], 'title' => 'search')); ?>
             </div>
-          </div>
+          </div> -->
 </div>
 </div>
 <? endif; ?>

@@ -28,7 +28,7 @@ if($horse['horses_id'] == $post['horses_id']){
 ?>
 
 <form method="post" action="/admin/horses/breed">
-				        <td><b>STALLION<br/><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= $horse['horses_name'] ?> #<?= $horse['horses_id'] ?></a></b><br/>
+				        <td><b>STALLION<br/><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= $horse['horses_name'] ?> #<?= generateId($horse['horses_id']) ?></a></b><br/>
 				        	Owned by <a href="/game/profile/<?= $horse['join_players_id'] ?>"><?= $horse['p1_nickname'] ?> #<?= $horse['join_players_id'] ?></a><br/>
 				        	<?= $horse['horses_birthyear'] ?> <?= $horse['horses_gender'] ?> <?= $horse['horses_breed'] ?>
 				        <br/><br/><b>MARE<br/><a href="/horses/view/<?= $horse['h2_id'] ?>"><?= $horse['h2_name'] ?> #<?= $horse['h2_id'] ?></a></b><br/>

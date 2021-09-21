@@ -15,7 +15,6 @@ class Horses extends MY_Controller {
 		$this->load->model('horse');
 		$this->load->model('privileges');
 		$this->data['privileges'] = $this->privileges->get();
-
 		$this->data['page']['title'] = "Hurricane Farm";
 	}
 
@@ -40,8 +39,39 @@ class Horses extends MY_Controller {
 		}
 		$this->load->view('layout/footer');
 	}
-
+	public function manageHorses()
+	{				
+		if ($this->input->is_ajax_request()) {   	
+			$res = $this->horse->getMyHorsesList($this->data['player']['players_id'],$_POST);
+			foreach($res as $v){                
+				$name = $v['horses_competition_title'].' '.$v['horses_breeding_title'].' '.$v['horses_name'];
+				$action = '<a href="/horses/view/'.$v["horses_id"].'">View</a>';
+				$vetFerr = $v['horses_vet'].' '.$v['horses_farrier'];
+				$status = $v['horses_pending']==1 ? '<span class="badge badge-danger pb-1">Pending</span>' : '<span class="badge badge-success pb-1">Approved</span>';
+				$stable = $v['stables_name'];
+				$i = generateId($v["horses_id"]);
+				$data[] = array($i,$name,$stable,$v['horses_birthyear'],$v['horses_color'],$v['horses_breed'],$v['horses_gender'],$v['horses_hs'],$v['horses_fs'],$vetFerr,$status,$action);
+			}			
+			$output = array(
+                "draw" => $_POST['draw'],
+                "recordsTotal" => $this->horse->countAll($this->data['player']['players_id'],$_POST),
+                "recordsFiltered" => $this->horse->countFiltered($this->data['player']['players_id'],$_POST),
+                "data" => $data
+            );
+            echo json_encode($output);exit;			
+		}else{
+			$this->data['page']['title'] = "Manage Horses";
+			$this->data['dataTableElement'] = 'dt-my-horses-list';
+			$this->data['dataTableURL'] = base_url('manage-horses');
+			$this->data['stables'] = Player::get_stables($this->data['profile']['players_id']);
+			$this->load->view('layout/header', $this->data);
+			$this->load->view('horses/manageHorses',$this->data);
+			$this->load->view('layout/footer');
+		}
+		
+	}
 	public function register(){
+		$this->data['player']['today_adoption'] = $this->horse->getTodayAdoption($this->player->player_id);
 		$this->data['page']['title'] = "Register a Horse";
 		$this->data['breeds'] = $this->horse->get_breeds();
 		$this->data['base_colors'] = $this->horse->get_base_colors();
@@ -67,7 +97,7 @@ class Horses extends MY_Controller {
 			}
 			redirect('horses/register');
 		}
-
+		
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/register', $this->data);
 		$this->load->view('layout/footer');
@@ -106,7 +136,7 @@ class Horses extends MY_Controller {
 
 		}
 
-		$this->data['page']['title'] = "Import " . $this->data['horse']['horses_name'] . " #" . $this->data['horse']['horses_id'];
+		$this->data['page']['title'] = "Import " . $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/import', $this->data);
 		$this->load->view('layout/footer');
@@ -191,7 +221,7 @@ class Horses extends MY_Controller {
 			--if accepted, create pending horse
 		*/
 
-		$this->data['page']['title'] = "Breed to Horse " . $this->data['horse']['horses_name'] . " #" . $this->data['horse']['horses_id'];
+		$this->data['page']['title'] = "Breed to Horse " . $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/breed', $this->data);
 		$this->load->view('layout/footer');
@@ -203,8 +233,7 @@ class Horses extends MY_Controller {
 		$this->data['horse1'] = $this->data['horse1']->horse;
 		$this->data['horse2'] = new Horse($_POST['horses_id']);
 		$this->data['horse2'] = $this->data['horse2']->horse;
-		$this->data['page']['title'] = "Possible Foal Genetic Material: " . $this->data['horse1']['horses_name'] . " #" . $this->data['horse1']['horses_id'] ." x " . $this->data['horse2']['horses_name'] . " #" . $this->data['horse2']['horses_id'];
-
+		$this->data['page']['title'] = "Possible Foal Genetic Material: " . $this->data['horse1']['horses_name'] . " #" . generateId($this->data['horse1']['horses_id']) ." x " . $this->data['horse2']['horses_name'] . " #" . generateId($this->data['horse2']['horses_id']);
 		$this->data['genes'] = Horse::sample_genes($id, $this->data['horse1']['genes'], $_POST['horses_id'], $this->data['horse2']['genes']);
 		//unset($this->data['horse1'], $this->data['horse2']);
 
@@ -226,7 +255,7 @@ class Horses extends MY_Controller {
 		$this->data['horses'] = Horse::get_horses_dropdown($this->session->userdata('players_id'));
 		//pre($this->data['horses']);exit;
 
-		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . $this->data['horse']['horses_id'];
+		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
 
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/view', $this->data);
@@ -255,7 +284,7 @@ class Horses extends MY_Controller {
 			redirect('horses/view/' . $id);
 		}
 
-		$this->data['page']['title'] = "Auction " . $this->data['horse']['horses_name'] . " #" . $this->data['horse']['horses_id'];
+		$this->data['page']['title'] = "Auction " . $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
 
 
 		if($this->input->post('auction')){
@@ -302,7 +331,7 @@ class Horses extends MY_Controller {
 			redirect('horses');
 		}
 
-		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . $this->data['horse']['horses_id'];
+		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
 
 		if($this->input->post('update')){
 			$response = $this->horse->update($this->data['player'], $this->data['horse'], $_POST, $allowed);

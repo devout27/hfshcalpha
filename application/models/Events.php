@@ -402,7 +402,7 @@ class Events extends CI_Model {
 		//pre($class);exit;
 
 		//update the money. if error, don't update &  return errors again.
-		$note = "Enter Horse #" . $horse['horses_id'] ." into Class #" . $class['events_x_classes_id'];
+		$note = "Enter Horse #" . generateId($horse['horses_id']) ." into Class #" . $class['events_x_classes_id'];
 		$transfer = Bank::instant_transfer($player_id, $player['default_bank'], $class['join_bank_id'], $class['events_x_classes_fee'], $note);
 		if(count($transfer['errors']) > 0){
 			return $transfer['errors'];

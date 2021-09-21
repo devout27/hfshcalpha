@@ -103,7 +103,8 @@ $route['city/articles/(:num)'] = "city/articles_view/$1";
 $route['horses/adopt/(:num)/(:any)'] = "horses/adopt/$1/$2";
 $route['horses/view/offspring-genes/(:num)'] = "horses/view_offspring_genes/$1";
 
-
+//my routes
+$route['manage-horses'] = "horses/manageHorses";
 
 $route['admin/mods/add'] = "admin/add_mod";
 $route['admin/mods/edit/(:num)'] = "admin/edit_mod/$1";

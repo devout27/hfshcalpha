@@ -49,46 +49,45 @@ Disciplines:<br/>
 </div>
 
 
-<div class="row">
+<!-- <div class="row">
     <div class="col-lg-12">
           <div class="card mb-4">
             <div class="card-body">
               <h2 class="card-title">Genetics (TODO: make invisible to players w/o perk)</h2>
+				<div class="row"> -->
+					<? //pre($horse['genes']); ?>
+					<? // foreach((array)$horse['genes'] AS $g): ?>
+						<!-- <div class="col-sm-6 col-md-4">
+							<div class="row">
+								<div class="col-sm-6">
+									<b><? //$g['genes_name'] ?>:</b>
+								</div>
+								<div class="col-sm-4">
+									<? //$g['horses_x_genes_value'] ?: $g['genes_code3'] ?>
+								</div>
+							</div>
+						</div> -->
+					<? //endforeach; ?>
+				<!-- </div>
+        	</div>  -->
 
-<div class="row">
-<? //pre($horse['genes']); ?>
-<? foreach((array)$horse['genes'] AS $g): ?>
-	<div class="col-sm-6 col-md-4">
-		<div class="row">
-			<div class="col-sm-6">
-				<b><?= $g['genes_name'] ?>:</b>
-			</div>
-			<div class="col-sm-4">
-				<?= $g['horses_x_genes_value'] ?: $g['genes_code3'] ?>
-			</div>
-		</div>
-	</div>
-<? endforeach; ?>
-</div>
-            </div>
-
-<div class="card-footer text-muted">
-	<form method="post" action="/horses/view/offspring-genes/<?= $horse['horses_id'] ?>">
-		<div class="row">
-			<div class="col-sm-6">
-				<?= hf_dropdown('horses_id', '', $post, $horses, array(), $errors) ?>
-			</div>
-			<div class="col-sm-6">
-				<?= hf_submit('sample_breeding', 'Sample Breeding', array('class' => 'btn btn-primary col-sm-12')) ?>
-			</div>
-		</div>
-	</form>
-</div>
+			<!-- <div class="card-footer text-muted">
+				<form method="post" action="/horses/view/offspring-genes/<?= $horse['horses_id'] ?>">
+					<div class="row">
+						<div class="col-sm-6">
+							<?= hf_dropdown('horses_id', '', $post, $horses, array(), $errors) ?>
+						</div>
+						<div class="col-sm-6">
+							<?= hf_submit('sample_breeding', 'Sample Breeding', array('class' => 'btn btn-primary col-sm-12')) ?>
+						</div>
+					</div>
+				</form>
+			</div> -->
               <?/*<a href="/horses/view/offspring-genes/<?= $horse['horses_id'] ?>" class="center">View Possible Offspring Genes</a><br/><br/>*/?>
-          </div>
+          <!-- </div>
 
 </div>
-</div>
+</div> -->
 
 <div class="row">
     <div class="col-lg-7">
@@ -200,8 +199,8 @@ Disciplines:<br/>
           	  <? endif; ?>
           	  <? if($horse['horses_sale'] == 1): ?>
           	  	<font color=green><b>For Sale</font></b><br />
+				<b><a href="javascript:void(0);" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price']) ?></a></b><br/>
           	  <? endif; ?>
-
             </div>
           </div>
       	  <? if($horse['join_players_id'] == EXPORT_ID): ?>

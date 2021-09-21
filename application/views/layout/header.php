@@ -61,6 +61,7 @@
                 <a class="dropdown-item" href="/city/events">Event House</a>
                 <a class="dropdown-item" href="/city/vet">Veterinary Office</a>
                 <a class="dropdown-item" href="/city/farrier">Farrier Office</a>
+                <a class="dropdown-item" href="/manage-horses">Manage Horses</a>
                 <a class="dropdown-item" href="/horses">Horses</a>
                 <a class="dropdown-item" href="/game/profile/search">Stables</a>
               </div>

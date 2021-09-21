@@ -351,9 +351,7 @@ class Player extends CI_Model {
 
 	public static function admin_update_credits($data){
 		$CI =& get_instance();
-
-		$CI->db->query("UPDATE players SET players_credits_adoptathon=?, players_credits_creation=? WHERE players_id=? LIMIT 1", array($data['players_credits_adoptathon'], $data['players_credits_creation'], $data['players_id']));
-
+		$CI->db->query("UPDATE players SET per_day_credits = ? players_credits_adoptathon=?, players_credits_creation=? WHERE players_id=? LIMIT 1", array($data['per_day_credits'], $data['players_credits_adoptathon'], $data['players_credits_creation'], $data['players_id']));
 		return  true;
 	}
 
@@ -434,7 +432,6 @@ class Player extends CI_Model {
 
 	public static function get_stables($player_id){
 		$CI =& get_instance();
-
 		$stables = $CI->db->query("SELECT * FROM stables WHERE join_players_id=?", array($player_id))->result_array();
 		foreach((array)$stables AS $i => $s){
 			$stables[$i]['amenities'] = $CI->db->query("SELECT sxa.*, a.* FROM stables_x_amenities sxa LEFT JOIN amenities a ON a.amenities_id=sxa.join_amenities_id WHERE sxa.join_stables_id=?", $s['stables_id'])->result_array();
@@ -572,7 +569,7 @@ class Player extends CI_Model {
 		}
 
 		//complete appt
-		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . $appt['horses_id'] . "</a> has been seen by the Vet.";
+		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . generateId($appt['horses_id']) . "</a> has been seen by the Vet.";
 		$CI->db->query('UPDATE horse_appointments SET horse_appointments_completed=NOW() WHERE horse_appointments_id=?', array($horse_appointments_id));
 		$CI->db->query('UPDATE horses SET horses_vet=? WHERE horses_id=?', array($appt['horse_appointments_date'], $appt['horses_id']));
 		$CI->db->query("INSERT INTO horse_records(join_players_id, join_horses_id, horse_records_type, horse_records_date, horse_records_notes) VALUES(?, ?, ?, ?, ?)", array($appt['join_players_id'], $appt['horses_id'], "Vet", $appt['horse_appointments_date'], $appt['horse_appointments_description']));
@@ -648,7 +645,7 @@ class Player extends CI_Model {
 		}
 
 		//complete appt
-		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . $appt['horses_id'] . "</a> has been seen by the Farrier.";
+		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . generateId($appt['horses_id']) . "</a> has been seen by the Farrier.";
 		$CI->db->query('UPDATE horse_appointments SET horse_appointments_completed=NOW() WHERE horse_appointments_id=?', array($horse_appointments_id));
 		$CI->db->query('UPDATE horses SET horses_farrier=? WHERE horses_id=?', array($appt['horse_appointments_date'], $appt['horses_id']));
 		$CI->db->query("INSERT INTO horse_records(join_players_id, join_horses_id, horse_records_type, horse_records_date, horse_records_notes) VALUES(?, ?, ?, ?, ?)", array($appt['join_players_id'], $appt['horses_id'], "Farrier", $appt['horse_appointments_date'], $appt['horse_appointments_description']));

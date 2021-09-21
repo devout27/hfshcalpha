@@ -41,7 +41,7 @@ class Game extends MY_Controller {
 		}
 
 		$this->load->view('layout/header', $this->data);
-		$this->load->view('game/search', $this->data);
+		$this->load->view('game/search', $this->data);				
 		if($this->input->post('search')){
 			$this->load->view('partials/player-search', $this->data['search']);
 		}
@@ -309,11 +309,29 @@ class Game extends MY_Controller {
 		$this->load->view('game/profile-update', array('errors' => $errors, 'profile' => $this->data['profile']));
 		$this->load->view('layout/footer');
 	}
-
+	public function stables($id)
+	{
+		$this->load->model('stables');
+		$this->load->model('privileges');
+		$this->data['stable'] = new Stables($id);
+		$this->data['stable'] = $this->data['stable']->stable;
+		//pre($this->data['stable']);exit;
+		$this->data['page']['title'] = "Stable";
+		$this->data['privileges'] = $this->privileges->get();
+		//pre($this->data['player']['privileges']);exit;
+		if(!$this->data['stable']['stables_id']){
+			$this->session->set_flashdata('notice', "Invalid Stable.");
+			redirect('game/profile/search');
+		}
+		$this->data['page']['title'] = $this->data['stable']['stables_name'] . " #" . $this->data['stable']['stables_id'];
+		$this->load->view('layout/header', $this->data);
+		$this->load->view('city/stables-view', $this->data);
+		$this->load->view('layout/footer');
+	}
 	public function profile($id = null){
 		$this->data['profile'] = new Player($id ?: $this->session->userdata('players_id'));
 		$this->data['profile'] = $this->data['profile']->player;
-		$this->data['profile']['horses'] = Player::get_owned_horses($this->data['profile']['players_id']);
+		//$this->data['profile']['horses'] = Player::get_owned_horses($this->data['profile']['players_id']);
 		$this->data['profile']['stables'] = Player::get_stables($this->data['profile']['players_id']);
 		$this->data['profile']['cabs'] = Player::get_cabs($this->data['profile']['players_id']);
 		$this->data['profile']['events'] = Player::get_events($this->data['profile']['players_id'], array('only_recent' => 1));

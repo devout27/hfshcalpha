@@ -82,6 +82,11 @@
 						<?= hf_input('max_breed', 'Maximum Breeding Price', $_POST, array(), $errors) ?>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<?= hf_checkbox('for_sale', 'For Sale', $_POST, array(), $errors) ?>
+					</div>
+				</div>
 
             </div>
             <div class="card-footer text-muted">

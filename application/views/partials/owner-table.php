@@ -16,7 +16,7 @@
       		<table class="table w-100">
       			<? foreach((array)$owner['horses'] AS $horse): ?>
       			<tr>
-      				<td><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= $horse['horses_competition_title'] ?> <?= $horse['horses_breeding_title'] ?> <?= $horse['horses_name'] ?> #<?= $horse['horses_id'] ?></a></td>
+      				<td><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= $horse['horses_competition_title'] ?> <?= $horse['horses_breeding_title'] ?> <?= $horse['horses_name'] ?> #<?= generateId($horse['horses_id']) ?></a></td>
 					<td><?= $horse['horse_records_date'] ?></td>
 					<td><?= $horse['horses_birthyear'] ?></td>
 					<td><?= $horse['horses_color'] ?></td>

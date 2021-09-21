@@ -13,7 +13,7 @@
   <tbody>
   	<? foreach((array)$appts AS $h => $horse): ?>
     <tr>
-      <td><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= $horse['horses_id'] ?></a></td>
+      <td><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= generateId($horse['horses_id']) ?></a></td>
       <td><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= $horse['horses_name'] ?></a></td>
       <td><?= $horse['horses_birthyear'] ?></td>
       <td><?= $horse['horses_gender'] ?></td>

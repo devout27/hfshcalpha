@@ -74,7 +74,13 @@ class Horse extends CI_Model {
 			unset($normalized, $genes);
 			//pre($this->db->last_query());
 		}
+		$this->column_search=['horses_id','horses_name','horses_birthyear','horses_gender','horses_color','horses_pattern','horses_breed','horses_points','horses_competition_title','horses_breeding_title','horses_level'];
+		$this->column_order=['horses_id','horses_name','horses_birthyear','horses_gender','horses_color','horses_pattern','horses_breed','horses_points','horses_competition_title','horses_breeding_title','horses_level'];
+		$this->order = ['horses_id' => 'desc'];
 	}
+
+
+
 
 	public static function get_blueprint_possibilities($horse, $cat = null, $genes = null, $blueprints = null){
 		$CI =& get_instance();
@@ -338,7 +344,7 @@ class Horse extends CI_Model {
 		// if player is regular player, only allow update of breeding fee & sale.
 
 		//pre($data);exit;
-
+		
 		if($player['privileges']['privileges_horses']){ //admin can update everything else
 			$allowed_fields = array(
 				'horses_name',
@@ -357,51 +363,11 @@ class Horse extends CI_Model {
 				'horses_adoptable',
 				'horses_deceased',
 				'horses_notes',
-				'horses_breeding_fee'
+				'horses_breeding_fee',
+				'horses_sale_price'
 			);
 
-			if(!is_numeric($horse['horses_sire']))
-			{
-				$errors['horses_sire']="Please Provide Integer Sire";
-			}
-			if(is_numeric($data['horses_sire']) && $data['horses_sire'] < 0)
-			{
-				$errors['horses_sire']="Sire Must be Greater than Zero.";
-			}
-			if(!is_numeric($data['horses_dam']))
-			{
-				$errors['horses_dam']="Please Provide Integer Dam";
-			}
-			if(is_numeric($data['horses_dam']) && $data['horses_dam'] < 0)
-			{
-				$errors['horses_dam']="Dam Must be Greater than Zero.";
-			}
-
-			if($data['horses_gender']=="Stallion" && $data['horses_sire'] < 3 || $data['horses_sire'] > 29)
-			{
-				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-			}
-			if(!$data['horses_name']){
-				$errors['horses_name'] = "Name is required.";
-			}			
-			$birthDate = "01/01/".$data['horses_birthyear'];
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($data['horses_gender']=="Stallion" && $age < 3 || $age > 29)
-			{
-				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-			}
-			if($data['horses_gender']=="Mare" && $age < 3 || $age > 25)
-			{
-				$errors['horses_sire']="There is a gender issue or that the horse is too young/old or that the mare has a foal born that year.";
-			}
-			if($data['horses_gender']=="Mare")
-			{				
-				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? LIMIT 1", array($data['horses_birthyear'],$data['join_players_id']))->row_array();
-				if($year_exists){
-					$errors['horses_birthyear'] = $data['horses_birthyear']." Year no longer be available.";
-				}
-			}	
+			
 			//check if horse name is unique
 			$name_exists = $CI->db->query("SELECT horses_id FROM horses WHERE horses_name=? AND horses_id!=? LIMIT 1", array($data['horses_name'], $data['horses_id']))->row_array();
 			if($name_exists){
@@ -439,18 +405,62 @@ class Horse extends CI_Model {
 			if($data['horses_breeding_fee'] < 0){
 				$data['horses_breeding_fee'] = 0;
 			}
+			if($data['horses_sale']==1 && empty($data['horses_sale_price']) || !$data['horses_sale_price'] > 0)
+			{
+				$errors['horses_sale_price'] = "Please Enter a Sale Price.";
+			}
 			if($data['horses_birthyear'] > date('Y') || $data['horses_birthyear'] < "1950"){
 				$errors['horses_birthyear'] = "Invalid birth year.";
+			}
+			if(!empty($data['horses_sire']) && !self::getHorseById($data['horses_sire']))
+			{
+				$errors['horses_sire']="This Sire Doesn't exist.";
+			}
+			if(!empty($data['horses_dam']) && !self::getHorseById($data['horses_dam']))
+			{
+				$errors['horses_dam']="This Dam Doesn't exist.";
+			}			
+			if(!$data['horses_name']){
+				$errors['horses_name'] = "Name is required.";
+			}			
+			$birthDate = "01/01/".$data['horses_birthyear'];
+			$birthDate = explode("/", $birthDate);
+			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+			if($data['horses_gender']=="Stallion" && !empty($data['horses_birthyear']))
+			{
+				if($age < 3 || $age > 29)
+				{
+					$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+				}
+			}			
+			if($data['horses_gender']=="Mare" && !empty($data['horses_birthyear']))
+			{
+				if($age < 3 || $age > 25)
+				{
+					$errors['horses_sire']="There is a gender issue or that the horse is too young/old or that the mare has a foal born that year.";
+				}
+			}			
+			if($data['horses_gender']=="Mare")
+			{				
+				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? AND horses_id <> ? LIMIT 1", array($data['horses_birthyear'],$player['players_id'],$horse['horses_id']))->row_array();
+				if($year_exists){
+					$errors['horses_birthyear'] = $data['horses_birthyear']." no longer be available.";
+				}
 			}
 			if($data['horses_sale'] AND $data['horses_sale2'] > 0){
 				$data['horses_sale'] = $data['horses_sale2'];
 			}else{
 				$data['horses_sale'] = 0;
 			}
-		}elseif($player['players_id'] == $horse['join_players_id']){
+		}elseif($player['players_id'] == $horse['join_players_id']){			
+			if($data['horses_sale']==1 && empty($data['horses_sale_price']) || !$data['horses_sale_price'] > 0)
+			{
+				$errors['horses_sale_price'] = "Please Enter a Sale Price.";
+			}
 			$allowed_fields = array(
 				'horses_sale',
-				'horses_breeding_fee'
+				'horses_breeding_fee',
+				'horses_sale_price'
 			);
 		}else{
 			$errors['horses_name'] = "You do not own this horse.";
@@ -831,6 +841,13 @@ class Horse extends CI_Model {
 		if($horse['horses_birthyear'] > date('Y') || $horse['horses_birthyear'] < "1950"){
 			$errors['horses_birthyear'] = "Invalid birth year.";
 		}
+
+		//check if horse name is unique
+		$name_exists = $CI->db->query("SELECT horses_id FROM horses WHERE horses_name=? AND horses_id!=? LIMIT 1", array($horse['horses_name'], $horse['horses_id']))->row_array();
+		if($name_exists){
+			$errors['horses_name'] = "That horse name is already in use.";
+		}
+
 		if($horse['horses_gender']=="Mare")
 		{				
 			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? LIMIT 1", array($horse['horses_birthyear'],$horse['join_players_id']))->row_array();
@@ -838,19 +855,23 @@ class Horse extends CI_Model {
 				$errors['horses_birthyear'] = $horse['horses_birthyear']." Birth Year no longer be available.";
 			}
 		}
-
 		$birthDate = "01/01/".$horse['horses_birthyear'];
 		$birthDate = explode("/", $birthDate);
 		$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-		if($horse['horses_gender']=="Mare" && $age < 3 || $age > 25)
+		if($horse['horses_gender']=="Mare" && !empty($horse['horses_birthyear']) )
 		{
-			$errors['horses_sire']="There is a Gender issue or that the horse is too young/old or that the mare has a foal born that year.";
+			if($age < 3 || $age > 25)
+			{
+				$errors['horses_birthyear'] = "There is a Gender issue or that the horse is too young/old or that the mare has a foal born that year.";
+			}
+		}		
+		if(!empty($horse['horses_sire']) && !self::getHorseById($horse['horses_sire']))
+		{
+			$errors['horses_sire']="This Sire Doesn't exist.";
 		}
-
-		//check if horse name is unique
-		$name_exists = $CI->db->query("SELECT horses_id FROM horses WHERE horses_name=? AND horses_id!=? LIMIT 1", array($horse['horses_name'], $horse['horses_id']))->row_array();
-		if($name_exists){
-			$errors['horses_name'] = "That horse name is already in use.";
+		if(!empty($horse['horses_dam']) && !self::getHorseById($horse['horses_dam']))
+		{
+			$errors['horses_dam']="This Dam Doesn't exist.";
 		}
 
 		if(count($errors) > 0){
@@ -886,14 +907,14 @@ class Horse extends CI_Model {
 		$CI->db->update('horses', $update_data, 'horses_id=' . $horse['horses_id']);
 		$horse_id = $horse['horses_id'];
 
-		$message = "<b>Horse registered! <a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a>";
+		$message = "<b>Horse registered! <a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a>";
 
 		if($horse['body']){
 			$sn = SITE_NAME;
 			$msg['messages_to'] = $horse['join_players_id'];
 			$msg['messages_sender'] = $mod_id;
 			$msg['messages_subject'] = "Horse Registration Accepted";
-			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a> has been registered with the game and is now available in your account.<br><br>". $horse['body'] . "<br><br>Sincerely,<br>$sn Team";
+			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a> has been registered with the game and is now available in your account.<br><br>". $horse['body'] . "<br><br>Sincerely,<br>$sn Team";
 			$result = $CI->messages->send($msg);
 		}
 		return array('errors' => $errors, 'notices' => $notices, 'horse_id' => $horse['horses_id']);
@@ -974,7 +995,7 @@ class Horse extends CI_Model {
 		}
 
 
-		$message = "A moderator has approved and completed this breeding: <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". $mare['horses_id'] . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". $stallion['horses_id'] . "</a> for <font color=green>$" . $data['horses_breedings_fee'] . "</font>.";
+		$message = "A moderator has approved and completed this breeding: <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". generateId($mare['horses_id']) . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". generateId($stallion['horses_id']) . "</a> for <font color=green>$" . $data['horses_breedings_fee'] . "</font>.";
 
 
 		if($stallion['join_players_id'] != $mare['join_players_id']){
@@ -984,7 +1005,7 @@ class Horse extends CI_Model {
 		}
 
 		$horse['join_players_id'] = $data['horses_breedings_owner'];
-		$horse['horses_name'] = date('Y') . ' Foal (#' . $stallion['horses_id'] .' x #' . $mare['horses_id'] . ')';
+		$horse['horses_name'] = date('Y') . ' Foal (#' . generateId($stallion['horses_id']) .' x #' . generateId($mare['horses_id']) . ')';
 		$horse['horses_breed'] = $post['horses_breedings_breed'];
 		$horse['horses_birthyear'] = date('Y');
 		$horse['horses_gender'] = $data['horses_breedings_gender'];
@@ -1108,7 +1129,7 @@ class Horse extends CI_Model {
 			return array('errors' => $errors);
 		}
 
-		$message = "A moderator has rejected this breeding: <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". $mare['horses_id'] . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". $stallion['horses_id'] . "</a> for <font color=green>$" . $data['horses_breedings_fee'] . "</font>.";
+		$message = "A moderator has rejected this breeding: <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". generateId($mare['horses_id']) . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". generateId($stallion['horses_id']) . "</a> for <font color=green>$" . $data['horses_breedings_fee'] . "</font>.";
 
 
 		if($stallion['join_players_id'] != $mare['join_players_id']){
@@ -1588,14 +1609,14 @@ class Horse extends CI_Model {
 		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse['horses_id'], $horse['join_players_id']));
 
 		//send message
-		$message = "<b>Horse exported. <a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a>";
+		$message = "<b>Horse exported. <a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a>";
 
 		if($data['body']){
 			$sn = SITE_NAME;
 			$msg['messages_to'] = $horse['join_players_id'];
 			$msg['messages_sender'] = $mod_id;
 			$msg['messages_subject'] = "Horse Exported";
-			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a> has been exported successfully.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
+			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a> has been exported successfully.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
 			$result = $CI->messages->send($msg);
 			//pre($result);
 		}
@@ -1610,7 +1631,7 @@ class Horse extends CI_Model {
 		$horse = $horse->horse;
 
 
-		$message = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_competition_title'] ." " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #". $horse['horses_id'] . "</a> has been rejected for export.";
+		$message = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_competition_title'] ." " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #". generateId($horse['horses_id']) . "</a> has been rejected for export.";
 
 		$CI->db->query("UPDATE horses SET horses_pending_export=0, horses_pending_export_date='0000-00-00 00:00:00' WHERE horses_id=? LIMIT 1", array($horse['horses_id']));
 
@@ -1621,7 +1642,7 @@ class Horse extends CI_Model {
 			$msg['messages_to'] = $horse['join_players_id'];
 			$msg['messages_sender'] = $mod_id;
 			$msg['messages_subject'] = "Horse Export Rejected";
-			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a> has been rejected for export.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
+			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a> has been rejected for export.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
 			$result = $CI->messages->send($msg);
 		}
 	}
@@ -1650,7 +1671,7 @@ class Horse extends CI_Model {
 		$result = $CI->db->query("UPDATE horses SET join_players_id=?, horses_sale=0, horses_auction=0 WHERE join_players_id=? AND horses_id=? LIMIT 1", array($import['join_players_id'], $EXPORT_ID, $data['horses_id']));
 		$result = $CI->db->query("UPDATE import_requests SET import_requests_accepted=1 WHERE import_requests_id=? LIMIT 1", array($import['import_requests_id']));
 
-		$message = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_competition_title'] ." " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #". $horse['horses_id'] . "</a> has been imported.";
+		$message = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_competition_title'] ." " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #". generateId($horse['horses_id']) . "</a> has been imported.";
 
 		$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($import['join_players_id'], $message));
 
@@ -1663,7 +1684,7 @@ class Horse extends CI_Model {
 			$msg['messages_to'] = $import['join_players_id'];
 			$msg['messages_sender'] = $mod_id;
 			$msg['messages_subject'] = "Horse Imported";
-			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a> has been imported successfully.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
+			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a> has been imported successfully.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
 			$result = $CI->messages->send($msg);
 		}
 	}
@@ -1679,7 +1700,7 @@ class Horse extends CI_Model {
 		//get import info
 		$import = $CI->db->query("SELECT * FROM import_requests WHERE import_requests_id=? AND join_horses_id=? AND import_requests_accepted=0", array($data['import_requests_id'], $data['horses_id']))->row_array();
 
-		$message = "Your import request was denied for horse <a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_competition_title'] ." " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #". $horse['horses_id'] . "</a>";
+		$message = "Your import request was denied for horse <a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_competition_title'] ." " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #". generateId($horse['horses_id']) . "</a>";
 
 		$CI->db->query("DELETE FROM import_requests WHERE import_requests_id=? LIMIT 1", array($import['import_requests_id']));
 
@@ -1690,7 +1711,7 @@ class Horse extends CI_Model {
 			$msg['messages_to'] = $horse['join_players_id'];
 			$msg['messages_sender'] = $mod_id;
 			$msg['messages_subject'] = "Horse Import Rejected";
-			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a> has been rejected for import.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
+			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a> has been rejected for import.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
 			$result = $CI->messages->send($msg);
 		}
 	}
@@ -1718,7 +1739,7 @@ class Horse extends CI_Model {
 			$msg['messages_to'] = $horse['join_players_id'];
 			$msg['messages_sender'] = $mod_id;
 			$msg['messages_subject'] = "Horse Import Rejected";
-			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . $horse['horses_id'] . "</a> has been rejected for import.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
+			$msg['messages_body'] = "<a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a> has been rejected for import.<br><br>". $data['body'] . "<br><br>Sincerely,<br>$sn Team";
 			$result = $CI->messages->send($msg);
 		}
 	}
@@ -2010,7 +2031,7 @@ class Horse extends CI_Model {
 			return array('errors' => $errors);
 		}
 
-		$message = "Breeding request accepted! <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". $mare['horses_id'] . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". $stallion['horses_id'] . "</a> for <font color=green>$" . $data['horses_breedings_fee'] . "</font>.";
+		$message = "Breeding request accepted! <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". generateId($mare['horses_id']) . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". generateId($stallion['horses_id']) . "</a> for <font color=green>$" . $data['horses_breedings_fee'] . "</font>.";
 		$message1 = $message . " <i>A moderator must now approve the breeding.</i>";
 
 
@@ -2050,7 +2071,7 @@ class Horse extends CI_Model {
 			return array('errors' => $errors);
 		}
 
-		$message = "Breeding request rejected. <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". $mare['horses_id'] . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". $stallion['horses_id'] . "</a>";
+		$message = "Breeding request rejected. <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". generateId($mare['horses_id']) . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". generateId($stallion['horses_id']) . "</a>";
 
 		if($stallion['join_players_id'] != $mare['join_players_id']){
 			$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?), (?, ?)", array($stallion['join_players_id'], $message, $mare['join_players_id'], $message));
@@ -2110,7 +2131,7 @@ class Horse extends CI_Model {
 		//insert owner log
 		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse['horses_id'], $player['players_id']));
 
-		$message = "<a href='/horses/view/" . $horse['horses_id'] . "'>". $horse['horses_competition_title'] . " " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #" . $horse['horses_id'] . "</a> has been imported.";
+		$message = "<a href='/horses/view/" . $horse['horses_id'] . "'>". $horse['horses_competition_title'] . " " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #" . generateId($horse['horses_id']) . "</a> has been imported.";
 
 		$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($player['players_id'], $message));
 
@@ -2195,7 +2216,7 @@ class Horse extends CI_Model {
 		$update_data = filter_keys($horse, $allowed_fields);
 		$CI->db->insert('horses_breedings', $update_data);
 
-		$message = "<a href='/horses/view/" . $mare['horses_id'] . "'>". $mare['horses_competition_title'] . " " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #" . $mare['horses_id'] . "</a> has requested a breeding to <a href='/horses/view/" . $stallion['horses_id'] . "'>". $stallion['horses_competition_title'] . " " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #" . $stallion['horses_id'] . "</a>.";
+		$message = "<a href='/horses/view/" . $mare['horses_id'] . "'>". $mare['horses_competition_title'] . " " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #" . generateId($mare['horses_id']) . "</a> has requested a breeding to <a href='/horses/view/" . $stallion['horses_id'] . "'>". $stallion['horses_competition_title'] . " " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #" . generateId($stallion['horses_id']) . "</a>.";
 
 
 		//create notice to stallion owner
@@ -2320,15 +2341,27 @@ class Horse extends CI_Model {
 	}
 
 
+	public static function getHorseById($id)
+	{
+		$CI =& get_instance();		
 
+		$horse_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_id = ? LIMIT 1", array($id))->row_array();
+		if($horse_exists){
+			return true;
+		}
+		return false;
+	}
 	/**** create horse  ****/
 	public static function register($player, $horse, $allowed){
 		//allowed is the list of each breed, color, etc. that is allowed as an option
-		$CI =& get_instance();
-
+		$CI =& get_instance();		
 		//does player have adoption credit?
 		if($player->player['players_credits_creation'] < 1){
 			$errors['horses_name'] = "You do not have any creation credits.";
+		}
+		if(self::getTodayAdoption($player->player['players_id']) >= $player->player['per_day_credits'])
+		{
+			$errors['horses_name'] = "You do not have any creation credits for Today.";
 		}
 		$check = in_array($horse['horses_breed'], $allowed['breeds']);				
 		if(!$horse['horses_birthyear']){
@@ -2337,41 +2370,39 @@ class Horse extends CI_Model {
 		if($horse['horses_birthyear'] > date('Y') || $horse['horses_birthyear'] < "1950"){
 			$errors['horses_birthyear'] = "Invalid birth year.";
 		}
-		if(!is_numeric($horse['horses_sire']))
+		if(!empty($horse['horses_sire']) && !self::getHorseById($horse['horses_sire']))
 		{
-			$errors['horses_sire']="Please Provide Integer Sire";
-		}		
-		if(is_numeric($horse['horses_sire']) && $horse['horses_sire'] < 0)
-		{
-			$errors['horses_sire']="Sire Must be Greater than Zero.";
+			$errors['horses_sire']="This Sire Doesn't exist.";
 		}
-		if(!is_numeric($horse['horses_dam']))
+		if(!empty($horse['horses_dam']) && !self::getHorseById($horse['horses_dam']))
 		{
-			$errors['horses_dam']="Please Provide Integer Dam";
-		}
-		if(is_numeric($horse['horses_dam']) && $horse['horses_dam'] < 0)
-		{
-			$errors['horses_dam']="Dam Must be Greater than Zero.";
+			$errors['horses_dam']="This Dam Doesn't exist.";
 		}
 		$birthDate = "01/01/".$horse['horses_birthyear'];
 		$birthDate = explode("/", $birthDate);
 		$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-		if($horse['horses_gender']=="Mare" && $age < 3 || $age > 25)
+		if($horse['horses_gender']=="Mare" && !empty($horse['horses_birthyear']))
 		{
-			$errors['horses_sire']="There is a Gender issue or that the horse is too young/old or that the mare has a foal born that year.";
-		}
+			if($age < 3 || $age > 25)
+			{
+				$errors['horses_birthyear']="There is a Gender issue or that the horse is too young/old or that the mare has a foal born that year.";
+			}
+		}		
 		if($horse['horses_gender']=="Mare")
 		{				
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? LIMIT 1", array($horse['horses_birthyear'],$horse['join_players_id']))->row_array();
+			
+			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? LIMIT 1", array($horse['horses_birthyear'],$player->player['players_id']))->row_array();			
 			if($year_exists){
 				$errors['horses_birthyear'] = $horse['horses_birthyear']." Birth Year no longer be available.";
 			}
 		}
-		if($horse['horses_gender']=="Stallion" && $age < 3 || $age > 29)
+		if($horse['horses_gender']=="Stallion" &&  !empty($horse['horses_birthyear'])  )
 		{
-			$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-		}
-
+			if($age < 3 || $age > 29)
+			{
+				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+			}
+		}		
 		
 		if(!$check){
 			$errors['horses_breed'] = "Invalid breed.";
@@ -2452,7 +2483,12 @@ class Horse extends CI_Model {
 		return array('errors' => $errors, 'notices' => $notices, 'horse_id' => $horse_id);
 	}
 
-
+	public static function getTodayAdoption($player_id)
+	{
+		$CI =& get_instance();
+		$res = $CI->db->query("SELECT count(horses_id) as total_records FROM horses WHERE join_players_id = ? AND DATE(`horses_pending_date`) = CURDATE()", array($player_id))->row_array();		
+		return $res['total_records'];		
+	}
 
 	public function search_owners($data){
 		$CI =& get_instance(); //allow us to use the db...
@@ -2603,7 +2639,19 @@ class Horse extends CI_Model {
 
 		$wheres[] = 'horses_pending = 0';
 
-		//---------- WHERES --------------
+		//---------- WHERES --------------		
+		if($data['for_sale'] == 1){
+			$wheres [] = "horses_sale = ?";
+			$params [] = 1;			
+		}
+		if($data['min_price']){
+			$wheres [] = "horses_sale_price>=?";
+			$params [] = $data['min_price'];
+		}
+		if($data['max_price']){
+			$wheres [] = "horses_sale_price <= ? AND horses_sale_price > 0";
+			$params [] = $data['max_price'];
+		}
 		if($data['horses_id']){
 			$wheres [] = "horses_id=?";
 			$params [] = $data['horses_id'];
@@ -2662,14 +2710,6 @@ class Horse extends CI_Model {
 			$wheres [] = "join_players_id=" + EXPORT_ID;
 		}
 
-		if($data['min_price']){
-			$wheres [] = "horses_sale>=?";
-			$params [] = $data['min_price'];
-		}
-		if($data['max_price']){
-			$wheres [] = "horses_sale<=? AND horses_sale>0";
-			$params [] = $data['max_price'];
-		}
 
 		if($data['min_breed']){
 			$wheres [] = "horses_breeding_fee>=?";
@@ -2720,4 +2760,58 @@ class Horse extends CI_Model {
 	}
 
 
+
+	/* datatable related functions */
+		public function getMyHorsesList($player_id,$postData)
+		{
+			$this->get_list_query($player_id,$postData);
+			if($postData['length'] != -1){
+			  $this->db->limit($postData['length'],$postData['start']);
+			}
+			$query = $this->db->get();
+			return $query->result_array();	
+		}
+		public function countAll($player_id,$postData)
+		{
+			$this->get_list_query($player_id,$postData);
+			return $this->db->count_all_results();
+		}
+		public function countFiltered($player_id,$postData)
+		{
+			$this->get_list_query($player_id,$postData);
+			return $this->db->count_all_results();      
+		}
+		public function get_list_query($player_id,$postData,$where=false)
+		{													
+			$this->db->select('horses.*,s.stables_name');
+			$this->db->join('stables s','s.stables_id=horses.join_stables_id','LEFT');
+			$this->db->from('horses');
+			$this->db->where('horses.join_players_id',$player_id);
+			if($where)
+			{
+				$this->db->where($where);
+			}
+			$i = 0;        
+			foreach($this->column_search as $item){            
+				if($postData['search']['value']){                
+					if($i===0){                    
+						$this->db->group_start();
+						$this->db->like($item, $postData['search']['value']);
+					}else{
+						$this->db->or_like($item, $postData['search']['value']);
+					}
+					if(count($this->column_search) - 1 == $i){
+						$this->db->group_end();
+					}
+				}
+				$i++;
+			}         
+			if(isset($postData['order'])){
+				$this->db->order_by($this->column_order[$postData['order']['0']['column']],$postData['order']['0']['dir']);
+			}else if(isset($this->order)){
+				$order = $this->order;
+				$this->db->order_by(key($order),$order[key($order)]);
+			}
+		}
+	/* datatable  related functions end*/
 }

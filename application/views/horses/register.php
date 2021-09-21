@@ -22,9 +22,11 @@ $errors = $this->session->flashdata('errors');
           	<h4 class="card-header">Register a Horse</h4>
             <div class="card-body">
 				<form method="post" action="/horses/register">
-				<div class="center">
-					You have <b><?= $player['players_credits_creation'] ?: '0' ?></b> creation credit(s).<br/>
+				<div class="center">					
+					You have <b><?= $player['players_credits_creation'] ?: '0' ?></b> creation  credit(s).<br/>
 					You have <b><?= $player['players_credits_adoptathon'] ?: '0' ?></b> adoption credit(s).<br/>
+					You have Daily <b><?= $player['per_day_credits'] ?: '0' ?></b> creation credit(s).<br/>
+					You have Today <b><?= $player['today_adoption'] ?: '0' ?></b> adoption credit(s).<br/>
 					<a href="/city/articles/13">Buy More</a>
 				</div>
 				<div class="row">

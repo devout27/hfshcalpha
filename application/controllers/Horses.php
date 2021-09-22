@@ -70,7 +70,7 @@ class Horses extends MY_Controller {
 		}
 		
 	}
-	public function register(){
+	public function register(){		
 		$this->data['player']['today_adoption'] = $this->horse->getTodayAdoption($this->player->player_id);
 		$this->data['page']['title'] = "Register a Horse";
 		$this->data['breeds'] = $this->horse->get_breeds();
@@ -87,7 +87,7 @@ class Horses extends MY_Controller {
 			);
 
 
-		if($this->input->post('create')){
+		if($this->input->post('create')){			
 			$response = $this->horse->register($this->player, $_POST, $allowed);
 			if(count($response['errors']) > 0){
 				$this->session->set_flashdata('notice', "There was a problem creating your horse.");
@@ -96,8 +96,7 @@ class Horses extends MY_Controller {
 				redirect('horses/register');
 			}
 			redirect('horses/register');
-		}
-		
+		}		
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/register', $this->data);
 		$this->load->view('layout/footer');

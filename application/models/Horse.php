@@ -80,7 +80,12 @@ class Horse extends CI_Model {
 	}
 
 
-
+	public static function getBirthYear($horses_id)
+	{		
+		$CI =& get_instance();
+		$r = $CI->db->query('SELECT horses_birthyear FROM horses where horses_id = ? LIMIT 1', array($horses_id))->row_array();
+		return $r ? $r['horses_birthyear'] : false;
+	}
 
 	public static function get_blueprint_possibilities($horse, $cat = null, $genes = null, $blueprints = null){
 		$CI =& get_instance();
@@ -412,6 +417,31 @@ class Horse extends CI_Model {
 			if($data['horses_birthyear'] > date('Y') || $data['horses_birthyear'] < "1950"){
 				$errors['horses_birthyear'] = "Invalid birth year.";
 			}
+			
+			if(!$data['horses_name']){
+				$errors['horses_name'] = "Name is required.";
+			}			
+			
+			if($data['horses_gender']=="Stallion" && !empty($data['horses_sire']))
+			{
+				$birthDate = "01/01/".self::getBirthYear($data['horses_sire']);
+				$birthDate = explode("/", $birthDate);
+				$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+				if($age < 3 || $age > 29)
+				{
+					$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+				}
+			}			
+			if($data['horses_gender']=="Mare" && !empty($data['horses_dam']))
+			{
+				$birthDate = "01/01/".self::getBirthYear($data['horses_dam']);
+				$birthDate = explode("/", $birthDate);
+				$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+				if($age < 3 || $age > 25)
+				{
+					$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
+				}
+			}			
 			if(!empty($data['horses_sire']) && !self::getHorseById($data['horses_sire']))
 			{
 				$errors['horses_sire']="This Sire Doesn't exist.";
@@ -420,31 +450,11 @@ class Horse extends CI_Model {
 			{
 				$errors['horses_dam']="This Dam Doesn't exist.";
 			}			
-			if(!$data['horses_name']){
-				$errors['horses_name'] = "Name is required.";
-			}			
-			$birthDate = "01/01/".$data['horses_birthyear'];
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($data['horses_gender']=="Stallion" && !empty($data['horses_birthyear']))
-			{
-				if($age < 3 || $age > 29)
-				{
-					$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-				}
-			}			
-			if($data['horses_gender']=="Mare" && !empty($data['horses_birthyear']))
-			{
-				if($age < 3 || $age > 25)
-				{
-					$errors['horses_sire']="There is a gender issue or that the horse is too young/old or that the mare has a foal born that year.";
-				}
-			}			
 			if($data['horses_gender']=="Mare")
 			{				
-				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? AND horses_id <> ? LIMIT 1", array($data['horses_birthyear'],$player['players_id'],$horse['horses_id']))->row_array();
+				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_id <> ? AND horses_dam = ? LIMIT 1", array($data['horses_birthyear'],$horse['horses_id'],$horse['horses_dam']))->row_array();				
 				if($year_exists){
-					$errors['horses_birthyear'] = $data['horses_birthyear']." no longer be available.";
+					$errors['horses_dam'] = "The Mare has a foal born that year.";
 				}
 			}
 			if($data['horses_sale'] AND $data['horses_sale2'] > 0){
@@ -849,28 +859,40 @@ class Horse extends CI_Model {
 		}
 
 		if($horse['horses_gender']=="Mare")
-		{				
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? LIMIT 1", array($horse['horses_birthyear'],$horse['join_players_id']))->row_array();
+		{							
+			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_dam = ? AND horses_id <> ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam'],$horse['horses_id']))->row_array();
 			if($year_exists){
-				$errors['horses_birthyear'] = $horse['horses_birthyear']." Birth Year no longer be available.";
+				$errors['horses_dam'] = "The Mare has a foal born that year.";
 			}
 		}
-		$birthDate = "01/01/".$horse['horses_birthyear'];
-		$birthDate = explode("/", $birthDate);
-		$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-		if($horse['horses_gender']=="Mare" && !empty($horse['horses_birthyear']) )
+		/*  */
+		if($horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']))
 		{
+			$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
+			$birthDate = explode("/", $birthDate);
+			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+			if($age < 3 || $age > 29)
+			{
+				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+			}
+		}			
+		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']))
+		{
+			$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
+			$birthDate = explode("/", $birthDate);
+			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
 			if($age < 3 || $age > 25)
 			{
-				$errors['horses_birthyear'] = "There is a Gender issue or that the horse is too young/old or that the mare has a foal born that year.";
+				$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
 			}
-		}		
+		}			
+		/*  */
 		if(!empty($horse['horses_sire']) && !self::getHorseById($horse['horses_sire']))
 		{
 			$errors['horses_sire']="This Sire Doesn't exist.";
 		}
 		if(!empty($horse['horses_dam']) && !self::getHorseById($horse['horses_dam']))
-		{
+		{			
 			$errors['horses_dam']="This Dam Doesn't exist.";
 		}
 
@@ -2369,7 +2391,33 @@ class Horse extends CI_Model {
 		}
 		if($horse['horses_birthyear'] > date('Y') || $horse['horses_birthyear'] < "1950"){
 			$errors['horses_birthyear'] = "Invalid birth year.";
-		}
+		}		
+		
+
+
+
+		/*  */
+		if($horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']))
+		{
+			$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
+			$birthDate = explode("/", $birthDate);
+			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+			if($age < 3 || $age > 29)
+			{
+				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+			}
+		}			
+		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']))
+		{
+			$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
+			$birthDate = explode("/", $birthDate);
+			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+			if($age < 3 || $age > 25)
+			{
+				$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
+			}
+		}			
+		/*  */
 		if(!empty($horse['horses_sire']) && !self::getHorseById($horse['horses_sire']))
 		{
 			$errors['horses_sire']="This Sire Doesn't exist.";
@@ -2378,32 +2426,13 @@ class Horse extends CI_Model {
 		{
 			$errors['horses_dam']="This Dam Doesn't exist.";
 		}
-		$birthDate = "01/01/".$horse['horses_birthyear'];
-		$birthDate = explode("/", $birthDate);
-		$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-		if($horse['horses_gender']=="Mare" && !empty($horse['horses_birthyear']))
-		{
-			if($age < 3 || $age > 25)
-			{
-				$errors['horses_birthyear']="There is a Gender issue or that the horse is too young/old or that the mare has a foal born that year.";
-			}
-		}		
 		if($horse['horses_gender']=="Mare")
-		{				
-			
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND join_players_id = ? LIMIT 1", array($horse['horses_birthyear'],$player->player['players_id']))->row_array();			
+		{										
+			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();			
 			if($year_exists){
-				$errors['horses_birthyear'] = $horse['horses_birthyear']." Birth Year no longer be available.";
+				$errors['horses_dam'] = "The Mare has a foal born that year.";
 			}
 		}
-		if($horse['horses_gender']=="Stallion" &&  !empty($horse['horses_birthyear'])  )
-		{
-			if($age < 3 || $age > 29)
-			{
-				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-			}
-		}		
-		
 		if(!$check){
 			$errors['horses_breed'] = "Invalid breed.";
 		}
@@ -2643,6 +2672,8 @@ class Horse extends CI_Model {
 		if($data['for_sale'] == 1){
 			$wheres [] = "horses_sale = ?";
 			$params [] = 1;			
+			$wheres [] = "horses_sale_price > ?";
+			$params [] = 0;
 		}
 		if($data['min_price']){
 			$wheres [] = "horses_sale_price>=?";

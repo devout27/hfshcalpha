@@ -37,15 +37,15 @@ $errors = $this->session->flashdata('errors');
 						<?= hf_dropdown('horses_gender', 'Gender', $post, array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
 					</div>
 					<div class="col-sm-3">
-						<?= hf_input('horses_birthyear', 'Birth Year', $post, array('placeholder' => '1984'), $errors) ?>
+						<?= hf_input('horses_birthyear', 'Birth Year', $post, array('placeholder' => '1984'), $errors,'number') ?>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm-6">
-						<?= hf_input('horses_sire', 'Sire', $post, array(), $errors) ?>
+						<?= hf_input('horses_sire', 'Sire', $post, array(), $errors,'number') ?>
 					</div>
 					<div class="col-sm-6">
-						<?= hf_input('horses_dam', 'Dam', $post, array(), $errors) ?>
+						<?= hf_input('horses_dam', 'Dam', $post, array(), $errors,'number') ?>
 					</div>
 				</div>
 				<div class="row">

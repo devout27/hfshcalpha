@@ -180,3 +180,12 @@ $route['admin/stables/land'] = "admin/stables_land";
 
 $route['/city/ajax/(:any)'] = "city/ajax/$1";
 $route['/admin/ajax/(:any)'] = "admin/ajax/$1";
+
+//super-admin-routes
+$route['super-admin'] = 'super-admin/Dashboards';
+$route['super-admin-login'] = 'super-admin/Logins';
+$route['super-admin/reset-password/(:any)'] =  'super-admin/Logins/ResetPassword/$1';
+$route['super-admin/forgot-password'] = 'super-admin/Logins/forgotPassword';
+$route['super-admin/change-password'] = 'super-admin/Accounts/changePassword';
+
+$route['super-admin/dashboard'] = 'super-admin/Dashboards/index';

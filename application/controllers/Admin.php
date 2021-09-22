@@ -1131,7 +1131,6 @@ class Admin extends MY_Controller {
 				$this->session->set_flashdata('notice', "Horse registered.");
 			}
 			redirect('admin/horses/register');
-
 		}elseif($this->input->post('reject')){
 			$response = $this->horse->reject_horse($_POST);
 			if(count($response['errors']) > 0){

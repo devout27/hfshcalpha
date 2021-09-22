@@ -3,8 +3,8 @@
 
 if(!function_exists('hf_input')){
 
-	function hf_input($name, $label, $value, $params = null, $errors = null){
-		//generate the element, then call function to add standard html
+	function hf_input($name, $label, $value, $params = null, $errors = null,$type="text"){
+		//generate the element, then call function to add standard html		
 		$params['id'] = $params['id'] ?: $name;
 		$params['name'] = $name;
 		if($params['class']){
@@ -17,7 +17,7 @@ if(!function_exists('hf_input')){
 			$value = $value[$name];
 		}
 
-		$element = form_input($params, $value);
+		$element = form_input($params,$value,'',$type);
 
 		$html = hf_build_form_html($element, $name, $label, $value, $params, $errors);
 		return $html;

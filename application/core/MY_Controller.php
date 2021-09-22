@@ -112,3 +112,72 @@ class MY_Controller extends CI_Controller {
 	}
 
 }
+
+class MY_Admin_Controller extends CI_Controller
+{
+	protected $data = array();
+	public function __construct()
+	{
+		parent::__construct();
+		$this->data['page_title'] = '';
+		$this->data['before_head'] = '';
+		$this->data['before_body'] ='';
+		$this->data['BASE_URL']= base_url();
+		$this->data['BASE_URL_ADMIN']= base_url().'super-admin/';
+		$this->data['errors'] = $this->session->flashdata('errors');
+		$this->data['old_values'] = $this->session->flashdata('old_values');
+	}
+
+	protected function render($the_view = null, $template = 'master')
+	{
+		if ($template == 'json' || $this->input->is_ajax_request()) {
+			/* header('Content-Type: application/json');
+			echo json_encode($this->data); */
+		} else {
+			$this->data['the_view_content'] = (is_null($the_view)) ? '' : $this->load->view($the_view, $this->data, true);
+			$this->load->view('templates/'.$template.'_view', $this->data);
+		}
+	}
+}
+
+class Admin_Controller extends MY_Admin_Controller
+{
+	public function __construct()
+	{
+		parent::__construct();
+		$loginUserData=$this->session->get_userdata();
+
+		if (!isset($loginUserData['adminLoginId']) || $loginUserData['adminLoginId']=='') {
+			//redirect them to the login page
+			redirect('super-admin-login', 'refresh');
+		}
+		defined('BASE_URL') or define('BASE_URL',base_url());		
+		$this->data['loginUserData']=$loginUserData;
+		$this->data['CLASS_NAME']=strtolower($this->router->fetch_class());
+		$this->data['METHOD_NAME']=strtolower($this->router->fetch_method());
+		$this->data['PARAMETER_NAME']=isset($this->router->uri->rsegments[3]) ? $this->router->uri->rsegments[3]:'';				
+	}
+	protected function render($the_view = null, $template = 'admin_master')
+	{
+		parent::render($the_view, $template);
+	}
+}
+class Adminlogin_Controller extends MY_Admin_Controller
+{
+	public function __construct()
+	{
+		parent::__construct();		
+		$loginUserData=$this->session->get_userdata();
+		if (isset($loginUserData['adminLoginId']) && $loginUserData['adminLoginId'] !='') {
+			redirect('super-admin/dashboard', 'refresh');
+		}
+		if (!empty($loginUserData['userLoginId'])) {
+			redirect('/', 'refresh');
+		}
+		$this->data['page_title'] = SITE_NAME.'Super Admin Login';
+	}
+	protected function render($the_view = null, $template = 'admin_master_login')
+	{
+		parent::render($the_view, $template);
+	}
+}

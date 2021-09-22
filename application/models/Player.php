@@ -322,8 +322,6 @@ class Player extends CI_Model {
 			$body = $player['players_nickname'] . ", your application to join $sn has been rejected.<br><br>" . $data['body'] . "<br><br>Sincerely,<br>$sn Team";
 			$this->send_email($player['players_nickname'], $player['players_email'], $subject, $body);
 		}
-
-
 		return array('notice' => 'Application rejected.');
 	}
 

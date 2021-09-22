@@ -49,9 +49,10 @@ if(!function_exists('pre')){
 	}
 	function generateId($id)
 	{
+		$id = str_replace("-","",$id);
 		if(strlen($id) < 6){
 			$zero = "";
-			$l = 5-strlen($id);			
+			$l = 5-strlen($id);
 			for($i=1;$i<=$l;$i++)
 			{				
 				$zero .= '0';
@@ -62,4 +63,42 @@ if(!function_exists('pre')){
 			return $id;
 		}
 	}
+	function setting($key)
+	{
+		return null;
+	}
+	function send_email($name, $email, $subject, $body){
+		// load email library
+		$CI =& get_instance();
+		$CI->load->library('email');
+		$config['protocol'] = 'sendmail';
+		$config['mailpath'] = '/usr/sbin/sendmail';
+		$config['charset'] = 'iso-8859-1';
+		$config['wordwrap'] = TRUE;
+		$config['mailtype'] = 'html';
+		$CI->email->initialize($config);
+		// from address
+		$CI->email->from(ADMIN_EMAIL, ADMIN_NAME)->to($email)
+		 //   ->cc($cc_email)
+		 //   ->bcc($bcc_email)
+		 //   ->subject('Welcome to Hurricane Farm')
+		    ->subject($subject)
+		 //   ->message('Welcome! You have successfully applied to join the game. A member of the team will review your application and be in touch.');
+		    ->message($body);
+		$CI->email->send(); // send Email
+		//$this->email->print_debugger(array('headers', 'subject', 'body'));
+		return array('notice' => 'Email sent.');
+	}
+	function dateFormate($date,$time=true){
+
+		$newDate='';
+		if($date !='' && $date !='0000-00-00 00:00:00' && $date !='0000-00-00' ){
+			 if($time==false){
+				  $newDate=date('M d, Y',strtotime($date));
+			 }else{
+				  $newDate=date('d M Y h:i:A',strtotime($date));
+			 }
+		}
+		return $newDate;
+   }   
 }

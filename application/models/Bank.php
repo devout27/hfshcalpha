@@ -4,6 +4,9 @@ class Bank extends CI_Model {
 
 	function __construct(){
 		$this->data['player_id'] = $this->session->userdata('players_id');
+		$this->column_search=['bank_nickname','bank_balance','bank_id','join_players_id','bank_available_balance','bank_type','bank_status'];
+		$this->column_order=['bank_nickname','bank_id','bank_balance','join_players_id','bank_available_balance','bank_type','bank_status'];
+		$this->order = ['bank_id' => 'desc'];
 	}
 
 
@@ -988,4 +991,60 @@ class Bank extends CI_Model {
         return $accounts;
 	}
 
+	/* datatable related functions */
+		public function getMyBankAccountsList($player_id,$postData)
+		{
+			$this->get_list_query($player_id,$postData);
+			if($postData['length'] != -1){
+				$this->db->limit($postData['length'],$postData['start']);
+			}
+			$query = $this->db->get();
+			return $query->result_array();	
+		}
+		public function countAll($player_id,$postData)
+		{
+			$this->get_list_query($player_id,$postData);
+			return $this->db->count_all_results();
+		}
+		public function countFiltered($player_id,$postData)
+		{			
+			$this->get_list_query($player_id,$postData);
+			return $this->db->count_all_results();      
+		}
+		public function get_list_query($player_id,$postData,$where=false)
+		{													
+			$this->db->select('bank.*,p.players_nickname');			
+			$this->db->join('players p','p.players_id=bank.join_players_id','LEFT');
+			$this->db->from('bank');
+			if(is_numeric($player_id))
+			{
+				$this->db->where('bank.join_players_id',$player_id);
+			}			
+			if($where)
+			{
+				$this->db->where($where);
+			}
+			$i = $_POST['start'];
+			foreach($this->column_search as $item){            
+				if($postData['search']['value']){                
+					if($i===0){                    
+						$this->db->group_start();
+						$this->db->like($item, $postData['search']['value']);
+					}else{
+						$this->db->or_like($item, $postData['search']['value']);
+					}
+					if(count($this->column_search) - 1 == $i){
+						$this->db->group_end();
+					}
+				}
+				$i++;
+			}         
+			if(isset($postData['order'])){
+				$this->db->order_by($this->column_order[$postData['order']['0']['column']],$postData['order']['0']['dir']);
+			}else if(isset($this->order)){
+				$order = $this->order;
+				$this->db->order_by(key($order),$order[key($order)]);
+			}
+		}
+	/* datatable  related functions end*/
 }

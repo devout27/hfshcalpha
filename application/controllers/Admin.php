@@ -1156,7 +1156,6 @@ class Admin extends MY_Controller {
 			redirect('admin');
 		}
 		$this->data['accounts'] = Bank::get_accounts($id);
-
 		$this->data['page']['title'] = "Admin - Member Management";
 		$this->data['post'] = $this->session->flashdata('post');
 		$this->data['errors'] = $this->session->flashdata('errors');

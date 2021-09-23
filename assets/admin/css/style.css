@@ -59,6 +59,8 @@ body {
 a, a:hover {
     text-decoration: none;
     outline: none;
+    color:#4d4f3d;
+    font-weight: bold;
 }
 button, button:hover, button:focus {
     outline: none !important;
@@ -237,10 +239,10 @@ footer p
 }
 .btn-primary:hover
 {
-    background: #000;
+    background: #4d4f3d6e;
 }
 .main-btn button,.btn-primary {
-    background: #2A4252;
+    background: #4d4f3d;
     color: #fff;
 }
 .secondry-btn button {
@@ -374,7 +376,7 @@ label.radio-checkbox input[type="radio"] {
     box-sizing: inherit !important;
 }
 .table th {
-    background-color: #2A4252;
+    background-color: #4d4f3d;
     color: #fff;
     vertical-align: middle !important;
     font-size: 13px;
@@ -405,7 +407,7 @@ label.radio-checkbox input[type="radio"] {
     height: 30px;
 }
 .custom-active {
-    background: #2A4252;
+    background: #4d4f3d;
     color: #fff;
 }
 .custom-inactive {
@@ -421,7 +423,7 @@ label.radio-checkbox input[type="radio"] {
     align-items: center;
 }
 .action-btns a {
-    background: #2A4252;
+    background: #4d4f3d;
     color: #fff !important;
     height: 30px;
     border-radius: 5px;
@@ -439,7 +441,7 @@ label.radio-checkbox input[type="radio"] {
     margin-right: 0px;
 }
 .action-btns a.delete-btn {
-    background: #2A4252;
+    background: #4d4f3d;
     color: #fff !important;
 }
 .dataTables_filter label, .dataTables_length label, .dataTables_info {
@@ -484,7 +486,7 @@ label.radio-checkbox input[type="radio"] {
     cursor: not-allowed;
 }
 .dataTables_wrapper .dataTables_paginate.paging_simple_numbers a.current {
-    background: #2A4252 !important;
+    background: #4d4f3d !important;
     color: #fff !important;
 }
 
@@ -700,7 +702,7 @@ label.radio-checkbox input[type="radio"] {
     display: inline-block;
 }
 .inner-head-section {
-    border-bottom: 2px dashed rgba(0,0,0,0.1);
+    border-bottom: 3px dashed rgb(77 79 61);
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
@@ -870,11 +872,11 @@ label.radio-checkbox input[type="radio"] {
     margin-top: 20px;
 }
 .step-detail-single.dark p {
-    color: #000;
+    color: #2A4252;
     font-weight: 400;
 }
 .step-detail-single.dark p strong {
-    color: #222;
+    color: #2A4252;
 }
 .step-detail-single {
     margin-bottom: 30px;
@@ -1879,7 +1881,7 @@ label.radio-checkbox input[type="radio"] {
     color: #fff;
 }
 .back-color {
-    background-color: #000;
+    background-color: #4d4f3d;
 }
 .modal-butn {
     text-align: right;
@@ -2071,13 +2073,13 @@ label#name-error {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #2A4252; 
+    background: #4d4f3d; 
     border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #2A4252; 
+    background: #4d4f3d; 
 }
 .view-btn
 {
@@ -2196,4 +2198,16 @@ label#name-error {
 }
 .dashboard .bg-black i, .dashboard .bg-red i  {
     color: #fff !important;
+}
+
+
+.user-status .custom-active
+{
+    background: #a5a883;    
+}
+
+.form-error
+{
+    color:red;
+    font-weight: bold;
 }

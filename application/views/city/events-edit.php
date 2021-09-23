@@ -111,146 +111,147 @@
       <div class="modal-body">
       	<div class="save_status" data-id="0">
       	</div>
-      	<div class="row">
-      		<div class="col-sm-4">
-      			<label for="name">Name</label>
-      		</div>
-      		<div class="col-sm-8">
-      			<?= hf_input('events_x_classes_name', '', '', array(), $errors) ?>
+		<form action="javascript:void(0)" id="events-class-edit-form">
+			<div class="row">
+				<div class="col-sm-4">
+					<label for="name">Name</label>
+				</div>
+				<div class="col-sm-8">
+					<?= hf_input('events_x_classes_name', '', '', array(), $errors) ?>
 
-      			<input type=hidden name="events_x_classes_id" id="events_x_classes_id">
-      		</div>
-      	</div>
+					<input type=hidden name="events_x_classes_id" id="events_x_classes_id">
+				</div>
+			</div>
 
-      	<div class="row">
-      		<div class="col-sm-4">
-      			<label for="description">Description</label>
-      		</div>
-      		<div class="col-sm-8">
-      			<?= hf_input('events_x_classes_description', '', '', array(), $errors) ?>
-      		</div>
-      	</div>
+			<div class="row">
+				<div class="col-sm-4">
+					<label for="description">Description</label>
+				</div>
+				<div class="col-sm-8">
+					<?= hf_input('events_x_classes_description', '', '', array(), $errors) ?>
+				</div>
+			</div>
 
-      	<div class="row">
-      		<div class="col-sm-4">
-      			<label for="strenuous">Strenuous</label>
-      		</div>
-      		<div class="col-sm-8">
-      			<?= hf_dropdown('events_x_classes_strenuous', '', '', array('0' => "No", '1' => "Yes"), null, $errors, 0, 0) ?>
-      		</div>
-      	</div>
+			<div class="row">
+				<div class="col-sm-4">
+					<label for="strenuous">Strenuous</label>
+				</div>
+				<div class="col-sm-8">
+					<?= hf_dropdown('events_x_classes_strenuous', '', '', array('0' => "No", '1' => "Yes"), null, $errors, 0, 0) ?>
+				</div>
+			</div>
 
 
-      	<div class="row">
-      		<div class="col-sm-4">
-      			<label for="minage">Min Age</label>
-      		</div>
-      		<div class="col-sm-8">
-      			<?= hf_input('events_x_classes_min_age', '', '', array(), $errors) ?>
-      		</div>
-      	</div>
-      	<div class="row">
-      		<div class="col-sm-4">
-      			<label for="maxage">Max Age</label>
-      		</div>
-      		<div class="col-sm-8">
-      			<?= hf_input('events_x_classes_max_age', '', '', array(), $errors) ?>
-      		</div>
-      	</div>
+			<div class="row">
+				<div class="col-sm-4">
+					<label for="minage">Min Age</label>
+				</div>
+				<div class="col-sm-8">
+					<?= hf_input('events_x_classes_min_age', '', '', array(), $errors) ?>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-4">
+					<label for="maxage">Max Age</label>
+				</div>
+				<div class="col-sm-8">
+					<?= hf_input('events_x_classes_max_age', '', '', array(), $errors) ?>
+				</div>
+			</div>
 
-      	<div class="row">
-      		<div class="col-sm-4">
-      			<label for="fee">Fee</label>
-      		</div>
-      		<div class="col-sm-8">
-      			<?= hf_input('events_x_classes_fee', '', '', array(), $errors) ?>
-      		</div>
-      	</div>
+			<div class="row">
+				<div class="col-sm-4">
+					<label for="fee">Fee</label>
+				</div>
+				<div class="col-sm-8">
+					<?= hf_input('events_x_classes_fee', '', '', array(), $errors) ?>
+				</div>
+			</div>
 
-      	<div class="row" id="events-prizes">
-      		<div class="col-sm-4">
-      			<strong>Prizes</strong>
-      		</div>
-      		<div class="col-sm-8">
-      			<div class="row">
-      				<div class="col-xs-6 col-sm-3">
-      					1st
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize01', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					2nd
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize02', '', '', array(), $errors) ?>
-		      		</div>
+			<div class="row" id="events-prizes">
+				<div class="col-sm-4">
+					<strong>Prizes</strong>
+				</div>
+				<div class="col-sm-8">
+					<div class="row">
+						<div class="col-xs-6 col-sm-3">
+							1st
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize01', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							2nd
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize02', '', '', array(), $errors) ?>
+						</div>
 
-      				<div class="col-xs-6 col-sm-3">
-      					3rd
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize03', '', '', array(), $errors) ?>
-		      		</div>
+						<div class="col-xs-6 col-sm-3">
+							3rd
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize03', '', '', array(), $errors) ?>
+						</div>
 
-      				<div class="col-xs-6 col-sm-3">
-      					4th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize04', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					5th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize05', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					6th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize06', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					7th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize07', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					8th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize08', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					9th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize09', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					10th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize10', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					11th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize11', '', '', array(), $errors) ?>
-		      		</div>
-      				<div class="col-xs-6 col-sm-3">
-      					12th
-      				</div>
-      				<div class="col-xs-6 col-sm-3">
-		      			<?= hf_input('events_x_classes_prize12', '', '', array(), $errors) ?>
-		      		</div>
-		      	</div>
-      		</div>
-      	</div>
-
+						<div class="col-xs-6 col-sm-3">
+							4th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize04', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							5th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize05', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							6th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize06', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							7th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize07', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							8th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize08', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							9th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize09', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							10th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize10', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							11th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize11', '', '', array(), $errors) ?>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							12th
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<?= hf_input('events_x_classes_prize12', '', '', array(), $errors) ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

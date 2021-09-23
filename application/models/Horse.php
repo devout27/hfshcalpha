@@ -2808,21 +2808,25 @@ class Horse extends CI_Model {
 			return $this->db->count_all_results();
 		}
 		public function countFiltered($player_id,$postData)
-		{
+		{			
 			$this->get_list_query($player_id,$postData);
 			return $this->db->count_all_results();      
 		}
 		public function get_list_query($player_id,$postData,$where=false)
 		{													
-			$this->db->select('horses.*,s.stables_name');
+			$this->db->select('horses.*,s.stables_name,p.players_username,p.players_id');
 			$this->db->join('stables s','s.stables_id=horses.join_stables_id','LEFT');
-			$this->db->from('horses');
-			$this->db->where('horses.join_players_id',$player_id);
+			$this->db->join('players p','p.players_id=horses.join_players_id','LEFT');
+			$this->db->from('horses');						
+			if(is_numeric($player_id))
+			{							
+				$this->db->where('horses.join_players_id',$player_id);
+			}			
 			if($where)
 			{
 				$this->db->where($where);
 			}
-			$i = 0;        
+			$i = $_POST['start'];
 			foreach($this->column_search as $item){            
 				if($postData['search']['value']){                
 					if($i===0){                    

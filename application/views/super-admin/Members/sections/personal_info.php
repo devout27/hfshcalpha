@@ -110,7 +110,7 @@
                     </div>
                     <div class="col-12 col-md-7 col-lg-8 col-xl-9">
                         <p>                            
-                            <strong><?= $member['players_dob'] ? dateformate($member['players_dob']) : 'N/A'; ?></strong>
+                            <strong><?= $member['players_dob'] != "0000-00-00" ? dateformate($member['players_dob']) : 'N/A'; ?></strong>
                         </p>
                     </div>
                 </div>

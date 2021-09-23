@@ -1,13 +1,9 @@
 <hr>
-
- <div class="row">
+<div class="row">
     <div class="col-sm-12">
         <div class="card mb-4">
           	<h4 class="card-header">Search Results</h4>
             <div class="card-body">
-
-
-
 				<div class="container-fluid">
 				    <div class="table-responsive">
 					<table class="table table-sm table-hover  no-wrap col-sm-12 w-100" id="dt-logs">
@@ -32,7 +28,6 @@
 				</table>
 				</div>
 				</div>
-
             </div>
         </div>
     </div>

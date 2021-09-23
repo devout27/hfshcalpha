@@ -10,18 +10,28 @@
 	                	<span>Dashboard</span>
 	             	</a>
 				</li>
-				<li class="treeview <?php if(in_array($CLASS_NAME,array('members'))) echo 'active'?>" style="display:<?php if(in_array($CLASS_NAME,array('members'))) echo 'block;'?>">
+				<li class="treeview <?php if(in_array($CLASS_NAME,array('members','horses','banks'))) echo 'active'?>" style="display:<?php if(in_array($CLASS_NAME,array('members','horses','banks'))) echo 'block;'?>">
 	            	<a href="javascript:void(0)">
 	                	<i class="las la-user-friends"></i>
 	                	<span>Users Management</span>
 	               		<i class="la la-angle-left pull-right"></i>
 	              	</a>
-	              	<ul class="treeview-menu" style="display:<?php if(in_array($CLASS_NAME,array('members'))) echo 'block;'?>">
+	              	<ul class="treeview-menu" style="display:<?php if(in_array($CLASS_NAME,array('members','horses','banks'))) echo 'block;'?>">
 					    <li  class="<?php echo $CLASS_NAME=='members' && $METHOD_NAME=='index'  ? 'active':''?>">
 							<a href="<?php echo $BASE_URL_ADMIN ?>Members">
-								<i class="las la-circle"></i> Members
+								<i class="las la-circle"></i> Members List
 							</a>
 						</li>                        
+					    <li  class="<?php echo $CLASS_NAME=='horses' && $METHOD_NAME=='index'  ? 'active':''?>">
+							<a href="<?php echo $BASE_URL_ADMIN ?>Horses">
+								<i class="las la-circle"></i> Horses List
+							</a>
+						</li>
+					    <li  class="<?php echo $CLASS_NAME=='banks' && $METHOD_NAME=='index'  ? 'active':''?>">
+							<a href="<?php echo $BASE_URL_ADMIN ?>banks">
+								<i class="las la-circle"></i> Banks List
+							</a>
+						</li>
 					</ul>
 	            </li>
 				<li class="treeview <?php if(in_array($CLASS_NAME,array('accounts'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('accounts'))) echo 'block;'?>">

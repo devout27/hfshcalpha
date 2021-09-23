@@ -425,7 +425,8 @@ Class Member_Model extends MY_Model {
 		}else if($status=='inactive'){
 			$condition['status']=0;
             $this->db->where($condition);
-		}        
+		}
+        $this->db->where('players_deleted',0);        
         if($where)
         {
             $this->db->where($where);

@@ -349,25 +349,23 @@ class Player extends CI_Model {
 
 	public static function admin_update_credits($data){
 		$CI =& get_instance();
-		$CI->db->query("UPDATE players SET per_day_credits = ? players_credits_adoptathon=?, players_credits_creation=? WHERE players_id=? LIMIT 1", array($data['per_day_credits'], $data['players_credits_adoptathon'], $data['players_credits_creation'], $data['players_id']));
+		$CI->db->query("UPDATE players SET per_day_credits = ?, players_credits_adoptathon=?, players_credits_creation=? WHERE players_id=? LIMIT 1", array($data['per_day_credits'], $data['players_credits_adoptathon'], $data['players_credits_creation'], $data['players_id']));
 		return  true;
 	}
 
 	public static function admin_adoptathon($data){
 		$CI =& get_instance();
-
 		if($data['credits'] < 1){
 			//prevent accidental removal of credits
 			$data['credits'] = 0;
 		}elseif($data['credits'] > 100){
 			$data['credits'] = 100;
 		}
-		$CI->db->query("UPDATE players SET players_credits_adoptathon=players_credits_adoptathon+?", array($data['credits']));
-
+		$CI->db->query("UPDATE players SET players_credits_adoptathon=?", array($data['credits']));
 		return  true;
 	}
 
-	function admin_update_profile($data){
+	function admin_update_profile($data){		
 		if($this->input->post('update_profile')){
 			//update the player's profile
 
@@ -385,7 +383,7 @@ class Player extends CI_Model {
 				array(
 					'field' => 'players_about',
 					'label' => 'About',
-					'rules' => 'xss_clean'
+					'rules' => 'xss_clean|max_length[6000]'
 				),
 				array(
 					'field' => 'players_house',
@@ -418,6 +416,33 @@ class Player extends CI_Model {
 			}
 			return array('errors' => $errors, 'notices' => $notices);
 
+		}
+	}
+	function admin_update_role($data){		
+		if($this->input->post('update_role')){
+			//update the player's profile
+
+			$this->form_validation->set_rules(array(
+				array(
+					'field' => 'players_super_admin',
+					'label' => 'Player Role',
+					'rules' => 'required|in_list[0,1]'
+				)				
+			));
+			if ($this->form_validation->run() !== false) {
+				$data = $this->input->post();
+				$allowed_fields = array('players_super_admin');
+				$update_data = filter_keys($data, $allowed_fields);
+				$this->db->where('players_id', $data['players_id']);
+				$this->db->update('players', $update_data);
+			}
+			foreach($_POST AS $v => $e){
+				$e = form_error($v);
+				if($e){
+					$errors[$v] = $e;
+				}
+			}
+			return array('errors' => $errors, 'notices' => $notices);
 		}
 	}
 

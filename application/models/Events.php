@@ -189,31 +189,54 @@ class Events extends CI_Model {
 			$errors['classlists_classes_name'] = "Please include a name.";
 		}
 		if(strlen(trim($data['classlists_classes_description'])) < 3){
-			$errors['classlists_classes_description'] = "Please include a name.";
+			$errors['classlists_classes_description'] = "Please include a decription.";
 		}
 		$data['classlists_classes_strenuous'] = $data['classlists_classes_strenuous'] ? '1' : '0';
+		if(!$data['classlists_classes_min_age'])
+		{
+			$errors['classlists_classes_min_age'] = "Please Enter Min age.";
+		}
+		if(!$data['classlists_classes_max_age'])
+		{
+			$errors['classlists_classes_max_age'] = "Please Enter Max age.";
+		}
 		if($data['classlists_classes_min_age'] < 0 || $data['classlists_classes_min_age'] > $data['classlists_classes_max_age']){
-			$errors['classlists_classes_min_age'] = "Invalid age.";
+			$errors['classlists_classes_min_age'] = "Invalid Min Age.";
 		}
 		if($data['classlists_classes_max_age'] < 0 || $data['classlists_classes_max_age'] < $data['classlists_classes_min_age']){
-			$errors['classlists_classes_max_age'] = "Invalid age.";
+			$errors['classlists_classes_max_age'] = "Invalid Max Age.";
+		}
+		if(!$data['classlists_classes_fee'])
+		{
+			$errors['classlists_classes_fee'] = "Please Enter Fee.";
 		}
 		if($data['classlists_classes_fee'] < 0){
 			$errors['classlists_classes_fee'] = "Invalid fee.";
 		}
-		if($data['join_divisions_id'] AND !array_key_exists($data['join_divisions_id'], $divisions)){
+		if($data['join_divisions_id'] && !array_key_exists($data['join_divisions_id'], $divisions)){
 			$errors['join_divisions_id'] = "Invalid division.";
 		}
-
+		if(!$data['classlists_classes_disciplines'])
+		{
+			$errors['classlists_classes_disciplines'] = "Please Select Discipline.";
+		}
 		foreach((array)$data['classlists_classes_disciplines'] AS $d){
 			if(!in_array($d, $disciplines)){
 				$errors['classlists_classes_disciplines'] = "Invalid discipline.";
 			}
 		}
+		if(!$data['classlists_classes_breeds_types'])
+		{
+			$errors['classlists_classes_breeds_types'] = "Please Select Type.";
+		}
 		foreach((array)$data['classlists_classes_breeds_types'] AS $d){
 			if(!in_array($d, $breeds_types)){
 				$errors['classlists_classes_breeds_types'] = "Invalid type.";
 			}
+		}
+		if(!$data['classlists_classes_breeds'])
+		{
+			$errors['classlists_classes_breeds'] = "Please Select Breeds.";
 		}
 		foreach((array)$data['classlists_classes_breeds'] AS $d){
 			if(!in_array($d, $breeds)){

@@ -189,3 +189,7 @@ $route['super-admin/forgot-password'] = 'super-admin/Logins/forgotPassword';
 $route['super-admin/change-password'] = 'super-admin/Accounts/changePassword';
 
 $route['super-admin/dashboard'] = 'super-admin/Dashboards/index';
+
+$route['super-admin/members/active'] = 'super-admin/Members/index/active';
+$route['super-admin/members/inactive'] = 'super-admin/Members/index/inactive';
+$route['super-admin/members/superAdmins'] = 'super-admin/Members/index/superAdmins';

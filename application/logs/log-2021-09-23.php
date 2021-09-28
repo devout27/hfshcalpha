@@ -106,3 +106,7 @@ ERROR - 2021-09-23 16:31:15 --> Severity: error --> Exception: Call to undefined
 ERROR - 2021-09-23 16:34:24 --> 404 Page Not Found: Assets/admin
 ERROR - 2021-09-23 16:41:44 --> 404 Page Not Found: Assets/admin
 ERROR - 2021-09-23 16:48:14 --> 404 Page Not Found: Assets/admin
+ERROR - 2021-09-23 17:07:26 --> 404 Page Not Found: Assets/admin
+ERROR - 2021-09-23 17:24:05 --> 404 Page Not Found: Assets/admin
+ERROR - 2021-09-23 17:27:14 --> 404 Page Not Found: super-admin/Horses/view
+ERROR - 2021-09-23 17:29:15 --> 404 Page Not Found: Assets/admin

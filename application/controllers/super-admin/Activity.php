@@ -12,7 +12,7 @@ class Activity extends Admin_Controller
 	}
 	public function index($players_id=null)
 	{   
-        if ($this->input->is_ajax_request()) {            
+        if($this->input->is_ajax_request()) {            
 			$res = $this->Logs->getMyLogsList($players_id,$_POST);
             $sub_page_view_url="view";
             $result=[];
@@ -30,7 +30,7 @@ class Activity extends Admin_Controller
             );
             echo json_encode($output);exit;
 		}else{
-			$this->data['page_title'] = 'Logs';
+			$this->data['page_title'] = 'Activity Logs';
             $this->data['dataTableElement'] = 'myLogsList';
             $this->data['dataTableURL'] = BASE_URL.$this->data['class_name'];
 		    $this->render($this->class_name.'index');

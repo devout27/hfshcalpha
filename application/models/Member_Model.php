@@ -420,12 +420,17 @@ Class Member_Model extends MY_Model {
         $this->db->select('*');
 		$condition=array();
 		if($status=='active'){
-			$condition['status']=1;
+			$condition['players_pending']=0;
             $this->db->where($condition);
 		}else if($status=='inactive'){
-			$condition['status']=0;
+			$condition['players_pending']=1;
             $this->db->where($condition);
-		}
+		}else if($status == "superAdmins")
+        {
+            $condition['players_super_admin']=1;
+            $this->db->where($condition);
+        }
+
         $this->db->where('players_deleted',0);        
         if($where)
         {
@@ -437,7 +442,7 @@ Class Member_Model extends MY_Model {
         foreach($this->user_column_search as $item){
             // if datatable send POST for search
             if($postData['search']['value']){                
-                if($i===0){                    
+                if($i==0){                    
                     $this->db->group_start();
                     $this->db->like($item, $postData['search']['value']);
                 }else{

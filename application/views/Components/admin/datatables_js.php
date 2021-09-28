@@ -36,50 +36,54 @@
                 });
             }
         <?php endif; ?>
-        <?php if($dataTableElement2): ?>
+        <?php if($dataTableElement2): ?>        
             if($('#<?=$dataTableElement2?>').length)
             {
-                $('#<?=$dataTableElement2?>').DataTable({
-                    "processing": true,        
-                    "serverSide": true,
-                    "searching": true,
-                    "paging": true,
-                    "info": false,
-                    "lengthMenu": [ 10, 25, 50,100 ],
-                    "pageLength":10,        
-                    "order": [],        
-                    "ajax": {
-                        "url": '<?=$dataTableURL2?>',
-                        "type": "POST"
-                    },                                        
-                    "columnDefs": [{ 
-                        "targets": [0],
-                        "orderable": true
-                    }]
-                });
+                setTimeout(() => {
+                    $('#<?=$dataTableElement2?>').DataTable({
+                        "processing": true,        
+                        "serverSide": true,
+                        "searching": true,
+                        "paging": true,
+                        "info": false,
+                        "lengthMenu": [ 10, 25, 50,100 ],
+                        "pageLength":10,        
+                        "order": [],        
+                        "ajax": {
+                            "url": '<?=$dataTableURL2?>',
+                            "type": "POST"
+                        },                                        
+                        "columnDefs": [{ 
+                            "targets": [0],
+                            "orderable": true
+                        }]
+                    });    
+                }, 1000);                
             }
         <?php endif; ?>
         <?php if($dataTableElement3): ?>
             if($('#<?=$dataTableElement3?>').length)
             {
-                $('#<?=$dataTableElement3?>').DataTable({
-                    "processing": true,        
-                    "serverSide": true,
-                    "searching": true,
-                    "paging": true,
-                    "info": false,
-                    "lengthMenu": [ 10, 25, 50,100 ],
-                    "pageLength":10,        
-                    "order": [],        
-                    "ajax": {
-                        "url": '<?=$dataTableURL3?>',
-                        "type": "POST"
-                    },                                        
-                    "columnDefs": [{ 
-                        "targets": [0],
-                        "orderable": true
-                    }]
-                });
+                setTimeout(() => {
+                    $('#<?=$dataTableElement3?>').DataTable({
+                        "processing": true,        
+                        "serverSide": true,
+                        "searching": true,
+                        "paging": true,
+                        "info": false,
+                        "lengthMenu": [ 10, 25, 50,100 ],
+                        "pageLength":10,        
+                        "order": [],        
+                        "ajax": {
+                            "url": '<?=$dataTableURL3?>',
+                            "type": "POST"
+                        },                                        
+                        "columnDefs": [{ 
+                            "targets": [0],
+                            "orderable": true
+                        }]
+                    });    
+                }, 2000);                
             }
         <?php endif; ?>
     })

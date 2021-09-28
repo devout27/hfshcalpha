@@ -65,7 +65,7 @@ class Members extends Admin_Controller
             $this->data['sub_page_delete_url'] = 'delete';
             $this->data['sub_page_url_active_inactive'] = 'activeInactive';
             $this->data['status'] = $status;
-            $this->data['dataTableElement'] = 'usersList';
+            $this->data['dataTableElement'] = 'usersList';            
             $this->data['dataTableURL'] = BASE_URL.$this->data['class_name']."index/".$status;
             $this->render($this->class_name . 'index');
         }

@@ -17,12 +17,12 @@
                 <div class="card-box bg-black">
                     <div class="inner">
                         <h3 class="count-1"><?=$adminsCount?></h3>
-                        <p>Super Admins</p>                        
+                        <p>Super Admins</p>
                     </div>
                     <div class="icon">
                         <i class="las la-user-friends"></i>
                     </div>
-                    <a href="<?=$BASE_URL_ADMIN?>members" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="<?=$BASE_URL_ADMIN?>members/superAdmins" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <div class="col-lg-3 col-sm-6">
@@ -34,7 +34,7 @@
                     <div class="icon">
                         <i class="las la-user-friends"></i>
                     </div>
-                    <a href="<?=$BASE_URL_ADMIN?>members" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="<?=$BASE_URL_ADMIN?>members/inactive" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <div class="col-lg-3 col-sm-6">
@@ -46,7 +46,7 @@
                     <div class="icon">
                         <i class="las la-user-friends"></i>
                     </div>
-                    <a href="<?=$BASE_URL_ADMIN?>subscriptions" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="<?=$BASE_URL_ADMIN?>members/active" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>            
             <!---->

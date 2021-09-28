@@ -32,6 +32,11 @@
 								<i class="las la-circle"></i> Banks List
 							</a>
 						</li>
+						<li  class="<?php echo $CLASS_NAME=='activity' && $METHOD_NAME=='index'  ? 'active':''?>">
+							<a href="<?php echo $BASE_URL_ADMIN ?>Activity">
+								<i class="las la-circle"></i> Activity Logs
+							</a>
+						</li>
 					</ul>
 	            </li>
 				<li class="treeview <?php if(in_array($CLASS_NAME,array('accounts'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('accounts'))) echo 'block;'?>">

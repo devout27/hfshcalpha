@@ -152,7 +152,7 @@ class Logs extends CI_Model {
 			$i = $_POST['start'];
 			foreach($this->column_search as $item){            
 				if($postData['search']['value']){                
-					if($i===0){                    
+					if($i==0){                    
 						$this->db->group_start();
 						$this->db->like($item, $postData['search']['value']);
 					}else{

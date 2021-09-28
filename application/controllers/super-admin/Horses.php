@@ -27,7 +27,8 @@ class Horses extends Admin_Controller
                 $vetFerr = $v['horses_vet'].' '.$v['horses_farrier'];
 				$status = $v['horses_pending']==1 ? '<span class="badge badge-danger pb-1">Pending</span>' : '<span class="badge badge-success pb-1">Approved</span>';
 				$stable = $v['stables_name'];                
-                $id ='<a href="'.BASE_URL.$this->data['class_name'].$sub_page_view_url."/".$v['horses_id'].'" title="View">'.generateId($v['horses_id']).'</a>';
+                //$id ='<a href="'.BASE_URL.$this->data['class_name'].$sub_page_view_url."/".$v['horses_id'].'" title="View">'.generateId($v['horses_id']).'</a>';
+                $id ='<a href="javascript:void(0);" title="View">'.generateId($v['horses_id']).'</a>';
                 $v['horses_hs'] = $v['horses_hs']  ? $v['horses_hs'] : 'N/A';
                 $v['horses_fs'] = $v['horses_fs']  ? $v['horses_fs'] : 'N/A';
                 $v['players_username'] = $v['players_username']  ? $v['players_username'] : 'N/A';

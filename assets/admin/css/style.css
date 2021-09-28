@@ -2211,3 +2211,8 @@ label#name-error {
     color:red;
     font-weight: bold;
 }
+
+.badge-success {
+    color: #fff;
+    background-color: #4d4f3d;
+}

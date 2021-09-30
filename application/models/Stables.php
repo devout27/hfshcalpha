@@ -469,5 +469,5 @@ class Stables extends CI_Model {
 
         return $cabs;
 	}
-
+	
 }

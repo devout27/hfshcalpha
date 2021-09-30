@@ -66,7 +66,7 @@
           <div class="card my-4">
             <h5 class="card-header">Amenities</h5>
             <div class="card-body">
-				<? $this->load->view('partials/amenities-table', array('amenities' => $stable['amenities'], 'title' => 'search')); ?>
+				        <? $this->load->view('partials/amenities-table', array('amenities' => $stable['amenities'], 'title' => 'search')); ?>
             </div>
           </div>
 

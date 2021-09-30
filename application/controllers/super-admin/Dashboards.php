@@ -15,7 +15,7 @@ class Dashboards extends Admin_Controller
 		$this->data['memberAdminCount']=$this->db->where('players_admin',1)->get('players')->num_rows();
 		$this->data['adminsCount']=$this->db->where('players_super_admin',1)->get('players')->num_rows();
 		$this->data['pendingUsersCount']=$this->db->where('players_pending',1)->get('players')->num_rows();	    
-		$this->data['acceptedUsersCount']=$this->db->where('players_pending',0)->where('players_admin',0)->get('players')->num_rows();	    		
+		$this->data['acceptedUsersCount']=$this->db->where('players_pending',0)->where('players_super_admin',0)->get('players')->num_rows();	    		
 		$this->render($this->class_name.'index');
 	}
 }

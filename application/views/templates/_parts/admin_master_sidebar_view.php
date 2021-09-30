@@ -39,6 +39,20 @@
 						</li>
 					</ul>
 	            </li>
+				<li class="treeview <?php if(in_array($CLASS_NAME,array('stables'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('stables'))) echo 'block;'?>">
+	            	<a href="javascript:void(0)">
+	                	<i class="las la-award"></i>
+	                	<span>Stables Management</span>
+	               		<i class="la la-angle-left pull-right"></i>
+	              	</a>
+	              	<ul class="treeview-menu  <?php if(in_array($CLASS_NAME,array('stables'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('stables'))) echo 'block;'?>">
+					 	<li class="<?php  echo $CLASS_NAME=='stables' && $METHOD_NAME=='index'  ? 'active':''?>">
+							<a href="<?php echo $BASE_URL_ADMIN ?>stables">
+								<i class="las la-circle"></i> Stables
+							</a>
+						</li>					    
+					</ul>
+	            </li>											           
 				<li class="treeview <?php if(in_array($CLASS_NAME,array('accounts'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('accounts'))) echo 'block;'?>">
 	            	<a href="javascript:void(0)">
 	                	<i class="las la-award"></i>

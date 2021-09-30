@@ -19,7 +19,7 @@ class Activity extends Admin_Controller
             $i=$_POST['start'];
 			foreach($res as $v){             
                 $i++;
-                $id='<a href="'.$this->data['BASE_URL_ADMIN'].$this->data['class_name'].$v['join_players_id'].'">'.$v['players_nickname'].'</a>';
+                $id='<a href="'.$this->data['BASE_URL_ADMIN'].'Members/'.$sub_page_view_url.'/'.$v['join_players_id'].'">'.$v['players_nickname'].'</a>';
 				$result[] = array($i,$id,$v['log_activity'],$v['log_ip'],$v['log_date']);
 			}
 			$output = array(

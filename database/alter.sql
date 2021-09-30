@@ -6,3 +6,7 @@ ALTER TABLE `horses` ADD `horses_sale_price` DOUBLE(10,2) NULL DEFAULT NULL AFTE
 
 --22-Sep-2021--
 ALTER TABLE `players` ADD `players_super_admin` INT(1) NOT NULL DEFAULT '0' AFTER `per_day_credits`;
+
+--30-Sep-2021--
+
+ALTER TABLE `stables` ADD `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `stables_boarding_public`;

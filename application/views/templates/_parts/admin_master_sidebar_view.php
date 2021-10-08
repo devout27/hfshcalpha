@@ -39,16 +39,26 @@
 						</li>
 					</ul>
 	            </li>
-				<li class="treeview <?php if(in_array($CLASS_NAME,array('stables'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('stables'))) echo 'block;'?>">
+				<li class="treeview <?php if(in_array($CLASS_NAME,array('stables','amenities','packages'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('stables','amenities','packages'))) echo 'block;'?>">
 	            	<a href="javascript:void(0)">
 	                	<i class="las la-award"></i>
 	                	<span>Stables Management</span>
 	               		<i class="la la-angle-left pull-right"></i>
 	              	</a>
-	              	<ul class="treeview-menu  <?php if(in_array($CLASS_NAME,array('stables'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('stables'))) echo 'block;'?>">
+	              	<ul class="treeview-menu  <?php if(in_array($CLASS_NAME,array('stables','amenities','packages'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('stables','amenities','packages'))) echo 'block;'?>">
 					 	<li class="<?php  echo $CLASS_NAME=='stables' && $METHOD_NAME=='index'  ? 'active':''?>">
-							<a href="<?php echo $BASE_URL_ADMIN ?>stables">
-								<i class="las la-circle"></i> Stables
+							<a href="<?php echo $BASE_URL_ADMIN ?>Stables">
+								<i class="las la-circle"></i> Stables List
+							</a>
+						</li>					    
+					 	<li class="<?php  echo $CLASS_NAME=='packages' && $METHOD_NAME=='index'  ? 'active':''?>">
+							<a href="<?php echo $BASE_URL_ADMIN ?>Packages">
+								<i class="las la-circle"></i> Packages List
+							</a>
+						</li>					    
+					 	<li class="<?php  echo $CLASS_NAME=='amenities' && $METHOD_NAME=='index'  ? 'active':''?>">
+							<a href="<?php echo $BASE_URL_ADMIN ?>Amenities">
+								<i class="las la-circle"></i> Amenities List
 							</a>
 						</li>					    
 					</ul>

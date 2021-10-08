@@ -90,11 +90,11 @@ if(!function_exists('hf_input')){
 			$params['value'] = $v;
 			$params['class'] = 'radio-padding';
 			$element .= form_radio($params);
-			$element .= " " . ucfirst($v);
+			$element .= " " . ucfirst($v.' ');
 		}
 		$element .= "</div>\n";
 		$params['label'] = $label;
-		$params['radio'] = true;
+		$params['radio'] = true;		
 
 		$html = hf_build_form_html($element, $name, $label, $value, $params, $errors);
 		return $html;

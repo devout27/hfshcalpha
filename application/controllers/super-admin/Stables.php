@@ -38,7 +38,7 @@ class Stables extends Admin_Controller
             );
             echo json_encode($output);exit;
 		}else{
-			$this->data['page_title'] = 'Stables';
+			$this->data['page_title'] = 'Stables List';
             $this->data['dataTableElement'] = 'myStablesList';
             $this->data['dataTableURL'] = BASE_URL.$this->data['class_name'];
 		    $this->render($this->class_name.'index');

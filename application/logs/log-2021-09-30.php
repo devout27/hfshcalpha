@@ -34,3 +34,5 @@ ERROR - 2021-09-30 16:09:14 --> 404 Page Not Found: Assets/admin
 ERROR - 2021-09-30 16:11:22 --> 404 Page Not Found: Assets/admin
 ERROR - 2021-09-30 16:11:49 --> 404 Page Not Found: Assets/admin
 ERROR - 2021-09-30 16:18:47 --> 404 Page Not Found: Assets/admin
+ERROR - 2021-09-30 16:27:18 --> 404 Page Not Found: Assets/admin
+ERROR - 2021-09-30 16:27:47 --> 404 Page Not Found: Assets/admin

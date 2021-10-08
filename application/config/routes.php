@@ -193,3 +193,6 @@ $route['super-admin/dashboard'] = 'super-admin/Dashboards/index';
 $route['super-admin/members/active'] = 'super-admin/Members/index/active';
 $route['super-admin/members/inactive'] = 'super-admin/Members/index/inactive';
 $route['super-admin/members/superAdmins'] = 'super-admin/Members/index/superAdmins';
+
+$route['super-admin/amenitiesList'] = 'super-admin/Amenities/amenitiesList';
+$route['super-admin/amenitiesList/(:num)'] = 'super-admin/Amenities/amenitiesList/$1';

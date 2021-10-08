@@ -369,7 +369,8 @@ class Horse extends CI_Model {
 				'horses_deceased',
 				'horses_notes',
 				'horses_breeding_fee',
-				'horses_sale_price'
+				'horses_sale_price',
+				'horses_registration_type'
 			);
 
 			
@@ -441,15 +442,30 @@ class Horse extends CI_Model {
 				{
 					$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
 				}
-			}			
-			if(!empty($data['horses_sire']) && !self::getHorseById($data['horses_sire']))
-			{
-				$errors['horses_sire']="This Sire Doesn't exist.";
-			}
-			if(!empty($data['horses_dam']) && !self::getHorseById($data['horses_dam']))
-			{
-				$errors['horses_dam']="This Dam Doesn't exist.";
-			}			
+			}	
+			/*  */
+					$sire = self::getHorseById($data['horses_sire'],true);
+					$dam = self::getHorseById($data['horses_dam'],true);
+					if($data['horses_registration_type']=="creation" && empty($data['horses_sire']))
+					{
+						$errors['horses_sire'] = "Sire is required.";
+					}
+					if($data['horses_registration_type']=="creation" && empty($data['horses_dam']))
+					{
+						$errors['horses_dam'] = "Dam is required.";
+					}		
+					if(!empty($data['horses_sire']) && !$sire)
+					{
+						$errors['horses_sire'] = "This Sire Doesn't exist.";
+					}elseif($data['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
+					{
+						$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
+					}
+					if(!empty($data['horses_dam']) && !$dam)
+					{
+						$errors['horses_dam'] = "This Dam Doesn't exist.";
+					}
+			/*  */			
 			if($data['horses_gender']=="Mare")
 			{				
 				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_id <> ? AND horses_dam = ? LIMIT 1", array($data['horses_birthyear'],$horse['horses_id'],$horse['horses_dam']))->row_array();				
@@ -886,15 +902,29 @@ class Horse extends CI_Model {
 				$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
 			}
 		}			
-		/*  */
-		if(!empty($horse['horses_sire']) && !self::getHorseById($horse['horses_sire']))
+		/*  */		
+		$sire = self::getHorseById($horse['horses_sire'],true);
+		$dam = self::getHorseById($horse['horses_dam'],true);
+		if($horse['horses_registration_type']=="creation" && empty($horse['horses_sire']))
 		{
-			$errors['horses_sire']="This Sire Doesn't exist.";
+			$errors['horses_sire'] = "Sire is required.";
 		}
-		if(!empty($horse['horses_dam']) && !self::getHorseById($horse['horses_dam']))
-		{			
-			$errors['horses_dam']="This Dam Doesn't exist.";
+		if($horse['horses_registration_type']=="creation" && empty($horse['horses_dam']))
+		{
+			$errors['horses_dam'] = "Dam is required.";
+		}		
+		if(!empty($horse['horses_sire']) && !$sire)
+		{
+			$errors['horses_sire'] = "This Sire Doesn't exist.";
+		}elseif($horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
+		{
+			$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
 		}
+		if(!empty($horse['horses_dam']) && !$dam)
+		{
+			$errors['horses_dam'] = "This Dam Doesn't exist.";
+		}
+
 
 		if(count($errors) > 0){
 			return array('errors' => $errors);
@@ -914,7 +944,8 @@ class Horse extends CI_Model {
 			'horses_line',
 			'horses_sire',
 			'horses_dam',
-			'horses_pending'
+			'horses_pending',
+			'horses_registration_type'
 		);
 		$update_data = filter_keys($horse, $allowed_fields);
 
@@ -2363,11 +2394,14 @@ class Horse extends CI_Model {
 	}
 
 
-	public static function getHorseById($id)
+	public static function getHorseById($id,$res=false)
 	{
-		$CI =& get_instance();		
-
-		$horse_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_id = ? LIMIT 1", array($id))->row_array();
+		$CI =& get_instance();
+		$horse_exists = $CI->db->query("SELECT * FROM horses WHERE  horses_id = ? LIMIT 1", array($id))->row_array();
+		if($res && $horse_exists)
+		{
+			return $horse_exists;
+		}
 		if($horse_exists){
 			return true;
 		}
@@ -2391,7 +2425,7 @@ class Horse extends CI_Model {
 		}
 		if($horse['horses_birthyear'] > date('Y') || $horse['horses_birthyear'] < "1950"){
 			$errors['horses_birthyear'] = "Invalid birth year.";
-		}		
+		}
 		
 
 
@@ -2418,13 +2452,26 @@ class Horse extends CI_Model {
 			}
 		}			
 		/*  */
-		if(!empty($horse['horses_sire']) && !self::getHorseById($horse['horses_sire']))
+		$sire = self::getHorseById($horse['horses_sire'],true);
+		$dam = self::getHorseById($horse['horses_dam'],true);		
+		if($horse['horses_registration_type']=="creation" && empty($horse['horses_sire']))
 		{
-			$errors['horses_sire']="This Sire Doesn't exist.";
+			$errors['horses_sire'] = "Sire is required.";
 		}
-		if(!empty($horse['horses_dam']) && !self::getHorseById($horse['horses_dam']))
+		if($horse['horses_registration_type']=="creation" && empty($horse['horses_dam']))
 		{
-			$errors['horses_dam']="This Dam Doesn't exist.";
+			$errors['horses_dam'] = "Dam is required.";
+		}		
+		if(!empty($horse['horses_sire']) && !$sire)
+		{
+			$errors['horses_sire'] = "This Sire Doesn't exist.";
+		}elseif($horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
+		{
+			$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
+		}
+		if(!empty($horse['horses_dam']) && !$dam)
+		{
+			$errors['horses_dam'] = "This Dam Doesn't exist.";
 		}
 		if($horse['horses_gender']=="Mare")
 		{										
@@ -2489,6 +2536,7 @@ class Horse extends CI_Model {
 			'horses_sire',
 			'horses_dam',
 			'horses_pending_date',
+			'horses_registration_type',
 		);
 		$update_data = filter_keys($horse, $allowed_fields);
 		$CI->db->insert('horses', $update_data);

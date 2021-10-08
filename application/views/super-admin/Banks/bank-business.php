@@ -125,8 +125,12 @@
                   <div class="tab-pane h-100 p-3 border border-muted" id="edit" role="tabpanel" aria-labelledby="edit-tab">
                      <div class="container-fluid">
                         <form method="post" action="<?= $BASE_URL.$class_name."view/".$account['bank_id'] ?>">
-                           <div class="row">
-                              <div class="col-sm-12">
+                           <div class="row">         
+                              <div class="col-sm-6 col-md-6">
+                                 <label for="special_list">Bank Tier</label>
+                                 <?= hf_dropdown('bank_tier', '', $account, array('A','B','C','D','E','F'), null, $errors, 1, 0) ?>
+                              </div>                                  
+                              <div class="col-sm-12">                              
                                  <?= hf_input('bank_nickname', 'Account Name', $account ?: $post, array(), $errors) ?>
                               </div>
                               <div class="col-sm-12">

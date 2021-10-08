@@ -464,7 +464,10 @@ class Bank extends CI_Model {
             $CI->db->query("UPDATE bank SET bank_default=1 WHERE bank_id=?", array($account['bank_id']));
         }
 
-
+        if($data['bank_tier'])
+        {
+            $CI->db->query("UPDATE bank SET bank_tier=? WHERE bank_id=?", array($data['bank_tier'], $account['bank_id']));
+        }
         $CI->db->query("UPDATE bank SET bank_nickname=? WHERE bank_id=?", array($data['bank_nickname'], $account['bank_id'])); //increase money
         //pre($CI->db->last_query());
 

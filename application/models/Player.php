@@ -26,8 +26,8 @@ class Player extends CI_Model {
 	function get_online($qty = 1, $interval = "HOUR"){
 		if(!in_array($interval, array("MINUTE", "HOUR", "DAY", "WEEK", "MONTH", "YEAR"))){
 			$interval = "HOUR";
-		}
-		return $this->db->query('SELECT players_nickname, DATE_FORMAT(players_last_active, "%M %D, %Y at %l:%i %p") AS players_last_active2, players_id FROM players WHERE players_last_active>NOW() - INTERVAL ' . $qty . " " . $interval . ' ORDER BY players_last_active DESC')->result_array();
+		}		
+		return $this->db->query('SELECT players_nickname, DATE_FORMAT(players_last_active, "%M %D, %Y at %l:%i %p") AS players_last_active2, players_id FROM players WHERE players_last_active > NOW() - INTERVAL ' . $qty . " " . $interval . ' ORDER BY players_last_active DESC')->result_array();
 	}
 
 	function get_online_count(){

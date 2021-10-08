@@ -10,3 +10,10 @@ ALTER TABLE `players` ADD `players_super_admin` INT(1) NOT NULL DEFAULT '0' AFTE
 --30-Sep-2021--
 
 ALTER TABLE `stables` ADD `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `stables_boarding_public`;
+
+--08-OCT-2021--
+ALTER TABLE `horses` ADD `horses_registration_type` VARCHAR(20) NULL AFTER `horses_level`;
+
+ALTER TABLE `amenities` ADD `ameneties_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `amenities_acres`;
+
+ALTER TABLE `stables_packages` ADD `stables_packages_created` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `stables_packages_available`;

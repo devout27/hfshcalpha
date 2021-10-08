@@ -26,7 +26,7 @@
                                     <?= hf_checkbox('stables_boarding_public', 'Public Boarding?', $postData, array(), $errors) ?>
                                 </div>
                                 <div class="col-12">
-                                    <?= hf_submit('edit', 'Update Stable', array('class' => 'btn btn-primary col-sm-12')) ?>
+                                    <?= hf_submit('action', 'Update Stable', array('class' => 'btn btn-primary col-sm-12')) ?>
                                 </div>                            
                             </form>
                         </div>

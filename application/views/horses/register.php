@@ -41,6 +41,18 @@ $errors = $this->session->flashdata('errors');
 					</div>
 				</div>
 				<div class="row">
+					<div class="col-md-12"><p>Registration Type</p></div>
+					<div class="col-md-12">																																								
+						<label class="radio-inline">
+							<input type="radio" id="horses_registration_type" name="horses_registration_type" value="creation" checked> Creation
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="horses_registration_type"  id="horses_registration_type" value="breed"> Breed
+						</label>						
+						<div class="form-error pull-right"><?php $errors["horses_registration_type"] ?></div>
+					</div>
+				</div>
+				<div class="row">
 					<div class="col-sm-6">
 						<?= hf_input('horses_sire', 'Sire', $post, array(), $errors,'number') ?>
 					</div>

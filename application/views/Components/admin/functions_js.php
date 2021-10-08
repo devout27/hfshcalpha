@@ -5,7 +5,7 @@
 	{
 		flash(msg,{
 				'autohide' : true,
-				'bgColor' : '#2A4252',
+				'bgColor' : '#4d4f3d',
 				'vPosition' :'top',
 				'hPosition' :'right',
 				'fadeIn' : 400,
@@ -19,7 +19,7 @@
 	{
 		flash(msg,{
 					'autohide' : true,
-					'bgColor' : '#397800',
+					'bgColor' : '#4d4f3d',
 					'vPosition' :'top',
 					'hPosition' :'right',
 					'fadeIn' : 400,

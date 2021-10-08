@@ -101,4 +101,8 @@ if(!function_exists('pre')){
 		}
 		return $newDate;
    }   
+   function getAmenityPic($path)
+   {
+	   return $path ? $path : site_url(AMENITY_DEFAULT_IMAGE);
+   }
 }

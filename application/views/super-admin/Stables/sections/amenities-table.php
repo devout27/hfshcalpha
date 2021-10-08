@@ -13,12 +13,8 @@
   <tbody>
   	<? foreach((array)$amenities AS $k=>$a): ?>
     <tr>
-        <td><?=++$k?></td>
-    	<? if($a['amenities_picture']): ?>
-      		<td><img src="<?= $a['amenities_picture'] ?>" height="50"></td>
-    	<? else: ?>
-      		<td class="text-center font-weight-bold">N/A</td>
-      	<? endif; ?>
+      <td><?=++$k?></td>    	
+      <td><img src="<?= getAmenityPic($a['amenities_picture']) ?>" height="50"></td>    	
       <td><b><?= $a['amenities_name'] ?></b><br/><p><small><?= $a['amenities_description'] ?></td>
       <td><?= $a['amenities_type'] ?></td>
       <td><?= $a['amenities_stalls'] ?></td>

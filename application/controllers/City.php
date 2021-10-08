@@ -280,7 +280,7 @@ class City extends MY_Controller {
 
 	public function ideal_dreams(){
 		$this->data['page']['title'] = "Ideal Dreams";
-		$this->data['online'] = $this->player->get_online($qty, $interval);
+		$this->data['online'] = $this->player->get_online(1, $interval);
 
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('city/online', $this->data);

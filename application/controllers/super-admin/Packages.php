@@ -56,7 +56,7 @@ class Packages extends Admin_Controller
         $this->data['package'] = $this->StablePackage_Model->getPackageDataById($id);
         if(empty($this->data['package']))
         {
-            $this->set_flashdata('message_error','Package Not Found.');
+            $this->session->set_flashdata('message_error','Package Not Found.');
             redirect($this->class_name);
         }        
         $this->render($this->class_name.'view');
@@ -67,7 +67,7 @@ class Packages extends Admin_Controller
             $postData = $this->StablePackage_Model->getPackageDataById($id);
             if(empty($postData))
             {
-                $this->set_flashdata('message_error','Package Not Found.');
+                $this->session->set_flashdata('message_error','Package Not Found.');
                 redirect($this->class_name);
             }            
             $this->data['page_title'] = $postData['stables_packages_name'] . " #" . $postData['stables_packages_id'];

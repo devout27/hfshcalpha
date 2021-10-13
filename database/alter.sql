@@ -17,3 +17,8 @@ ALTER TABLE `horses` ADD `horses_registration_type` VARCHAR(20) NULL AFTER `hors
 ALTER TABLE `amenities` ADD `ameneties_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `amenities_acres`;
 
 ALTER TABLE `stables_packages` ADD `stables_packages_created` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `stables_packages_available`;
+
+--13-OCT-2021--
+ALTER TABLE `inventory` CHANGE `itemtype` `itemtype` VARCHAR(255) NULL;
+ALTER TABLE `inventory` CHANGE `itemrarity` `itemrarity` VARCHAR(255) NULL;
+ALTER TABLE `inventory` ADD `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `itemdesc`;

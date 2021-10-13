@@ -54,7 +54,7 @@ class Stables extends Admin_Controller
         $this->data['stable'] = $this->Stable_Model->getStableDataById($id);
         if(empty($this->data['stable']))
         {
-            $this->set_flashdata('message_error','Stable Not Found.');
+            $this->session->set_flashdata('message_error','Stable Not Found.');
             redirect($this->class_name);
         }
         $this->data['stable']['amenties']=$this->Stable_Model->getAmenitiesDataByStableId($id);
@@ -71,7 +71,7 @@ class Stables extends Admin_Controller
         $postData = $this->Stable_Model->getStableDataById($id);
         if(empty($postData))
         {
-            $this->set_flashdata('message_error','Stable Not Found.');
+            $this->session->set_flashdata('message_error','Stable Not Found.');
             redirect($this->class_name);
         }
         $this->data['page_title'] = $postData['stables_name'] . " #" . $postData['stables_id'];

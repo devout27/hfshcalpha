@@ -80,7 +80,7 @@ class Amenities extends Admin_Controller
         $this->data['amenity'] = $this->Amenity_Model->getAmenityDataById($id);
         if(empty($this->data['amenity']))
         {
-            $this->set_flashdata('message_error','Amenity Not Found.');
+            $this->session->set_flashdata('message_error','Amenity Not Found.');
             redirect($this->class_name);
         }        
         $this->render($this->class_name.'view');
@@ -91,7 +91,7 @@ class Amenities extends Admin_Controller
             $postData = $this->Amenity_Model->getAmenityDataById($id);
             if(empty($postData))
             {
-                $this->set_flashdata('message_error','Amenity Not Found.');
+                $this->session->set_flashdata('message_error','Amenity Not Found.');
                 redirect($this->class_name);
             }
             $this->data['page_title'] = $postData['amenities_name'] . " #" . $postData['amenities_id'];

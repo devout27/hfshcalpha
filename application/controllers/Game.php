@@ -360,16 +360,138 @@ class Game extends MY_Controller {
 	}
 
 
-
-	public function inventory($id = null){
-		$this->data['profile'] = new Player($this->session->userdata('players_id'));
-		$this->data['profile'] = $this->data['profile']->player;
-		$id = $this->data['profile']['players_id'];
-		$this->data['page']['title'] = "Inventory";
-
-		$this->load->view('layout/header', $this->data);
-		$this->load->view('game/inventory', array('errors' => $errors, 'inventory' => $this->data['inventory']));
+	public function inventory()
+	{   
+		$this->data['class_name']="/game/";
+        if ($this->input->is_ajax_request()) {			
+			$this->load->model('Inventory_Model');
+			$res = $this->Inventory_Model->getInventorysList($this->session->userdata('players_id'),$_POST);
+            $sub_page_view_url="viewInventory";
+            $sub_page_url = 'addEditInventory';
+            $sub_page_delete_url = 'deleteInventory';
+            $result=[];			
+            $i=$_POST['start'];
+			foreach($res as $v){
+                $i++;      		    
+                $id = $v['itemid'];
+                $info = '<b>'.$v['itemname'].'</b><br/><p><small>'.$v['itemdesc'].'</p></small>';
+				$action = '<div class="action-btns row">';
+                $action .= '<a class="btn btn-primary btn-sm col-md-6 col-sm-12" href="'.$this->data['class_name'].$sub_page_url."/".$v['itemid'].'" title="Edit"><i class="las la-edit"></i></a>';
+                $url = $this->data['class_name'].$sub_page_delete_url."/".$v['itemid'];
+                $msg = "Are you sure you want to delete this Inventory Item?";
+                $action .='<a href="javascript:void(0)" msg="'.$msg.'" url="'.$url.'" title="delete" class="btn btn-primary  btn-sm col-md-6  col-sm-12 my-del-btn"><i class="las la-trash"></i></a>';
+                $action .='</div>';
+				$img = '<img src="'.getInventoryItemImage($v['itemimg']).'" class="img-thumbnail">';
+				$result[] = array($i,$id,$info,$v['itemtype'],$v['itemrarity'],$img,dateFormate($v['created']),$action);
+			}
+			$output = array(
+                "draw" => $_POST['draw'],
+                "recordsTotal" => $this->Inventory_Model->countAll($this->session->userdata('players_id'),$_POST),
+                "recordsFiltered" => $this->Inventory_Model->countFiltered($this->session->userdata('players_id'),$_POST),
+                "data" => $result
+            );
+            echo json_encode($output);exit;
+		}else{
+			$this->data['page']['title'] = "Inventory Items List";					
+			$this->data['sub_page_url'] = $this->data['class_name'].'addEditInventory';
+			$this->data['sub_page_title'] = 'Create Inventory Item';
+            $this->data['dataTableElement'] = 'inventoryItemsList';
+			$this->data['profile'] = new Player($this->session->userdata('players_id'));
+			$this->data['profile'] = $this->data['profile']->player;
+            $this->data['dataTableURL'] = $this->data['class_name'].'inventory';
+			$this->data['errors'] = $this->session->flashdata('errors');
+			$this->load->view('layout/header', $this->data);
+			$this->load->view('game/inventory', $this->data);
+			$this->load->view('layout/footer');
+		}
+	}			
+	public function addEditInventory($id=false)
+    {
+		$this->class_name="/game/";
+		$this->data['class_name']="/game/";
+		$this->load->model('Inventory_Model');	
+        if($id){
+            $postData = $this->Inventory_Model->getInventoryDataById($id);
+            if(empty($postData))
+            {
+                $this->session->set_flashdata('message_error','Inventory Item Not Found.');
+                redirect($this->class_name.'inventory');
+            }            
+			if($this->session->userdata('players_id') != $postData['join_players_id'])
+			{
+				$this->session->set_flashdata('message_error',"You Can't Edit this Inventory Item.");
+                redirect($this->class_name.'inventory');
+			}
+            $this->data['page']['title'] = $postData['itemname'] . " #" . $postData['itemid'];                        
+        }else
+        {            
+			$this->data['page']['title'] = 'Create Inventory Item';
+            $postData=[];
+        }
+        $this->load->helper('form');
+        $this->data['main_page_url'] =  $this->data['BASE_URL'].$this->class_name;        
+		
+        if($this->input->post()){
+			
+            $this->load->library('form_validation');
+            $set_rules = $this->Inventory_Model->config_add;
+            if(!empty($postData['itemid']))
+            {
+                $set_rules = $this->Inventory_Model->config_edit;
+            }
+			
+            $this->form_validation->set_rules($set_rules);
+            if($this->form_validation->run()===TRUE)
+			{
+                $_POST['itemid']=$id;
+                unset($_POST['submit']);
+                $response = $this->Inventory_Model->saveInventory($_POST);
+                if($response)
+                {
+                    $this->session->set_flashdata('message_success',$this->data['page']['title'].' Updated Successfully.');
+                }else
+                {
+                    $this->session->set_flashdata('message_error',$this->data['page']['title'].' Updated Unsuccessfully.');
+                }
+                redirect($this->class_name.'inventory');
+            }else{                    
+                $this->session->set_flashdata('message_error','Missing information.');
+				$this->session->set_flashdata('errors',$this->form_validation->error_array());				
+            }            
+        }
+        $this->data['errors'] = $this->session->flashdata('errors');		
+        $this->data['postData'] = $postData;
+        $this->load->view('layout/header', $this->data);
+		$this->load->view('game/addEditInventory', $this->data);
 		$this->load->view('layout/footer');
+    }
+	public function deleteInventory($id)
+	{
+		$this->class_name = "/game/";
+		$this->load->model('Inventory_Model');
+		$postData = $this->Inventory_Model->getInventoryDataById($id);
+		if(empty($postData))
+		{
+			$this->session->set_flashdata('message_error','Inventory Item Not Found.');
+			redirect($this->class_name.'inventory');
+		}            
+		if($this->session->userdata('players_id') != $postData['join_players_id'])
+		{
+			$this->session->set_flashdata('message_error',"You Can't Edit this Inventory Item.");
+			redirect($this->class_name.'inventory');
+		}else
+		{
+			$page_title='Inventory Item Deleted';
+			$this->load->model(['Player']);
+			if($this->Inventory_Model->deleteInventory($id)==1)
+			{
+			    $this->session->set_flashdata('message_success',$page_title.' Successfully.');
+			}
+			else
+			{
+			    $this->session->set_flashdata('message_error',$page_title.' Unsuccessfully.');
+			}			
+			redirect($this->class_name.'inventory');
+		}
 	}
-
 }

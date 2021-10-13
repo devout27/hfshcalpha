@@ -105,4 +105,8 @@ if(!function_exists('pre')){
    {
 	   return $path ? $path : site_url(AMENITY_DEFAULT_IMAGE);
    }
+   function getInventoryItemImage($path)
+   {
+	   return $path ? $path : site_url(INVENTRORY_DEFAULT_IMAGE);
+   }
 }

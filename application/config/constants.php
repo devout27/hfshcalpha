@@ -100,3 +100,27 @@ defined('SITE_FAV_LOGO')      		OR define('SITE_FAV_LOGO', '/img/favicon.ico');
 defined('SITE_LOGO')      		OR define('SITE_LOGO', '/img/logo.png');
 defined('USER_DEFAULT_IMAGE') or define('USER_DEFAULT_IMAGE','/assets/admin/images/user-male.png');
 defined('AMENITY_DEFAULT_IMAGE') or define('AMENITY_DEFAULT_IMAGE','/assets/images/amenity-placeholder.jpg');
+defined('INVENTRORY_DEFAULT_IMAGE') or define('INVENTRORY_DEFAULT_IMAGE','/assets/images/amenity-placeholder.jpg');
+defined('INVENTRORY_ITEM_TYPES') or define('INVENTRORY_ITEM_TYPES',[
+    'Raw Materials'=>'Raw Materials',
+    'Components'=>'Components',
+    'Work In Progress (WIP)'=>'Work In Progress (WIP)',
+    'Finished Goods'=>'Finished Goods',
+    'Maintenance, Repair and Operations (MRO) Goods'=>'Maintenance, Repair and Operations (MRO) Goods',
+    'Packing and Packaging Materials'=>'Packing and Packaging Materials',
+    'Safety Stock and Anticipation Stock'=>'Safety Stock and Anticipation Stock',
+    'Decoupling Inventory'=>'Decoupling Inventory',
+    'Cycle Inventory'=>'Cycle Inventory',
+    'Service Inventory'=>'Service Inventory',
+    'Transit Inventory'=>'Transit Inventory',
+    'Theoretical Inventory'=>'Theoretical Inventory',
+    'Excess Inventory'=>'Excess Inventory',
+]);
+defined('INVENTRORY_ITEM_RARITY') or define('INVENTRORY_ITEM_RARITY',[
+    'Common'=>'Common',
+    'Uncommon'=>'Uncommon',
+    'Rare'=>'Rare',
+    'Epic'=>'Epic',
+    'Legendary'=>'Legendary',
+    'Unique'=>'Unique',    
+]);

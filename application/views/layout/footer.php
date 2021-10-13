@@ -22,7 +22,7 @@
   </div>
 </div>
 
-
+<?php $this->load->view('elements/admin/modals'); ?>
 
 </div>
     <!-- Footer -->
@@ -46,9 +46,29 @@
   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
   crossorigin="anonymous"></script>
-
+  <script src="/assets/admin/js/flash.js"></script>
   <? $this->load->view("partials/js/datatables")?>
-
+  <? $this->load->view("partials/js/custom")?>
+  <script>
+    $(document).ready(function(){
+      /* alerts */
+        <?php if($this->session->flashdata('message_error')){?>								
+          error("<?=$this->session->flashdata('message_error')?>");
+        <?php }elseif($this->session->flashdata('message_success')){ ?>
+          success("<?=$this->session->flashdata('message_success')?>");
+        <?php } ?>								
+		  /* alerts end */
+      $(document).on("click",'.my-del-btn',function(e){
+            e.preventDefault()
+            var url = $(this).attr('url')
+            var msg = $(this).attr('msg')
+            $("#msg-confirmation").modal('show');
+            $("#msg-confirmation .modal-body").html('<p style="color:white !important;">'+msg+'</p>');
+            $("#msg-confirmation .modal-footer").html("<input type='hidden' value='"+url+"' id='confirmationURlID'><button type='button' class='btn btn-primary' onclick='confirmationYes()'>Yes</button><button type='button' class='btn btn-secondary' data-dismiss='modal'>No</button>");
+      })
+    })
+        
+  </script>
 
 
   <script src="/js/main.js?<?= rand(999,84589385743) ?>"></script>

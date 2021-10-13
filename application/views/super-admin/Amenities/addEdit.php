@@ -7,7 +7,7 @@
         </div>
         <div class="card-box-area">
             <div class="card-box-area-inner">
-                <div class="card my-4">
+                <div class="card">
                     <div class="card-body ">
                         <div class="row justify-content-center">
                             <div class="col-8">

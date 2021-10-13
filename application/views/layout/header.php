@@ -20,8 +20,9 @@
     <link href="/css/jquery-ui.css" rel="stylesheet">
 	<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 	<!--<link rel="stylesheet" href="//cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">-->
+  <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link href="/css/main.css?date=<?= date('YmdHis'); ?>" rel="stylesheet">
-
+    
   </head>
 
   <body>
@@ -43,7 +44,7 @@
                 Your Account
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownAccount">
-                <a class="dropdown-item" href="/game/profile">Profile</a>
+                <a class="dropdown-item" href="/game/profile">Profile</a>                
                 <a class="dropdown-item <?= $this->data['player']['unread'] ? ' new_msg' : '' ?>" href="/game/messages" >Messages (<?= $this->data['player']['unread'] ?: '0' ?>)</a>
                 <a class="dropdown-item" href="/city/credits">Credits</a>
                 <?php if($player['players_admin']): ?>
@@ -57,6 +58,7 @@
                 All Things SIM
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
+                <a class="dropdown-item" href="/game/inventory">Inventory</a>
                 <a class="dropdown-item" href="/city/humane">Humane Society</a>
                 <a class="dropdown-item" href="/city/events">Event House</a>
                 <a class="dropdown-item" href="/city/vet">Veterinary Office</a>

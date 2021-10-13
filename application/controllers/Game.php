@@ -455,6 +455,7 @@ class Game extends MY_Controller {
                 }
                 redirect($this->class_name.'inventory');
             }else{                    
+				$postData = $_POST;
                 $this->session->set_flashdata('message_error','Missing information.');
 				$this->session->set_flashdata('errors',$this->form_validation->error_array());				
             }            

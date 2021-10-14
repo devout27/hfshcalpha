@@ -94,7 +94,7 @@ Class Inventory_Model extends MY_Model {
 		}
     }
 	public function saveInventory($data) {         
-		$id=isset($data['itemid']) ? $data['itemid']:'';        
+		$id=!empty($data['itemid']) ? $data['itemid']:'';        
 		if(!empty($id)){			
 			$this->db->where('itemid', $id);
 			$query = $this->db->update($this->table, $data);

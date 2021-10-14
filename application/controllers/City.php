@@ -484,7 +484,7 @@ class City extends MY_Controller {
 			$response = $this->events->edit_event($this->data['player'], $this->data['event'], $_POST);
 			if(count($response['errors']) > 0){
 				$this->session->set_flashdata('notice', "There was a problem editing the Event.");
-				$this->session->set_flashdata('post', $_POST);
+				$this->session->set_flashdata('post', $_POST);				
 				$this->session->set_flashdata('errors', $response['errors']);
 				redirect('city/events/edit/' . $id);
 			}else{
@@ -547,13 +547,35 @@ class City extends MY_Controller {
 	}
 
 	public function events(){
+		$this->load->model('Events');
+		$this->data['profile'] = new Player($this->session->userdata('players_id'));
+		$this->data['profile'] = $this->data['profile']->player;
+		$res = $this->Events->getCalendarEvents($this->data['profile']['players_events_weekly_limit']);		
+		$result=[];
+		foreach($res[0] as $v){						
+			if($v['events_pending']==0)
+			{
+				array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date1'],'endDate'=>$v['events_date1']]);
+			}
+		}	
+		foreach($res[1] as $v){						
+			if($v['events_pending']==0)
+			{
+				array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date2'],'endDate'=>$v['events_date2']]);				
+			}			
+		}	
+		foreach($res[2] as $v){						
+			if($v['events_pending']==0)
+			{
+				array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date3'],'endDate'=>$v['events_date3']]);				
+			}			
+		}			
+		$this->data['CalendarEventsList']=json_encode($result);		
 		$this->data['page']['title'] = "Event House";
 		$this->load->model('privileges');
 		$this->load->model('events');
 		$this->load->model('articles');
 		$this->data['article'] = $this->articles->get_article(8);
-
-
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('city/event-house', $this->data);
 		$this->load->view('layout/footer');

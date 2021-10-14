@@ -11,7 +11,7 @@
 				<?= Bank::list_accounts_dropdown($this->session->userdata('players_id'), 'join_bank_id', 'Bank Account', $post, $errors, 'Checking'); ?>
 				<div class="row">
 					<div class="col-sm-2">
-						<?= hf_dropdown('events_type', 'Type', $post, array('Show', 'Race'), array(), $errors, 0, 0) ?>
+						<?= hf_dropdown('events_type', 'Type', $post, array('Show', 'Race',"Olympic","WEGs"), array(), $errors, 0, 0) ?>
 					</div>
 					<div class="col-sm-6 col-md-4">
 						<?= hf_dropdown('events_host', 'Hosting As...', $cab_id ?: $post, $host_list, array(), $errors, 0, 0) ?>

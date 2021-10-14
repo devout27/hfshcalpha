@@ -27,7 +27,7 @@
 				</div>
 				<?= hf_input('events_name', 'Name', $event, array(), $errors) ?>
 				<p>Please choose several different dates for your upcoming show. We will do our best to accomodate your request.</p>
-				<? if($event['events_type'] == "Show"): ?>
+				<? if($event['events_type'] == "Show" || $event['events_type'] == "Olympic" || $event['events_type'] == "WEGs"): ?>
 					<div class="row">
 						<div class="col-sm-4">
 							<?= hf_input('events_date1', 'Date One', $event, array('class' => 'datepicker_shows', 'autocomplete' => 'off'), $errors) ?>

@@ -22,3 +22,6 @@ ALTER TABLE `stables_packages` ADD `stables_packages_created` TIMESTAMP NULL DEF
 ALTER TABLE `inventory` CHANGE `itemtype` `itemtype` VARCHAR(255) NULL;
 ALTER TABLE `inventory` CHANGE `itemrarity` `itemrarity` VARCHAR(255) NULL;
 ALTER TABLE `inventory` ADD `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `itemdesc`;
+
+--14-OCT-2021--
+ALTER TABLE `events` CHANGE `events_type` `events_type` ENUM('Show','Race','Olympic','WEGs') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;

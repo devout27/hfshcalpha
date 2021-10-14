@@ -21,8 +21,8 @@
 	<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 	<!--<link rel="stylesheet" href="//cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">-->
   <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link href="/css/main.css?date=<?= date('YmdHis'); ?>" rel="stylesheet">
-    
+  <link href="/css/main.css?date=<?= date('YmdHis'); ?>" rel="stylesheet">
+  <link href="/assets/calendar/simple-calendar.css" rel="stylesheet">
   </head>
 
   <body>

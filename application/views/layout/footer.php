@@ -47,8 +47,10 @@
   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
   crossorigin="anonymous"></script>
   <script src="/assets/admin/js/flash.js"></script>
+  <script src="/assets/calendar/jquery.simple-calendar.js"></script>
   <? $this->load->view("partials/js/datatables")?>
   <? $this->load->view("partials/js/custom")?>
+  <? $this->load->view("partials/js/main")?>
   <script>
     $(document).ready(function(){
       /* alerts */

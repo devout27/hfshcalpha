@@ -166,9 +166,12 @@
             <div class="card-body">
         		<? foreach((array)$class['division_results'] AS $horse): ?>
         		<div class="row">
-        			<div class="col-sm-4"><b>#<?= $horse['events_divisions_place'] ?>. <a href="/horses/view/<?= $horse['join_horses_id'] ?>"><?= $horse['horses_competition_title'] ?> <?= $horse['horses_breeding_title'] ?> <?= $horse['horses_name'] ?></b></a></div>
+        			<div class="col-sm-4"><b>#<?= $horse['events_divisions_place'] ?>. <a href="/horses/view/<?= $horse['join_horses_id'] ?>"><?= $horse['horses_competition_title'] ?> <?= $horse['horses_breeding_title'] ?> <?= $horse['horses_name'] ?></b></a>
+					<?= $event['events_type']=="Olympic" || $event['events_type'] == "WEGs" ? '<i class="las la-medal" data-toggle="tooltip" data-placement="top" title="Qualifier"></i>' : '<i class="las la-medal" data-toggle="tooltip" data-placement="top" title="Qualifier"></i>'?>
+					</div>
         			<div class="col-sm-4"><?= $horse['horses_breed'] ?></div>
-        			<div class="col-sm-4"><a href="/game/profile/<?= $horse['join_players_id'] ?>"><?= $horse['players_nickname'] ?></a></div>
+        			<div class="col-sm-4"><a href="/game/profile/<?= $horse['join_players_id'] ?>"><?= $horse['players_nickname'] ?></a>					
+					</div>
         		</div>
         		<? endforeach; ?>
 			</div>

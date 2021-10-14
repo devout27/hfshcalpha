@@ -312,6 +312,7 @@ $(".enterhorse").on( "click", function() {
 			button.removeClass('btn-success');
 			button.addClass('btn-info');
 		}else{
+			button.attr('disabled', true);
 			button.removeClass('btn-success');
 			button.addClass('btn-warning');
 			button.html('Failed');

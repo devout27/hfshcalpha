@@ -244,11 +244,8 @@ class Members extends Admin_Controller
         if($this->input->post('update_credits')){                
             $response = $this->Player->admin_update_credits($_POST);
             if(count($response['errors']) > 0){
-                $this->session->set_flashdata('message_error', "There was a problem updating the member's credits.");                
-                foreach($_POST as $k=>$v)
-                {
-                    $postData[$k]=$_POST[$k];
-                }
+                $this->session->set_flashdata('message_error', "There was a problem updating the member's credits.");                                
+                $postData=$_POST;
                 $this->session->set_flashdata('errors', $response['errors']);
             }else{
                 $this->session->set_flashdata('message_success', "Member Credits updated.");
@@ -259,10 +256,7 @@ class Members extends Admin_Controller
             $response = $this->Player->admin_update_profile($_POST);
             if(count($response['errors']) > 0){
                 $this->session->set_flashdata('message_error', "There was a problem updating the member's profile.");                
-                foreach($_POST as $k=>$v)
-                {
-                    $postData[$k]=$_POST[$k];
-                }        
+                $postData=$_POST;
                 $this->session->set_flashdata('errors', $response['errors']);
             }else{
                 $this->session->set_flashdata('message_success', "Member Profile updated.");

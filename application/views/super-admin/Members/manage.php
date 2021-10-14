@@ -45,6 +45,7 @@
                                 <?= hf_input('players_dob', 'Date of Birth (MM/DD/YYYY)', $_POST ?: $postData, array('placeholder' => 'MM/DD/YYYY', 'disabled' => 'disabled'), $errors) ?>
                                 <?= hf_input('players_banner', 'Banner', $_POST ?: $postData, array('placeholder' => 'http://link.to.image/'), $errors) ?>
                                 <?= hf_textarea('players_about', 'About', $_POST ?: $postData, array('class' => 'col-sm-12', 'placeholder' => 'All about this Member and Member horses!', 'rows' => '10'), $errors) ?>
+                                <?= hf_input('players_events_weekly_limit', 'Advance Events See Week Limit', $_POST ?: $postData, array('placeholder' => 'Number of Weeks'), $errors,'number') ?>
                             </p>
                             </div>
                             <div class="card-footer text-muted">

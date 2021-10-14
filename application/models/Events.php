@@ -2,7 +2,7 @@
 
 class Events extends CI_Model {
 	var $event = null;
-
+	protected $table = 'events';
 	function __construct($events_id = NULL){
 		$this->data['player_id'] = $this->session->userdata('players_id');
 		if($events_id){
@@ -445,7 +445,7 @@ class Events extends CI_Model {
 		$count = 0;
 
 		$entries = $CI->db->query("SELECT ee.*, exc.events_x_classes_strenuous, e.events_type FROM events_entrants ee LEFT JOIN events_x_classes exc ON exc.events_x_classes_id=ee.join_events_x_classes_id LEFT JOIN events e ON e.events_id=exc.join_events_id WHERE ee.join_horses_id=? AND exc.join_events_id=?", array($event_id, $horse_id))->result_array();
-		foreach((array)$entries AS $e){
+		/* foreach((array)$entries AS $e){
 			if($e['events_type'] == "Show" AND $e['events_x_classes_strenuous']){
 				$count += 2;
 			}elseif($e['events_type'] == "Show" AND $e['events_x_classes_strenuous']){
@@ -453,8 +453,20 @@ class Events extends CI_Model {
 			}elseif($e['events_type'] == "Race"){
 				$count = 8;
 			}
-		}
+		} 
 		return $count;
+		*/
+		foreach((array)$entries AS $e){
+			if($e['events_type'] == "Show" || $e['events_type'] == "Olympic" || $e['events_type'] == "WEGs")
+			{
+				if($e['events_x_classes_strenuous']){
+					$count += 3;
+				}
+			}elseif($e['events_type'] == "Race"){
+				$count = 8;
+			}
+		}
+		return $count;		
 	}
 
 	public static function edit_class($player, $data){
@@ -560,7 +572,7 @@ class Events extends CI_Model {
 		$date3 = explode('-', $data['events_date3']);
 
 
-		if($event['events_type'] == "Show"){
+		if($event['events_type'] == "Show" || $event['events_type'] == "Olympic" || $event['events_type'] == "WEGs"){
 			$acceptable_dates = array(6, 10, 13, 16, 20, 23, 26, 30);
 			if(!checkdate($date1[1], $date1[2], $date1[0])){
 				$errors['events_date1'] = "Invalid date. ";
@@ -578,7 +590,7 @@ class Events extends CI_Model {
 				$errors['events_date3'] = "Invalid day of the month.";
 			}
 		}else{
-			$acceptable_days = array('Friday', 'Saturday');
+			$acceptable_days = array('Friday', 'Saturday');			
 			if(!checkdate($date1[1], $date1[2], $date1[0])){
 				$errors['events_dater1'] = "Invalid date.";
 			}elseif(!in_array(date('l', strtotime($event['events_date1'])), $acceptable_days)){
@@ -649,8 +661,17 @@ class Events extends CI_Model {
 		$date2 = explode('-', $data['events_date2']);
 		$date3 = explode('-', $data['events_date3']);
 
-		if($data['events_type'] == "0"){
-			$data['events_type'] = "Show";
+		if($data['events_type'] == "0" || $data['events_type'] == "2" || $data['events_type'] == "3"){
+			if($data['events_type'] == "2")
+			{
+				$data['events_type'] = "Olympic";
+			}elseif($data['events_type'] == "3")
+			{
+				$data['events_type'] = "WEGs";
+			}else
+			{
+				$data['events_type'] = "Show";
+			}
 			$acceptable_dates = array(6, 10, 13, 16, 20, 23, 26, 30);
 			if(!checkdate($date1[1], $date1[2], $date1[0])){
 				$errors['events_date1'] = "Invalid date. ";
@@ -741,7 +762,7 @@ class Events extends CI_Model {
 		//pre($CI->db->last_query());exit;
 
 		//return the good news
-		return array('errors' => $errors, 'notice' => 'Show is now pending. Please update the classlist.', 'event_id' => $event_id);
+		return array('errors' => $errors, 'notice' => $data['events_type'].' is now pending. Please update the classlist.', 'event_id' => $event_id);
 	}
 
 
@@ -939,4 +960,14 @@ class Events extends CI_Model {
         return $cabs;
 	}
 
+	public function getCalendarEvents($weeks)
+	{				
+		$futureWeeks = strtotime("+ ".$weeks." weeks");				
+		$endDate = date("Y-m-d", $futureWeeks);
+		$startDate = Date("Y-m-d");
+		$res1 = $this->db->select('events.*,players.players_nickname',)->join('players','players_id=join_players_id')->where('events_date1 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();
+		$res2 = $this->db->select('events.*,players.players_nickname',)->join('players','players_id=join_players_id')->where('events_date2 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();
+		$res3 = $this->db->select('events.*,players.players_nickname',)->join('players','players_id=join_players_id')->where('events_date3 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();		
+		return [$res1,$res2,$res3];
+	}
 }

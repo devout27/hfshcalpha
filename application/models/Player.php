@@ -368,7 +368,6 @@ class Player extends CI_Model {
 	function admin_update_profile($data){		
 		if($this->input->post('update_profile')){
 			//update the player's profile
-
 			$this->form_validation->set_rules(array(
 				array(
 					'field' => 'players_nickname',
@@ -389,6 +388,11 @@ class Player extends CI_Model {
 					'field' => 'players_house',
 					'label' => 'House',
 					'rules' => 'xss_clean|callback_house_validate'
+				),
+				array(
+					'field' => 'players_events_weekly_limit',
+					'label' => 'Advance Events See Week Limit',
+					'rules' => 'xss_clean|greater_than_equal_to[0]'
 					)
 			));
 
@@ -401,6 +405,7 @@ class Player extends CI_Model {
 					'players_banner',
 					'players_about',
 					'players_house',
+					'players_events_weekly_limit'
 				);
 				$update_data = filter_keys($data, $allowed_fields);
 				$this->db->where('players_id', $data['players_id']);

@@ -434,24 +434,26 @@ class Game extends MY_Controller {
         if($this->input->post()){
 			
             $this->load->library('form_validation');
+			$this->data['page']['title']="Inventory Item Created";
             $set_rules = $this->Inventory_Model->config_add;
             if(!empty($postData['itemid']))
             {
+				$this->data['page']['title']="Inventory Item Updated";
                 $set_rules = $this->Inventory_Model->config_edit;
             }
 			
             $this->form_validation->set_rules($set_rules);
             if($this->form_validation->run()===TRUE)
-			{
-                $_POST['itemid']=$id;
+			{                
                 unset($_POST['submit']);
+				$_POST['join_players_id']=$this->session->userdata('players_id');
                 $response = $this->Inventory_Model->saveInventory($_POST);
                 if($response)
                 {
-                    $this->session->set_flashdata('message_success',$this->data['page']['title'].' Updated Successfully.');
+                    $this->session->set_flashdata('message_success',$this->data['page']['title'].'Successfully.');
                 }else
                 {
-                    $this->session->set_flashdata('message_error',$this->data['page']['title'].' Updated Unsuccessfully.');
+                    $this->session->set_flashdata('message_error',$this->data['page']['title'].' Unsuccessfully.');
                 }
                 redirect($this->class_name.'inventory');
             }else{                    
@@ -494,5 +496,5 @@ class Game extends MY_Controller {
 			}			
 			redirect($this->class_name.'inventory');
 		}
-	}
+	}	
 }

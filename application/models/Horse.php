@@ -40,7 +40,7 @@ class Horse extends CI_Model {
 					SELECT p.players_nickname, hr.*, DATE_FORMAT(hr.horse_records_date, "%Y-%m-%d") AS horse_records_date
 					FROM horse_records hr
 					LEFT JOIN players p ON p.players_id=hr.join_players_id
-					WHERE hr.join_horses_id=? AND (hr.horse_records_type="Show" OR hr.horse_records_type="Race" OR hr.horse_records_type="Event")
+					WHERE hr.join_horses_id=? AND (hr.horse_records_type="Show"  OR hr.horse_records_type="WEGs" OR hr.horse_records_type="Olympic" OR hr.horse_records_type="Race" OR hr.horse_records_type="Event")
 					ORDER BY hr.horse_records_id DESC
 				', array($horse_id))->result_array();
 
@@ -2383,6 +2383,10 @@ class Horse extends CI_Model {
 		$entries = $CI->db->query("SELECT ee.*, e.events_type, DATEDIFF(e.events_date1, NOW()) AS forward_date, DATEDIFF(NOW(), e.events_date1) AS backward_date FROM events_entrants ee LEFT JOIN events_x_classes exc ON exc.events_x_classes_id=ee.join_events_x_classes_id LEFT JOIN events e ON e.events_id=exc.join_events_id WHERE ee.join_horses_id=? AND exc.join_events_id!=? AND e.events_date1>=NOW() - INTERVAL 14 DAY AND e.events_date1 <=NOW() + INTERVAL 14 DAY", array($data['events_id'], $data['horse']['horses_id']))->result_array();
 		foreach((array)$entries AS $e){
 			if($e['events_type'] == "Show" AND ($e['forward_date'] >= -2 || $e['forward_date'] <= 2)){
+				return true;
+			}elseif($e['events_type'] == "Olympic" AND ($e['forward_date'] >= -2 || $e['forward_date'] <= 2)){
+				return true;
+			}elseif($e['events_type'] == "WEGs" AND ($e['forward_date'] >= -2 || $e['forward_date'] <= 2)){
 				return true;
 			}elseif($e['events_type'] == "Event" AND ($e['forward_date'] >= -5 || $e['forward_date'] <= 5)){
 				return true;

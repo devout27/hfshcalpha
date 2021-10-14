@@ -173,13 +173,16 @@ class Autos extends CI_Model {
 			if(count($entrants) <= 3 AND $event['events_type'] == "Race"){
 				$max = 4 - count($entrants);
 				for($i = 0; $i <= $max; $i++){
-					$horse_id = 0 - ($i+1);
-					$this->db->query("INSERT INTO events_entrants(join_events_x_classes_id, join_horses_id) VALUES(?, ?)", array($event['events_x_classes_id'], $horse_id));
+					if(!empty($event['events_x_classes_id']))
+					{
+						$horse_id = 0 - ($i+1);
+						$this->db->query("INSERT INTO events_entrants(join_events_x_classes_id, join_horses_id) VALUES(?, ?)", array($event['events_x_classes_id'], $horse_id));	
+					}					
 				}
 			}
 
 			//splits
-			if($event['events_type'] == "Show"){
+			if($event['events_type'] == "Show" || $event['events_type'] == "Olympic" || $event['events_type'] == "WEGs"){
 				$split = 80;
 			}else{
 				$split = 18;

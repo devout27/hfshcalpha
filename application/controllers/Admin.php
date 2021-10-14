@@ -255,11 +255,9 @@ class Admin extends MY_Controller {
 			$this->session->set_flashdata('notice', "You don't have permission to access this.");
 			redirect('admin');
 		}
-
 		$this->data['page']['title'] = "Admin - Events";
 		$this->data['page']['hide_logo'] = 1;
 		$this->data['pending_events'] = $this->events->admin_get_pending();
-
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('admin/events-pending', $this->data);
 		$this->load->view('layout/footer');

@@ -5,6 +5,7 @@
     <tr>
       <th scope="col">ID</th>
       <th scope="col">Name</th>
+      <th scope="col">Owner</th>
       <th scope="col">Born</th>
       <th scope="col">Color</th>
       <th scope="col">Breed</th>
@@ -21,6 +22,7 @@
     <tr>
       <td><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= generateId($horse['horses_id']) ?></a></td>
       <td><a href="/horses/view/<?= $horse['horses_id'] ?>"><?= $horse['horses_competition_title'] ?> <?= $horse['horses_breeding_title'] ?> <?= $horse['horses_name'] ?></a></td>
+      <td><?= $horse['players_nickname'] ?></td>
       <td><?= $horse['horses_birthyear'] ?></td>
       <td><?= $horse['horses_color'] ?></td>
       <td><?= $horse['horses_breed'] ?></td>

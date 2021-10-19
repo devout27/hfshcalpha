@@ -58,8 +58,8 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
             </div>
           </div>
 
-
-		<? if($player['privileges']['privileges_horses']): ?>
+<!-- my comment -->
+<!-- 		<? if($player['privileges']['privileges_horses']): ?>
           <div class="card mb-4">
             <div class="card-body">
               <h2 class="card-title">Genetics</h2>
@@ -119,6 +119,7 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
 
         </div>
 
-</div>
+</div> -->
+<!-- my comment end -->
 
 <? //pre($genes);pre($horse['genes']); ?>

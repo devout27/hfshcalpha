@@ -446,11 +446,11 @@ class Horse extends CI_Model {
 			/*  */
 					$sire = self::getHorseById($data['horses_sire'],true);
 					$dam = self::getHorseById($data['horses_dam'],true);
-					if($data['horses_registration_type']=="creation" && empty($data['horses_sire']))
+					if($data['horses_registration_type']=="breed" && empty($data['horses_sire']))
 					{
 						$errors['horses_sire'] = "Sire is required.";
 					}
-					if($data['horses_registration_type']=="creation" && empty($data['horses_dam']))
+					if($data['horses_registration_type']=="breed" && empty($data['horses_dam']))
 					{
 						$errors['horses_dam'] = "Dam is required.";
 					}		
@@ -905,11 +905,11 @@ class Horse extends CI_Model {
 		/*  */		
 		$sire = self::getHorseById($horse['horses_sire'],true);
 		$dam = self::getHorseById($horse['horses_dam'],true);
-		if($horse['horses_registration_type']=="creation" && empty($horse['horses_sire']))
+		if($horse['horses_registration_type']=="breed" && empty($horse['horses_sire']))
 		{
 			$errors['horses_sire'] = "Sire is required.";
 		}
-		if($horse['horses_registration_type']=="creation" && empty($horse['horses_dam']))
+		if($horse['horses_registration_type']=="breed" && empty($horse['horses_dam']))
 		{
 			$errors['horses_dam'] = "Dam is required.";
 		}		
@@ -2458,11 +2458,11 @@ class Horse extends CI_Model {
 		/*  */
 		$sire = self::getHorseById($horse['horses_sire'],true);
 		$dam = self::getHorseById($horse['horses_dam'],true);		
-		if($horse['horses_registration_type']=="creation" && empty($horse['horses_sire']))
+		if($horse['horses_registration_type']=="breed" && empty($horse['horses_sire']))
 		{
 			$errors['horses_sire'] = "Sire is required.";
 		}
-		if($horse['horses_registration_type']=="creation" && empty($horse['horses_dam']))
+		if($horse['horses_registration_type']=="breed" && empty($horse['horses_dam']))
 		{
 			$errors['horses_dam'] = "Dam is required.";
 		}		
@@ -2542,7 +2542,8 @@ class Horse extends CI_Model {
 			'horses_pending_date',
 			'horses_registration_type',
 		);
-		$update_data = filter_keys($horse, $allowed_fields);
+		
+		$update_data = filter_keys($horse, $allowed_fields);		
 		$CI->db->insert('horses', $update_data);
 		$horse_id = $CI->db->insert_id();
 
@@ -2567,8 +2568,8 @@ class Horse extends CI_Model {
 	public static function getTodayAdoption($player_id)
 	{
 		$CI =& get_instance();
-		$res = $CI->db->query("SELECT count(horses_id) as total_records FROM horses WHERE join_players_id = ? AND DATE(`horses_pending_date`) = CURDATE()", array($player_id))->row_array();		
-		return $res['total_records'];		
+		$res = $CI->db->query("SELECT count(horses_id) as total_records FROM horses WHERE horses_registration_type = ? AND join_players_id = ? AND DATE(`horses_pending_date`) = CURDATE()", array('creation',$player_id))->row_array();
+		return $res['total_records'];
 	}
 
 	public function search_owners($data){
@@ -2812,6 +2813,14 @@ class Horse extends CI_Model {
 		if($data['max_age']){
 			$wheres [] = "horses_birthyear>=?";
 			$params [] = $year_end;
+		}
+
+		if($data['owner_name']){
+			$wheres [] = "p.players_username LIKE ?";
+			$params [] = '%'.$data['owner_name'].'%';
+
+			$wheres [] = "p.players_nickname LIKE ?";
+			$params [] = '%'.$data['owner_name'].'%';
 		}
 
 

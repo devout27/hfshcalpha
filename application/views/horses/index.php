@@ -33,6 +33,7 @@
 					<div class="col-sm-3">
 						<?= hf_input('horses_birthyear', 'Birth Year', $_POST, array('placeholder' => '1984'), $errors) ?>
 					</div>
+					
 				</div>
 				<div class="row">
 					<div class="col-sm-6">
@@ -59,6 +60,9 @@
 					</div>
 				</div> */?>
 				<div class="row">
+					<div class="col-sm-6">
+						<?= hf_input('owner_name', 'Owner Name', $_POST, array(), $errors) ?>
+					</div>
 					<div class="col-sm-6">
 						<?= hf_dropdown('horses_status', 'Status', $_POST, array('0' => 'Living', '1' => 'Deceased', '2' => 'Exported'), array(), $errors) ?>
 					</div>

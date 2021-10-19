@@ -552,25 +552,42 @@ class City extends MY_Controller {
 		$this->data['profile'] = $this->data['profile']->player;
 		$res = $this->Events->getCalendarEvents($this->data['profile']['players_events_weekly_limit']);		
 		$result=[];
-		foreach($res[0] as $v){						
+		$race_results=[];
+		foreach($res[0] as $v){			
 			if($v['events_pending']==0)
 			{
-				array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date1'],'endDate'=>$v['events_date1']]);
+				if($v['events_type']=="Race")
+				{					
+					array_push($race_results,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date1'],'endDate'=>$v['events_date1']]);
+				}else
+				{
+					array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date1'],'endDate'=>$v['events_date1']]);
+				}
 			}
 		}	
 		foreach($res[1] as $v){						
 			if($v['events_pending']==0)
 			{
-				array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date2'],'endDate'=>$v['events_date2']]);				
+				if($v['events_type']=="Race")
+				{					
+					array_push($race_results,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date2'],'endDate'=>$v['events_date2']]);
+				}else
+				{
+					array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date2'],'endDate'=>$v['events_date2']]);
+				}				
 			}			
 		}	
-		foreach($res[2] as $v){						
-			if($v['events_pending']==0)
+		foreach($res[2] as $v){
+			if($v['events_type']=="Race")
+			{					
+				array_push($race_results,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date3'],'endDate'=>$v['events_date3']]);
+			}else
 			{
-				array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date3'],'endDate'=>$v['events_date3']]);				
-			}			
+				array_push($result,['entity'=>$v['events_id'],'summary'=>'Event Name : '.$v['events_name'].'<br>Event Type : '.$v['events_type'].'<br> Event Owner : '.$v['players_nickname'],'startDate'=>$v['events_date3'],'endDate'=>$v['events_date3']]);
+			}				
 		}			
 		$this->data['CalendarEventsList']=json_encode($result);		
+		$this->data['CalendarRaceEventsList']=json_encode($race_results);
 		$this->data['page']['title'] = "Event House";
 		$this->load->model('privileges');
 		$this->load->model('events');
@@ -580,8 +597,6 @@ class City extends MY_Controller {
 		$this->load->view('city/event-house', $this->data);
 		$this->load->view('layout/footer');
 	}
-
-
 	public function events_view($id){
 		$this->data['page']['title'] = "Event Details";
 		$this->load->model('privileges');

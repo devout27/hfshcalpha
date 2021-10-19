@@ -71,8 +71,8 @@
           $(".raceEventsCalendarContainer").addClass("d-none");
       })
       $(".all-calendar").click(function(){
-          $(".allEventsCalendarContainer").addClass("d-none");
           $(".raceEventsCalendarContainer").removeClass("d-none");
+          $(".allEventsCalendarContainer").addClass("d-none");
       })
   });
 </script>

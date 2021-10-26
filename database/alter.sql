@@ -25,3 +25,5 @@ ALTER TABLE `inventory` ADD `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTA
 
 --14-OCT-2021--
 ALTER TABLE `events` CHANGE `events_type` `events_type` ENUM('Show','Race','Olympic','WEGs') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
+
+ALTER TABLE `players` ADD `players_events_weekly_limit` INT(1) NOT NULL DEFAULT '0' AFTER `players_super_admin`;

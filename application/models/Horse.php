@@ -466,7 +466,7 @@ class Horse extends CI_Model {
 						$errors['horses_dam'] = "This Dam Doesn't exist.";
 					}
 			/*  */			
-			if($data['horses_gender']=="Mare")
+			if($data['horses_gender']=="Mare" && !empty($horse['horses_dam']))
 			{				
 				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_id <> ? AND horses_dam = ? LIMIT 1", array($data['horses_birthyear'],$horse['horses_id'],$horse['horses_dam']))->row_array();				
 				if($year_exists){
@@ -874,7 +874,7 @@ class Horse extends CI_Model {
 			$errors['horses_name'] = "That horse name is already in use.";
 		}
 
-		if($horse['horses_gender']=="Mare")
+		if($horse['horses_gender']=="Mare"  && !empty($horse['horses_dam']))
 		{							
 			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_dam = ? AND horses_id <> ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam'],$horse['horses_id']))->row_array();
 			if($year_exists){
@@ -2477,7 +2477,7 @@ class Horse extends CI_Model {
 		{
 			$errors['horses_dam'] = "This Dam Doesn't exist.";
 		}
-		if($horse['horses_gender']=="Mare")
+		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']))
 		{										
 			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();			
 			if($year_exists){

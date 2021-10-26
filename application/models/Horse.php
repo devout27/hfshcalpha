@@ -2819,8 +2819,8 @@ class Horse extends CI_Model {
 			$wheres [] = "p.players_username LIKE ?";
 			$params [] = '%'.$data['owner_name'].'%';
 
-			$wheres [] = "p.players_nickname LIKE ?";
-			$params [] = '%'.$data['owner_name'].'%';
+			// $wheres [] = "p.players_nickname LIKE ?";
+			// $params [] = '%'.$data['owner_name'].'%';
 		}
 
 

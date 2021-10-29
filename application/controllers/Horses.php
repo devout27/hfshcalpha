@@ -305,6 +305,7 @@ class Horses extends MY_Controller {
 	}
 
 	public function update($id){
+		
 		$this->data['horse'] = new Horse($id);
 		$this->data['horse'] = $this->data['horse']->horse;
 		$this->data['page']['title'] = "Update Horse";
@@ -332,7 +333,7 @@ class Horses extends MY_Controller {
 
 		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
 
-		if($this->input->post('update')){
+		if($this->input->post('update')){			
 			$response = $this->horse->update($this->data['player'], $this->data['horse'], $_POST, $allowed);
 			if(count($response['errors']) > 0){
 				//pre($response);exit;

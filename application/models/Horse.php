@@ -411,7 +411,7 @@ class Horse extends CI_Model {
 			if($data['horses_breeding_fee'] < 0){
 				$data['horses_breeding_fee'] = 0;
 			}
-			if($data['horses_sale']==1 && empty($data['horses_sale_price']) || !$data['horses_sale_price'] > 0)
+			if($data['horses_sale']==1 && empty($data['horses_sale_price']))
 			{
 				$errors['horses_sale_price'] = "Please Enter a Sale Price.";
 			}

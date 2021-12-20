@@ -191,7 +191,6 @@ class Admin_Controller extends MY_Admin_Controller
 		return $exists['rows2'] == 0;
 	}
 
-	
 
     public function house_validate($value){
     	$houses = array('Milton', 'King', 'Eclipse');

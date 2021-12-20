@@ -16,9 +16,8 @@ if(!function_exists('hf_input')){
 		if(is_array($value)){
 			$value = $value[$name];
 		}
-
-		$element = form_input($params,$value,'',$type);
-
+		$element = form_input($params,$value,'',$type);		
+		
 		$html = hf_build_form_html($element, $name, $label, $value, $params, $errors);
 		return $html;
 	}

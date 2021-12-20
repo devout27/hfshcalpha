@@ -18,6 +18,7 @@
                         <thead>
                             <tr role="row">
                                 <th scope="col">Sr No.</th>
+                                <th >Bank ID</th>
                                 <th>Account</th>
                                 <th>Type</th>
                                 <th>Status</th>

@@ -83,7 +83,7 @@ class City extends MY_Controller {
 		$this->load->view('layout/footer');
 	}
 
-	public function bank(){
+	public function bank(){ 
 		$this->data['page']['title'] = "Grand Bank";
 		$this->data['accounts'] = Bank::get_accounts($this->session->userdata('players_id'));
 		$this->data['membership'] = array(
@@ -100,7 +100,7 @@ class City extends MY_Controller {
 	}
 
 
-	public function bank_account($id){
+	public function bank_account($id){  
 		//TODO: allow admins to view all bank accounts
 		$this->data['page']['title'] = "Statement";
 		$account = new Bank($id);
@@ -118,7 +118,7 @@ class City extends MY_Controller {
 			$this->session->set_flashdata('notice', "Account is closed.");
 			redirect('city/bank');
 		}
-
+     
 
 
 		if($this->input->post('update_bank_details')){
@@ -135,7 +135,7 @@ class City extends MY_Controller {
 
 		$this->data['page']['title'] = $this->data['account']['bank_type'] . " Statement: " . $this->data['account']['bank_nickname'] . " #" . $this->data['account']['bank_id'];
 
-
+      
 		$this->load->view('layout/header', $this->data);
 		if($this->data['account']['bank_type'] == "Checking"){
 			$this->load->view('city/bank-checking', $this->data);
@@ -150,9 +150,10 @@ class City extends MY_Controller {
 		$this->load->view('layout/footer');
 	}
 
-	public function open_account(){
+	public function open_account(){ 
 		if($this->input->post('open_savings')){
 			$response = $this->bank->open_savings($this->player->player);
+		
 			if(count($response['errors']) > 0){
 				$this->session->set_flashdata('notice', "There was a problem opening your savings account.");
 				$this->session->set_flashdata('post', $_POST);
@@ -165,8 +166,8 @@ class City extends MY_Controller {
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
 			}
-		}elseif($this->input->post('apply_loan')){
-			$response = $this->bank->apply_loan($this->player->player, $_POST);
+		}elseif($this->input->post('apply_loan')){ 
+			$response = $this->bank->apply_loan($this->player->player, $_POST); 
 			if(count($response['errors']) > 0){
 				$this->session->set_flashdata('notice', "There was a problem processing your loan application.");
 				$this->session->set_flashdata('post', $_POST);
@@ -176,7 +177,7 @@ class City extends MY_Controller {
 		redirect('city/bank');
 	}
 
-	public function transfer($id = null){
+	public function transfer($id = null){ 
 		$this->data['transfers'] = $this->bank->get_recurring($this->player->player);
 		$this->data['page']['title'] = "Transfer Money";
 		if($this->input->post('transfer_money')){
@@ -207,7 +208,7 @@ class City extends MY_Controller {
 		$this->load->view('layout/footer');
 	}
 
-	public function process_check($id){
+	public function process_check($id){ 
 		$response = $this->bank->process_check($this->player->player, $id, $_POST['action']);
 		if(count($response['errors']) > 0){
 			$this->session->set_flashdata('notice', "There was a problem processing the check.");
@@ -278,7 +279,7 @@ class City extends MY_Controller {
 		$this->load->view('layout/footer');
 	}
 
-	public function ideal_dreams(){
+	public function ideal_dreams(){ 
 		$this->data['page']['title'] = "Ideal Dreams";
 		$this->data['online'] = $this->player->get_online(1, $interval);
 

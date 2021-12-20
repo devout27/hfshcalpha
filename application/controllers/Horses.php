@@ -8,6 +8,7 @@ class Horses extends MY_Controller {
 		$this->kick_out();
 		$this->player_id = $this->session->userdata('players_id');
 		$this->player = new Player($this->player_id);
+		
 		$this->player->touch();
 		$this->data['player'] = $this->player->player;
 		$this->data['player']['unread'] = $this->player->get_unread();
@@ -72,7 +73,7 @@ class Horses extends MY_Controller {
 	}
 	public function register(){			
 		$this->data['player']['today_adoption'] = $this->horse->getTodayAdoption($this->player->player_id);
-		$this->data['page']['title'] = "Register a Horse";
+		$this->data['page']['title'] = "Breeding through the horses";
 		$this->data['breeds'] = $this->horse->get_breeds();
 		$this->data['base_colors'] = $this->horse->get_base_colors();
 		$this->data['base_patterns'] = $this->horse->get_base_patterns();
@@ -87,7 +88,7 @@ class Horses extends MY_Controller {
 			);
 
 
-		if($this->input->post('create')){						
+		if($this->input->post('create')){					
 			$response = $this->horse->register($this->player, $_POST, $allowed);
 			if(count($response['errors']) > 0){
 				$this->session->set_flashdata('notice', "There was a problem creating your horse.");
@@ -304,8 +305,7 @@ class Horses extends MY_Controller {
 		$this->load->view('layout/footer');
 	}
 
-	public function update($id){
-		
+	public function update($id){		
 		$this->data['horse'] = new Horse($id);
 		$this->data['horse'] = $this->data['horse']->horse;
 		$this->data['page']['title'] = "Update Horse";
@@ -333,7 +333,7 @@ class Horses extends MY_Controller {
 
 		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
 
-		if($this->input->post('update')){			
+		if($this->input->post('update')){
 			$response = $this->horse->update($this->data['player'], $this->data['horse'], $_POST, $allowed);
 			if(count($response['errors']) > 0){
 				//pre($response);exit;

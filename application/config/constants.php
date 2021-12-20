@@ -96,10 +96,12 @@ defined('CEMETERY_ID')      	OR define('CEMETERY_ID', '2');
 defined('ADMIN_BANK_ID')      	OR define('ADMIN_BANK_ID', '1');
 defined('ADMIN_EMAIL')      	OR define('ADMIN_EMAIL', 'email@domain.com');
 defined('ADMIN_NAME')      		OR define('ADMIN_NAME', 'Support @ Hurricane Farm');
+
 defined('SITE_FAV_LOGO')      		OR define('SITE_FAV_LOGO', '/img/favicon.ico');
 defined('SITE_LOGO')      		OR define('SITE_LOGO', '/img/logo.png');
 defined('USER_DEFAULT_IMAGE') or define('USER_DEFAULT_IMAGE','/assets/admin/images/user-male.png');
 defined('AMENITY_DEFAULT_IMAGE') or define('AMENITY_DEFAULT_IMAGE','/assets/images/amenity-placeholder.jpg');
+
 defined('INVENTRORY_DEFAULT_IMAGE') or define('INVENTRORY_DEFAULT_IMAGE','/assets/images/amenity-placeholder.jpg');
 defined('INVENTRORY_ITEM_TYPES') or define('INVENTRORY_ITEM_TYPES',[
     'Raw Materials'=>'Raw Materials',

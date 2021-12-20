@@ -1423,8 +1423,9 @@ class Admin extends MY_Controller {
 		$this->data['page']['title'] = "Admin - Bank Applications";
 		$this->data['page']['hide_logo'] = 1;
 		$this->data['bank_applications'] = $this->bank->admin_get_pending();
+		//  echo "<pre>"; print_r($this->data['bank_applications']);
 		$this->data['bank_accounts'] = $this->bank->admin_get_pending_bank();
-
+		//  echo "<pre>"; print_r($this->data['bank_accounts']); die('diii');
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('admin/bank-applications', $this->data);
 		$this->load->view('layout/footer');
@@ -1459,7 +1460,7 @@ class Admin extends MY_Controller {
 		redirect('admin/bank/applications');
 	}
 
-	public function bank_applications_loan_process(){
+	public function bank_applications_loan_process(){ 
 		if(!$this->data['player']['privileges']['privileges_bank']){
 			$this->session->set_flashdata('notice', "You don't have permission to access this.");
 			redirect('admin');

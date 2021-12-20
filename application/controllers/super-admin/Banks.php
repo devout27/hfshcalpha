@@ -27,12 +27,13 @@ class Banks extends Admin_Controller
                     $v['bank_status'] = "Open";
                 }
                 $v['bank_available_balance'] = $v['bank_balance'];
-                $name='<a href="'.$this->data['BASE_URL'].$this->data['class_name'].$sub_page_view_url.'/'.$v['bank_id'].'">'.$v['bank_nickname'].' #'.$v['bank_id'].'</a>';
+                $name=$v['bank_nickname'];
+                $ID='<a href="'.$this->data['BASE_URL'].$this->data['class_name'].$sub_page_view_url.'/'.$v['bank_id'].'">'.$v['bank_id'].'</a>';
                 $bal = '$'.number_format($v['bank_credit_limit'] - $v['bank_balance']);
                 if($v['bank_type'] != "Loan"):
                     $bal = '$'.number_format($v['bank_available_balance']);                 
                 endif;
-				$result[] = array($i,$name,$v['bank_type'],$v['bank_status'],'$'.number_format($v['bank_balance']),$bal);
+				$result[] = array($i,$ID,$name,$v['bank_type'],$v['bank_status'],'$'.number_format($v['bank_balance']),$bal);
 			}
 			$output = array(
                 "draw" => $_POST['draw'],

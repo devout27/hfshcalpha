@@ -10,7 +10,7 @@ $errors = $this->session->flashdata('errors');
           	<h4 class="card-header">Links</h4>
             <div class="card-body">
             	<a href="/horses">Search Horses</a><br/>
-            	<a href="/horses/register">Register a Horse</a><br/>
+            	<a href="/horses/register">Breeding through the horses</a><br/>
             	<!--<a href="/horses/export">Export a Horse</a><br/>-->
             	<a href="/city/vet">Veterinarian</a><br/>
             	<a href="/city/farrier">Farrier</a><br/>
@@ -19,8 +19,8 @@ $errors = $this->session->flashdata('errors');
     </div>
     <div class="col-md-8">
         <div class="card mb-4">
-          	<h4 class="card-header">Register a Horse</h4>
-            <div class="card-body">
+          	<h4 class="card-header">Breeding through the horses</h4>
+            <div class="card-body"> <?php //if(isset($post)){ if(!empty($post)){ echo "<pre>"; print_r($post);  die; } } ?>
 				<form method="post" action="/horses/register">
 				<div class="center">					
 					You have <b><?= $player['players_credits_creation'] ?: '0' ?></b> creation  credit(s).<br/>
@@ -42,12 +42,12 @@ $errors = $this->session->flashdata('errors');
 				</div>
 				<div class="row">
 					<div class="col-md-12"><p>Registration Type</p></div>
-					<div class="col-md-12">																																								
+					<div class="col-md-12">																																							
 						<label class="radio-inline">
-							<input type="radio" id="horses_registration_type" name="horses_registration_type" value="creation" checked> Creation
+							<input type="radio" id="horses_registration_type" name="horses_registration_type" value="creation" <?php if(isset($post) ){ if( $post['horses_registration_type']=='creation' ){ echo "checked"; } }else{ echo "checked"; } ?> > Creation
 						</label>
 						<label class="radio-inline">
-							<input type="radio" name="horses_registration_type"  id="horses_registration_type" value="breed"> Breed
+							<input type="radio" name="horses_registration_type"  id="horses_registration_type" value="breed" <?php if(isset($post) ){ if( $post['horses_registration_type']=='breed' ){ echo "checked"; } } ?> > Breed
 						</label>						
 						<div class="form-error pull-right"><?php $errors["horses_registration_type"] ?></div>
 					</div>

@@ -4,8 +4,8 @@ class Bank extends CI_Model {
 
     function __construct(){
         $this->data['player_id'] = $this->session->userdata('players_id');
-        $this->column_search=['bank_nickname','bank_balance','bank_id','join_players_id','bank_available_balance','bank_type','bank_status'];
-        $this->column_order=['bank_nickname','bank_id','bank_balance','join_players_id','bank_available_balance','bank_type','bank_status'];
+        $this->column_search=['bank_nickname','bank_balance','bank_id','join_players_id','bank_type'];
+        $this->column_order=['bank_nickname','bank_id','bank_balance','join_players_id','bank_type'];
         $this->order = ['bank_id' => 'desc'];
         $this->checks_column_search=['bank_checks_id','bank_checks_date','bank_checks_status'];
         $this->checks_column_order=['bank_checks_id','bank_checks_date','bank_checks_status'];
@@ -189,7 +189,8 @@ class Bank extends CI_Model {
         if(count($exists) > 0){
             $errors['loan_general'] = "You already have a pending loan application. You may apply for another one after your current pending application has been accepted/rejected.";
         }
-
+        
+        $data['amount_requested'] = preg_replace('/[^0-9]/', '', $data['amount_requested']);
         if($data['amount_requested'] < 1){
             $errors['amount_requested'] = "Invalid loan amount.";
         }
@@ -220,8 +221,7 @@ class Bank extends CI_Model {
 
         $data_insert['join_players_id'] = $player['players_id'];
         $data_insert['amount_requested'] = $data['amount_requested'];
-        $data_insert['membership'] = $data['membership'];
-
+        $data_insert['membership'] = $data['membership'];        
         foreach($data['purpose'] AS $i => $p){
             if($i == 0){$data_insert['purpose'] .= "To buy a Private Stable\n";
             }elseif($i == 1){$data_insert['purpose'] .= "To buy a Boarding Stable\n";
@@ -727,12 +727,14 @@ class Bank extends CI_Model {
 
     public static function admin_get_pending(){
         $CI =& get_instance();
-        return $CI->db->query("SELECT bl.*, p.players_nickname, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank_loans bl LEFT JOIN players p ON p.players_id=bl.join_players_id  WHERE bl.pending=1 ORDER BY bl.bank_loans_id ASC")->result_array();
+        return $CI->db->query("SELECT bl.*, p.players_nickname, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank_loans bl LEFT JOIN players p ON p.players_id=bl.join_players_id  WHERE bl.pending=0 ORDER BY bl.bank_loans_id ASC")->result_array();
+        
     }
 
-    public static function admin_get_pending_bank(){
+    public static function admin_get_pending_bank(){ 
         $CI =& get_instance();
-        return $CI->db->query("SELECT b.*, p.players_nickname, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank b LEFT JOIN players p ON p.players_id=b.join_players_id  WHERE b.bank_pending=1 ORDER BY b.bank_id ASC")->result_array();
+       return $CI->db->query("SELECT b.*, p.players_nickname, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank b LEFT JOIN players p ON p.players_id=b.join_players_id  WHERE b.bank_pending=1 ORDER BY b.bank_id ASC")->result_array();
+    
     }
 
     public static function admin_accept_application($data){
@@ -755,14 +757,15 @@ class Bank extends CI_Model {
 
 
     public static function admin_accept_loan_application($data){
+       
         $CI =& get_instance();
 
         $loan = $CI->db->query("SELECT * FROM bank_loans WHERE bank_loans_id=?", array($data['bank_loans_id']))->row_array();
-
+        
         //create account
         $insert_data['join_players_id'] = $loan['join_players_id'];
         $insert_data['bank_type'] = 'Loan';
-        $insert_data['bank_balance'] = 0;
+        $insert_data['bank_balance'] = $loan['amount_requested'];
         $insert_data['bank_credit_limit'] = $loan['amount_requested'];
         $insert_data['bank_credit_payment_due'] = date("Y-m-t", strtotime("+1 month"));
         $insert_data['bank_nickname'] = 'Loan';
@@ -774,7 +777,7 @@ class Bank extends CI_Model {
         $notice = "Your loan has been approved.";
         $CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $loan['join_players_id']));
 
-        $CI->db->query("UPDATE bank_loans SET pending=0 WHERE bank_loans_id=?", array($data['bank_loans_id']));
+        $CI->db->query("UPDATE bank_loans SET pending=1 WHERE bank_loans_id=?", array($data['bank_loans_id']));
         return true;
     }
 

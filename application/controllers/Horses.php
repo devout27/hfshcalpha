@@ -73,7 +73,7 @@ class Horses extends MY_Controller {
 	}
 	public function register(){			
 		$this->data['player']['today_adoption'] = $this->horse->getTodayAdoption($this->player->player_id);
-		$this->data['page']['title'] = "Breeding through the horses";
+		$this->data['page']['title'] = "Register Horse";
 		$this->data['breeds'] = $this->horse->get_breeds();
 		$this->data['base_colors'] = $this->horse->get_base_colors();
 		$this->data['base_patterns'] = $this->horse->get_base_patterns();

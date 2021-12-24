@@ -11,7 +11,7 @@
           	<h4 class="card-header">Links</h4>
             <div class="card-body">
             	<a href="/horses">Search Horses</a><br/>
-            	<a href="/horses/register">Breeding through the horses</a><br/>
+            	<a href="/horses/register">Register Horse</a><br/>
             	<!--<a href="/horses/export">Export a Horse</a><br/>-->
             	<a href="/city/vet">Veterinarian</a><br/>
             	<a href="/city/farrier">Farrier</a><br/>

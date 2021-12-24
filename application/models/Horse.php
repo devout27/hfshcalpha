@@ -966,6 +966,7 @@ class Horse extends CI_Model {
 		if(!empty($horse['horses_dam']))
 		{				
 			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_id <> ? AND horses_dam = ? LIMIT 1", array($data['horses_birthyear'],$horse['horses_id'],$horse['horses_dam']))->row_array();
+			
 			if($year_exists){
 				$errors['horses_dam'] = "The Mare has a foal born that year.";
 			}
@@ -1027,16 +1028,7 @@ class Horse extends CI_Model {
 		  {
 			$errors['horses_dam'] = "This Dam Doesn't exist.";
 		  }
-		}
-		/* check horse is foal year born  */
-		if(!empty($horse['horses_dam']) && !isset($errors['horses_gender']) && !isset($errors['horses_dam']) )
-		{										
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();			
-			if($year_exists){
-				$errors['horses_dam'] = "The Mare has a foal born that year.";
-			}
-		}
-		/* check horse is foal year born  end*/
+		}		
 		if(count($errors) > 0){
 			return array('errors' => $errors);
 		}

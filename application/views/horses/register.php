@@ -10,7 +10,7 @@ $errors = $this->session->flashdata('errors');
           	<h4 class="card-header">Links</h4>
             <div class="card-body">
             	<a href="/horses">Search Horses</a><br/>
-            	<a href="/horses/register">Breeding through the horses</a><br/>
+            	<a href="/horses/register">Register Horse</a><br/>
             	<!--<a href="/horses/export">Export a Horse</a><br/>-->
             	<a href="/city/vet">Veterinarian</a><br/>
             	<a href="/city/farrier">Farrier</a><br/>
@@ -19,7 +19,7 @@ $errors = $this->session->flashdata('errors');
     </div>
     <div class="col-md-8">
         <div class="card mb-4">
-          	<h4 class="card-header">Breeding through the horses</h4>
+          	<h4 class="card-header">Register Horse</h4>
             <div class="card-body"> <?php //if(isset($post)){ if(!empty($post)){ echo "<pre>"; print_r($post);  die; } } ?>
 				<form method="post" action="/horses/register">
 				<div class="center">					

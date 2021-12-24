@@ -199,7 +199,7 @@ Disciplines:<br/>
           	  <? endif; ?>
           	  <? if($horse['horses_sale'] == 1): ?>
           	  	<font color=green><b>For Sale</font></b><br />
-				<b><a href="javascript:void(0);" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price']) ?></a></b><br/>
+				<b><a href="/horses/buy/<?= $horse['horses_id'] ?>" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price']) ?></a></b><br/>
           	  <? endif; ?>
             </div>
           </div>

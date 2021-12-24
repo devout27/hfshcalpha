@@ -985,8 +985,7 @@ class Admin extends MY_Controller {
 
 		if($this->input->post('accept')){
 			$response = $this->horse->admin_accept_breeding($_POST, $this->player_id, $allowed);
-			if(count($response['errors']) > 0){
-				pre($response);exit;
+			if(count($response['errors']) > 0){				
 				$this->session->set_flashdata('notice', "There was a problem accepting the request.");
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);

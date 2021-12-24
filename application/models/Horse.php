@@ -345,11 +345,10 @@ class Horse extends CI_Model {
 	public static function update($player, $horse, $data, $allowed){
 		//allowed is the list of each breed, color, etc. that is allowed as an option
 		$CI =& get_instance();
-
 		// if player is regular player, only allow update of breeding fee & sale.
 
 		//pre($data);exit;
-		
+		$data['horses_sale_price']=(float)filter_var($data['horses_sale_price'], FILTER_SANITIZE_NUMBER_FLOAT);		
 		if($player['privileges']['privileges_horses']){ //admin can update everything else
 			$allowed_fields = array(
 				'horses_name',

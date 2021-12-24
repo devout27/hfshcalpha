@@ -197,7 +197,7 @@ Disciplines:<br/>
               <? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Stallion"): ?>
               	<b><a href="/horses/breed/<?= $horse['horses_id'] ?>">Breed for $<?= number_format($horse['horses_breeding_fee']) ?></a></b><br/>
           	  <? endif; ?>
-          	  <? if($horse['horses_sale'] == 1): ?>
+          	  <? if($horse['horses_sale'] == 1): ?> 
           	  	<font color=green><b>For Sale</font></b><br />
 				<b><a href="/horses/buy/<?= $horse['horses_id'] ?>" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price']) ?></a></b><br/>
           	  <? endif; ?>

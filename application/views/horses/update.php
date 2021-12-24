@@ -6,7 +6,7 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
 ?>
 <div class="row">
         <div class="col-lg-12">
-        	<br/>
+        	<br/>   
 
           <div class="card mb-4">
             <div class="card-body">

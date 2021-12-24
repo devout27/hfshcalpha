@@ -19,14 +19,14 @@ Please choose a mare to breed with this stallion. Once you have made this reques
 		<h5 class="card-header">Mares</h5>
         <div class="card-body">
 			<form method="post" action="/horses/breed/<?= $horse['horses_id'] ?>">
-				<? if($this->session->flashdata('errors')): ?>
-				<? foreach((array)$this->session->flashdata('errors') AS $e): ?>
+				<? if($errors = $this->session->flashdata('errors')): ?>
+				<!-- <? foreach((array)$this->session->flashdata('errors') AS $e): ?>
 					<div class="form-error"><?= $e ?></div>
-				<? endforeach; ?>
+				<? endforeach; ?> -->
 				<? endif; ?>
 			<div class="row">
 				<div class="col-md-6">
-					<?= hf_dropdown('mare_id', '', $_POST, $mares, array('class' => 'col-sm-12'), $errors, 0) ?>
+					<?= hf_dropdown('mare_id', '', $_POST, $mares, array('class' => 'col-sm-12'), $errors, 0) ?>										
 				</div>
 				<div class="col-md-6">
 					<?= hf_submit('breed', 'Place Request', array('class' => 'btn btn-primary col-sm-12')) ?>
@@ -71,7 +71,14 @@ Please choose a mare to breed with this stallion. Once you have made this reques
 				      		<? else: ?>
 								<form method="post" action="/horses/breed/<?= $horse['horses_id'] ?>">
 								<?= hf_hidden('horses_breedings_id', $h['horses_breedings_id']) ?>
-
+								<div class="row">
+									<div class="col-sm-6">						
+										<?= hf_input('horses_name', 'Name', $post, array(), $errors) ?>										
+									</div>
+									<div class="col-sm-6">						
+										<?= hf_input('horses_birthyear', 'Birth Year', $post, array('placeholder' => '1984'), $errors,'number') ?>
+									</div>
+								</div>
 								<div class="row">
 									<div class="col-sm-6">
 										<?= hf_dropdown('horses_gender', 'Gender', $post, array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
@@ -104,6 +111,7 @@ Please choose a mare to breed with this stallion. Once you have made this reques
 						<?= hf_multiselect('disciplines[]', 'Discipline', $post['disciplines'], $disciplines, array(), $errors, 1) ?>
 					</div>
 				</div>
+				
 
 								<?= hf_submit('accept', 'Accept', array('class' => 'btn btn-success col-sm-12')) ?>
 								</form>
@@ -120,6 +128,7 @@ Please choose a mare to breed with this stallion. Once you have made this reques
 				      		<? if(!$h['horses_breedings_accepted']): ?>
 								<form method="post" action="/horses/breed/<?= $horse['horses_id'] ?>">
 								<?= hf_hidden('horses_breedings_id', $h['horses_breedings_id']) ?>
+								<?= hf_textarea('message', 'Message', $_POST, array('placeholder' => 'Describe why are you Reject this Breeding.','cols'=>"30","rows"=>"5"), $errors) ?>
 								<?= hf_submit('reject', 'Reject', array('class' => 'btn btn-danger col-sm-12')) ?>
 								</form>
 							<? endif; ?>

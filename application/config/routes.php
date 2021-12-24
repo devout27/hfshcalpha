@@ -102,6 +102,9 @@ $route['city/articles/(:num)'] = "city/articles_view/$1";
 
 $route['horses/adopt/(:num)/(:any)'] = "horses/adopt/$1/$2";
 $route['horses/view/offspring-genes/(:num)'] = "horses/view_offspring_genes/$1";
+$route['horses/buy/(:num)'] = "horses/buy/$1";
+$route['horses/buy/(:num)'] = "horses/buy/$1";
+$route['manage-sale-purposals'] = "purposals/managePurposals";
 
 //my routes
 $route['manage-horses'] = "horses/manageHorses";

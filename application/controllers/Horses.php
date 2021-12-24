@@ -14,6 +14,7 @@ class Horses extends MY_Controller {
 		$this->data['player']['unread'] = $this->player->get_unread();
 		$this->data['online_players'] = $this->player->get_online_count();
 		$this->load->model('horse');
+		$this->load->model('purposal');
 		$this->load->model('privileges');
 		$this->data['privileges'] = $this->privileges->get();
 		$this->data['page']['title'] = "Hurricane Farm";
@@ -44,6 +45,7 @@ class Horses extends MY_Controller {
 	{				
 		if ($this->input->is_ajax_request()) {   	
 			$res = $this->horse->getMyHorsesList($this->data['player']['players_id'],$_POST);
+			$data = [];
 			foreach($res as $v){                
 				$name = $v['horses_competition_title'].' '.$v['horses_breeding_title'].' '.$v['horses_name'];
 				$action = '<a href="/horses/view/'.$v["horses_id"].'">View</a>';
@@ -60,7 +62,12 @@ class Horses extends MY_Controller {
                 "data" => $data
             );
             echo json_encode($output);exit;			
-		}else{
+		}else{			
+			$this->data['post'] = $_POST;
+			$this->data['breeds'] = $this->horse->get_breeds();
+			$this->data['lines'] = $this->horse->get_lines();
+			$this->data['disciplines'] = $this->horse->get_disciplines();
+			$this->data['requests'] = Horse::get_breeding_requests(false,$this->data['player']['players_id']);
 			$this->data['page']['title'] = "Manage Horses";
 			$this->data['dataTableElement'] = 'dt-my-horses-list';
 			$this->data['dataTableURL'] = base_url('manage-horses');
@@ -151,7 +158,9 @@ class Horses extends MY_Controller {
 
 
 		$this->data['mares'] = Horse::get_breedable_mares($this->session->userdata('players_id'));
-		$this->data['requests'] = Horse::get_breeding_requests($this->data['horse']);
+		
+		$this->data['requests'] = Horse::get_breeding_requests($this->data['horse']);///////ak
+
 		//$this->data['base_colors'] = $this->horse->get_base_colors();
 		//$this->data['base_patterns'] = $this->horse->get_base_patterns();
 
@@ -163,13 +172,12 @@ class Horses extends MY_Controller {
 				'disciplines' => $this->data['disciplines']
 			);
 
-
 		if(!$this->data['horse']['horses_id'] || $this->data['horse']['horses_gender'] != "Stallion"){
 			$this->session->set_flashdata('notice', "Invalid horse.");
-			redirect('horses');
+			redirect('manage-horses');
 		}elseif($this->data['horse']['horses_pending']){
 			$this->session->set_flashdata('notice', "Horse is pending registration.");
-			redirect('horses');
+			redirect('manage-horses');
 		}elseif(!Horse::is_breedable($id)){
 			$this->session->set_flashdata('notice', "Horse isn't breedable.");
 			redirect('horses/view/' . $id);
@@ -181,9 +189,9 @@ class Horses extends MY_Controller {
 				$this->session->set_flashdata('notice', "There was a problem submitting the breeding request.");
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
-				redirect('horses/breed/' . $id);
+				redirect('/manage-horses');
 			}
-			redirect('horses/breed/' . $id);
+			redirect('/manage-horses');
 
 		}elseif($this->input->post('reject')){
 			$response = $this->horse->reject_breed_request($this->player, $this->data['horse'], $_POST);
@@ -191,25 +199,21 @@ class Horses extends MY_Controller {
 				$this->session->set_flashdata('notice', "There was a problem rejecting the request.");
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
-				redirect('horses/breed/' . $id);
+				redirect('/manage-horses');
 			}
 			$this->session->set_flashdata('notice', "Rejected.");
-			redirect('horses/breed/' . $id);
-
-
+			redirect('/manage-horses');
 		}elseif($this->input->post('accept')){
 			$response = $this->horse->accept_breed_request($this->player, $this->data['horse'], $_POST);
-			if(count($response['errors']) > 0){
+			if(count($response['errors']) > 0){				
 				$this->session->set_flashdata('notice', "There was a problem accepting the request.");
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
-				redirect('horses/breed/' . $id);
+				redirect('/manage-horses');
 			}
 			$this->session->set_flashdata('notice', "Accepted.");
-			redirect('horses/breed/' . $id);
-
+			redirect('/manage-horses');
 		}
-
 		/*check...
 			-is stallion available for breeding?
 			-tell player to submit check to owner
@@ -363,6 +367,48 @@ class Horses extends MY_Controller {
 		$this->load->view('horses/update', $this->data);
 		$this->load->view('layout/footer');
 	}
+
+	public function buy($id){				
+		$this->data['horse'] = new Horse($id);
+		$this->data['horse'] = $this->data['horse']->horse;
+		$this->data['page']['title'] = "Update Horse";
+		$this->data['breeds'] = $this->horse->get_breeds();
+		$this->data['base_colors'] = $this->horse->get_base_colors();
+		$this->data['base_patterns'] = $this->horse->get_base_patterns();
+		$this->data['lines'] = $this->horse->get_lines();
+		$this->data['disciplines'] = $this->horse->get_disciplines();
+		$this->data['genes'] = $this->horse->get_genes();		
+		if(!$this->data['horse']['horses_id']){
+			$this->session->set_flashdata('notice', "Invalid horse.");
+			redirect('horses');
+		}elseif($this->data['horse']['horses_pending']){
+			$this->session->set_flashdata('notice', "Horse is pending registration.");
+			redirect('horses');
+		}
+		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
+		if($this->input->post('submit')){
+			if($this->data['horse']['horses_sale']==0)
+			{				
+				$this->session->set_flashdata('notice', "Horse is not available For Sale.");
+			}else{
+				
+				$response = $this->purposal->SavePurposal($this->data['player'], $this->data['horse'], $_POST);
+				if(count($response['errors']) > 0){					
+					$this->session->set_flashdata('notice', "There was a problem for submitting your purposal.");
+					$this->session->set_flashdata('post', $_POST);
+					$this->session->set_flashdata('errors', $response['errors']);				
+				}else{
+					$this->session->set_flashdata('notice', "Purposal Sent Successfully.");
+					redirect('horses/view/' . $id);
+				}			
+			}
+		}
+		$this->load->view('layout/header', $this->data);
+		$this->load->view('horses/buy', $this->data);
+		$this->load->view('layout/footer');
+	}
+
+
 
 	public function transfer($id){
 		$this->data['horse'] = new Horse($id);

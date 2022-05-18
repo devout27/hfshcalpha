@@ -15,7 +15,6 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
                     <form method="post" action="/horses/buy/<?= $horse['horses_id'] ?>">				                    
                         <?= hf_input('title', 'Title', $_POST, array('placeholder' => ''), $errors) ?>
                         <?= hf_input('players_email', 'Email Address', $_POST ?: $player, array('placeholder' => ''), $errors,'email') ?>
-                        <?= hf_input('phone_number', 'Phone Number', $_POST, array('placeholder' => ''), $errors) ?>
                         <?= hf_textarea('description', 'Description', $_POST, array('placeholder' => '','cols'=>"142","rows"=>"10"), $errors) ?>
                 </p>
             </div>

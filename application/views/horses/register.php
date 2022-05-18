@@ -47,7 +47,7 @@ $errors = $this->session->flashdata('errors');
 							<input type="radio" id="horses_registration_type" name="horses_registration_type" value="creation" <?php if(isset($post) ){ if( $post['horses_registration_type']=='creation' ){ echo "checked"; } }else{ echo "checked"; } ?> > Creation
 						</label>
 						<label class="radio-inline">
-							<input type="radio" name="horses_registration_type"  id="horses_registration_type" value="breed" <?php if(isset($post) ){ if( $post['horses_registration_type']=='breed' ){ echo "checked"; } } ?> > Breed
+							<input type="radio" name="horses_registration_type"  id="horses_registration_type" value="breed" <?php if(isset($post) ){ if( $post['horses_registration_type']=='breed' ){ echo "checked"; } } ?> > Bred
 						</label>						
 						<div class="form-error pull-right"><?php $errors["horses_registration_type"] ?></div>
 					</div>

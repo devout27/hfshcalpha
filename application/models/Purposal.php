@@ -4,8 +4,8 @@ class Purposal extends CI_Model {
 	function __construct(){
 		parent::__construct();
 		$CI =& get_instance();		
-		$this->column_search=['id','join_players_id','join_players_username','join_horses_name','join_horse_id','title','email','phone_number','description','created','price'];
-		$this->column_order=['id','join_players_id','join_players_username','join_horses_name','join_horse_id','title','email','phone_number','description','created','price'];
+		$this->column_search=['id','join_players_id','join_players_username','join_horses_name','join_horse_id','title','email','description','created','price'];
+		$this->column_order=['id','join_players_id','join_players_username','join_horses_name','join_horse_id','title','email','description','created','price'];
 		$this->order = ['id' => 'desc'];
 	}
 	/* datatable related functions */
@@ -85,12 +85,6 @@ class Purposal extends CI_Model {
 			$errors['players_email'] = "Email Address is required.";
 		}else if (!filter_var($data["players_email"], FILTER_VALIDATE_EMAIL)) {			
 			$errors['players_email'] = "Invalid Email Address Format.";
-		}		
-		$phone_number = $this->test_input($data["phone_number"]);		
-		if(!$data['phone_number']){
-			$errors['phone_number'] = "Phone Number is required.";
-		}elseif (!$this->validate_mobile($phone_number)) {			
-			$errors['phone_number'] = "Invalid Phone Number Format.";
 		}
 		if(!$data['description']){
 			$errors['description'] = "Title is required.";
@@ -114,7 +108,6 @@ class Purposal extends CI_Model {
 			'title',
 			'email',
 			'price',
-			'phone_number',
 			'description',
 		);		
 		$update_data = filter_keys($data, $allowed_fields);		

@@ -229,10 +229,10 @@ if ( ! function_exists('form_input'))
 	 * @param	mixed
 	 * @return	string
 	 */
-	function form_input($data = '', $value = '', $extra = '',$type="text")
+	function form_input($data = '', $value = '', $extra = '')
 	{
 		$defaults = array(
-			'type' => $type,
+			'type' => 'text',
 			'name' => is_array($data) ? '' : $data,
 			'value' => $value
 		);
@@ -407,7 +407,7 @@ if ( ! function_exists('form_dropdown'))
 
 		$multiple = (count($selected) > 1 && stripos($extra, 'multiple') === FALSE) ? ' multiple="multiple"' : '';
 
-		$form = '<select class="form-control" '.rtrim(_parse_form_attributes($data, $defaults)).$extra.$multiple.">\n";
+		$form = '<select '.rtrim(_parse_form_attributes($data, $defaults)).$extra.$multiple.">\n";
 
 		foreach ($options as $key => $val)
 		{

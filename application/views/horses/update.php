@@ -19,6 +19,8 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
 					<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => '', 'disabled' => 'disabled'), $errors) ?>
 				<? endif; ?>				
 				<?= hf_checkbox('horses_sale', 'For Sale?', $_POST ?: $horse, array(), $errors) ?>
+                <?= hf_checkbox('horses_adoptable', 'Is Adoptable?', $_POST ?: $horse, array(), $errors) ?>
+                <?= hf_checkbox('horses_deceased', 'Is Deceased?', $_POST ?: $horse, array(), $errors) ?>
 				<?= hf_input('horses_sale_price', 'Sale Price', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for sale'), $errors) ?>
 				<?= hf_input('horses_breeding_fee', 'Breeding Fee', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for breeding'), $errors) ?>
 

@@ -312,7 +312,6 @@ $(".enterhorse").on( "click", function() {
 			button.removeClass('btn-success');
 			button.addClass('btn-info');
 		}else{
-			button.attr('disabled', true);
 			button.removeClass('btn-success');
 			button.addClass('btn-warning');
 			button.html('Failed');
@@ -337,15 +336,11 @@ $(".enterhorse").on( "click", function() {
 $(".admin-new-class").on( "click", function() {
 	$('#classlists_classes_id').val('0');
 	$('#join_classlists_id').val($(this).data("classlistsid"));
-	$('#save-events-class').html("Create Class");	
-	$(".form-error").addClass("hidden");
-	$(".form-error").html("");
-	document.getElementById("events-class-edit-form").reset();
+	$('#save-events-class').html("Create Class");
 });
 
-$(document).on("click",".admin-edit-class", function() {
-	$(".form-error").html("")
-	$(".form-error").addClass("hidden")
+
+$(".admin-edit-class").on( "click", function() {
 	$('#classlists_classes_id').val($(this).data("id"));
 	$('#join_classlists_id').val($(this).data("classlistsid"));
 	$('#join_divisions_id').val($(this).data("divisionsid"));
@@ -358,8 +353,11 @@ $(document).on("click",".admin-edit-class", function() {
 	$('#classlists_classes_disciplines').val($(this).data("disciplines").split('|'));
 	$('#classlists_classes_breeds_types').val($(this).data("types").split('|'));
 	$('#classlists_classes_breeds').val($(this).data("breeds").split('|'));
+
 	$('#save-events-class').html("Save Changes");
 });
+
+
 
 $("#admin-save-events-class").on("click", function(){
 	var class_id = $('#classlists_classes_id').val();
@@ -395,12 +393,11 @@ $("#admin-save-events-class").on("click", function(){
 				if(response.classlists_classes_strenuous == 1){
 					strenuous = "*";
 				}
-				$("#dt-events-admin-classes_wrapper .dataTables_empty").remove()
-				$('#dt-events-admin-classes tr:last').after('<tr id="class-id-' + response.classlists_classes_id +'"><td id="e-name-' + response.classlists_classes_id +'">' + strenuous + response.classlists_classes_name +'</td><td id="e-age-' + response.classlists_classes_id +'">' + response.classlists_classes_min_age + ' - ' + response.classlists_classes_max_age + '</td><td id="e-fee-' + response.classlists_classes_id +'">$' + response.classlists_classes_fee + '</td><td id="e-divisionsid-' + response.join_divisions_id +'">'+ $('#classlists_divisions_id :selected').text() +'</td><td><button type="button" class="btn btn-primary admin-edit-class" data-toggle="modal" data-target="#dialog-events-classes-edit" data-id="' + response.classlists_classes_id +'" data-name="' + response.classlists_classes_name +'" data-minage="' + response.classlists_classes_min_age +'" data-maxage="' + response.classlists_classes_max_age +'" data-fee="' + response.classlists_classes_fee +'" data-desc="' + response.classlists_classes_description +'" data-strenuous="' + response.classlists_classes_strenuous +'">Edit Class</button><button type="button" class="btn btn-danger admin-delete-class float-right" "' + response.classlists_classes_id +'">X</button><div class="save_status float-right" data-id="' + response.classlists_classes_id +'"></div><div class=""></div></td></tr>');
+				$('#dt-events-admin-classes tr:last').after('<tr id="class-id-' + response.classlists_classes_id +'"><td id="e-name-' + response.classlists_classes_id +'">' + strenuous + response.classlists_classes_name +'</td><td id="e-age-' + response.classlists_classes_id +'">' + response.classlists_classes_min_age + ' - ' + response.classlists_classes_max_age + '</td><td id="e-fee-' + response.classlists_classes_id +'">$' + response.classlists_classes_fee + '</td><td id="e-divisionsid-' + response.join_divisions_id +'">'+ $('#classlists_divisions_id :selected').text() +'</td><td><button type="button" class="btn btn-primary admin-edit-class" data-toggle="modal" data-target="#dialog-events-classes-edit" data-id="' + response.classlists_classes_id +'" data-name="' + response.classlists_classes_name +'" data-minage="' + response.classlists_classes_min_age +'" data-maxage="' + response.classlists_classes_max_age +'" data-fee="' + response.classlists_classes_fee +'" data-desc="' + response.classlists_classes_description +'" data-strenuous="' + response.classlists_classes_strenuous +'">Edit Class</button><div class="save_status float-right" data-id="' + response.classlists_classes_id +'"></div><div class=""></div></td></tr>');
 			}else{
 				var strenuous;
 				var row = $('#class-id-' + class_id);
-				//$('.save_status[data-id="' + class_id + '"]').html('<p class="text-success"><span class="fas fa-check"></span></p>');
+				$('.save_status[data-id="' + class_id + '"]').html('<p class="text-success"><span class="fas fa-check"></span></p>');
 				$('.save_status[data-id="0"]').html(' ');
 				if($('#classlists_classes_strenuous').val() == "1"){
 					$('#e-name-' + class_id).html('*' + $('#classlists_classes_name').val());
@@ -422,18 +419,12 @@ $("#admin-save-events-class").on("click", function(){
 				save_button.data('desc', $('#classlists_classes_description').val());
 				save_button.data('divisionsid', $('#join_divisions_id').val());
 			}
-			$(".form-error").html("")
-			$(".form-error").addClass("hidden")
-			$('#dialog-events-classes-edit').modal('hide');
-		}else{						
-				for (let [key, value] of Object.entries(response)) {					
-					$("#"+key).next(".form-error").removeClass("hidden")
-					$("#"+key).next(".form-error").html(value)
-				}				
-		}		
+		}else{
+			$('.save_status[data-id="0"]').html('<p class="text-danger"><span class="fas fa-check"></span><br/>' + response + '</p>');
+		}
+		$('#dialog-events-classes-edit').modal('hide');
 	});
 });
-
 
 
 
@@ -546,13 +537,11 @@ $("#save-events-class").on("click", function(){
 			save_button.data('desc', $('#events_x_classes_description').val());
 			save_button.data('divisionsid', $('#classlists_divisions_id').val());
 			save_button.data('divisionsname', $('#classlists_divisions_name').val());
-			$('#dialog-events-classes-edit').modal('hide');
-		}else{			
-			for (let [key, value] of Object.entries(response)) {					
-				$("#"+key).next(".form-error").removeClass("hidden")
-				$("#"+key).next(".form-error").html(value)
-			}	
-		}		
+
+		}else{
+			$('.save_status[data-id="0"]').html('<p class="text-danger"><span class="fas fa-check"></span><br/>' + response + '</p>');
+		}
+		$('#dialog-events-classes-edit').modal('hide');
 	});
 });
 
@@ -582,7 +571,7 @@ $("#new-classlist").on("click", function(){
 	});
 });
 
-$(document).on("click",".admin-delete-class",function(){
+$(".admin-delete-class").on("click", function(){
 	$('#dialog-admin-confirm-delete').modal('show');
 	$('#admin-delete-class-confirm').data('id', $(this).data("id"));
 	//console.log($('#admin-delete-class-confirm').data('id'));
@@ -603,11 +592,7 @@ $('#admin-delete-class-confirm').on("click", function(){
 		//$( "#results" ).append( html );
 		response = JSON.parse(response);
 		if(response == "1"){
-			$('#class-id-' + class_id).remove();
-			if(!$('#dt-events-admin-classes td').length)
-			{
-				$('#dt-events-admin-classes').DataTable().clear().draw();
-			}
+			$('#class-id-' + class_id).slideUp('slow');
 		}else{
 			$('.save_status[data-id="'+class_id+'"]').html('<p class="text-danger"><span class="fas fa-check"></span><br/>' + response + '</p>');
 		}
@@ -648,13 +633,11 @@ $(".admin-edit-division").on( "click", function() {
 	$('#admin-save-division').html("Save Changes");
 });
 
-$(".admin-new-division").on( "click", function() {	
+$(".admin-new-division").on( "click", function() {
 	$('#classlists_divisions_id').val('0');
 	$('#join_classlists_id').val($(this).data("classlistsid"));
 	$('#classlists_divisions_name').val('');
-	$('#admin-save-division').html("Create");	
-	$(".form-error").addClass("hidden")
-	$(".form-error").html("")
+	$('#admin-save-division').html("Create");
 });
 
 
@@ -679,25 +662,22 @@ $("#admin-save-division").on("click", function(){
 		if(response.success == 1){
 			if(division_id == 0){
 				//this is a new division, so let's add a row to the table.
-				$("#dt-events-admin-divisions td[colspan='100%']").parent("tr").remove()
 				$('#dt-events-admin-divisions tr:last').after('<tr id="divisions-id-' + response.classlists_divisions_id +'"><td id="e-name-' + response.classlists_divisions_id +'">' + response.classlists_divisions_name +'</td><td><button type="button" class="btn btn-primary admin-edit-division" data-toggle="modal" data-target="#dialog-events-divisions-edit" data-id="' + response.classlists_divisions_id +'" data-name="' + response.classlists_divisions_name +'" data-classlists_id="' + response.join_classlists_id +'">Edit Division</button></td><td><button type="button" class="btn btn-danger admin-delete-division float-right" data-id="' + response.classlists_divisions_id +'">X</button><div class="save_status_division float-right" data-id="' + response.classlists_divisions_id +'"></td></tr>');
 				$('#admin-save-division').html("Save Changes");
-				$('#dialog-events-divisions-edit').modal('hide');
 			}else{
 				$('#e-name-' + division_id).html(response.classlists_divisions_name);
 				save_button.data('name', $('#classlists_divisions_name').val());
 			}
-		}else{			
-			for (let [key, value] of Object.entries(response)) {					
-				$("#"+key).next(".form-error").removeClass("hidden")
-				$("#"+key).next(".form-error").html(value)
-			}	
+
+		}else{
+			$('.save_status_division[data-id="0"]').html('<p class="text-danger"><span class="fas fa-check"></span><br/>' + response + '</p>');
 		}
-		
+		$('#dialog-events-divisions-edit').modal('hide');
 	});
 });
 
-$(document).on("click",".admin-delete-division",function(){
+
+$(".admin-delete-division").on("click", function(){
 	$('#dialog-admin-confirm-delete-division').modal('show');
 	$('#admin-delete-division-confirm').data('id', $(this).data("id"));
 	//console.log($('#admin-delete-class-confirm').data('id'));
@@ -717,12 +697,8 @@ $('#admin-delete-division-confirm').on("click", function(){
 	.done(function( response ) {
 		//$( "#results" ).append( html );
 		response = JSON.parse(response);
-		if(response == "1"){			
-			$('#divisions-id-' + divisions_id).remove();
-			if(!$('#dt-events-admin-divisions td').length)
-			{
-				$('#dt-events-admin-divisions').append('<tr><td colspan="100%">No divisions</td></tr>');
-			}			
+		if(response == "1"){
+			$('#divisions-id-' + divisions_id).slideUp('slow');
 		}else{
 			$('.save_status[data-id="'+divisions_id+'"]').html('<p class="text-danger"><span class="fas fa-check"></span><br/>' + response + '</p>');
 		}

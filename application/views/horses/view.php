@@ -27,7 +27,17 @@ Stable: <a href="/game/stables/<?= $horse['join_stables_id'] ?>"><?= $horse['sta
 <?= date('Y') - $horse['horses_birthyear'] ?> years old<br/>
 
 Breeding Years: <?= ($horse['horses_birthyear'] + 3) ?> to <?= ($horse['horses_birthyear'] + 32) ?> inclusive<br/>
-Breeding Fee : $<?= $horse['horses_breeding_fee'] ?><br/><br/>
+Breeding Fee : $<?= $horse['horses_breeding_fee'] ?><br>
+
+<? if($horse['horses_bred'] == 1): ?>
+    Horse Bred <?= date('Y') ?><br/>
+<? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Stallion"): ?>
+    <b><a href="/horses/breed/<?= $horse['horses_id'] ?>">Breed for $<?= number_format($horse['horses_breeding_fee']) ?></a></b><br/>
+<? endif; ?>
+<? if($horse['horses_sale'] == 1): ?>
+    <font color=green><b>For Sale</font></b><br />
+    <b><a href="<?php echo $horse['join_players_id'] == $this->session->userdata('players_id')  ? 'javascript:void(0);'  : '/horses/buy/'.$horse['horses_id'] ?>" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price']) ?></a></b><br/>
+<? endif; ?><br/><br/>
 
 Points: <?= $horse['horses_points'] ?><br/><br/>
 
@@ -118,11 +128,16 @@ Disciplines:<br/>
 
 
           <div class="card my-4">
-            <h5 class="card-header">Previous Owners</h5>
+            <h5 class="card-header">Ownership Records</h5>
             <div class="card-body">
             	<? if(count($horse['ownership_log']) > 0): ?>
+                    <? $i = 0; ?>
 	            	<? foreach((array)$horse['ownership_log'] AS $l): ?>
-	            		<a href="/game/profile/<?= $l['join_players_id'] ?>"><?= $l['players_nickname'] ?> #<?= $l['join_players_id'] ?></a> on <?= $l['horse_records_date'] ?><br/>
+                        <? if($i == 0) { ?>
+	            		    <b><a href="/game/profile/<?= $l['join_players_id'] ?>"><?= $l['owner_name'] ?> #<?= $l['join_players_id'] ?></a> on <?= $l['horse_records_date'] ?><br/></b>
+                        <? } else { ?>
+                        <a href="/game/profile/<?= $l['join_players_id'] ?>"><?= $l['owner_name'] ?> #<?= $l['join_players_id'] ?></a> on <?= $l['horse_records_date'] ?><br/>
+                        <? } $i++; ?>
 	            	<? endforeach; ?>
 	            <? else: ?>
 	            	No records available.
@@ -196,15 +211,6 @@ Disciplines:<br/>
               		(Last Visited <?= $horse['horses_farrier'] ?>)
               	<? endif; ?>
               	<br/>
-              <? if($horse['horses_bred'] == 1): ?>
-              	Horse Bred <?= date('Y') ?><br/>
-              <? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Stallion"): ?>
-              	<b><a href="/horses/breed/<?= $horse['horses_id'] ?>">Breed for $<?= number_format($horse['horses_breeding_fee']) ?></a></b><br/>
-          	  <? endif; ?>
-          	  <? if($horse['horses_sale'] == 1): ?> 
-          	  	<font color=green><b>For Sale</font></b><br />
-				<b><a href="<?php echo $horse['join_players_id'] == $this->session->userdata('players_id')  ? 'javascript:void(0);'  : '/horses/buy/'.$horse['horses_id'] ?>" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price']) ?></a></b><br/>
-          	  <? endif; ?>
             </div>
           </div>
       	  <? if($horse['join_players_id'] == EXPORT_ID): ?>

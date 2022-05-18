@@ -1,5 +1,5 @@
 
-<div class="row">
+<div class="row" hidden>
     <div class="col-lg-12">
     	<?= $article['articles_content'] ?>
     </div>

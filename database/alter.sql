@@ -27,3 +27,13 @@ ALTER TABLE `inventory` ADD `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTA
 ALTER TABLE `events` CHANGE `events_type` `events_type` ENUM('Show','Race','Olympic','WEGs') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL;
 
 ALTER TABLE `players` ADD `players_events_weekly_limit` INT(1) NOT NULL DEFAULT '0' AFTER `players_super_admin`;
+
+--24-DEC-2021--
+
+CREATE TABLE `hfshcpha_dev_hfshcpha_game`.`horses_sale_purposals` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `join_players_id` INT(11) NULL , `join_players_username` VARCHAR(255) NOT NULL , `title` VARCHAR(255) NOT NULL , `email` VARCHAR(255) NOT NULL , `phone_number` VARCHAR(30) NOT NULL , `description` LONGTEXT NULL DEFAULT NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `price` DOUBLE(10,2) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+ALTER TABLE `horses_sale_purposals` ADD `join_horse_id` INT(11) NOT NULL AFTER `join_players_username`;
+
+ALTER TABLE `horses_sale_purposals` ADD `join_horses_name` VARCHAR(255) NOT NULL AFTER `join_players_username`;
+ALTER TABLE `horses_sale_purposals` ADD `seen_status` INT(1) NOT NULL DEFAULT '0' AFTER `price`;
+ALTER TABLE `horses_breedings` ADD `horses_breedings_name` VARCHAR(255) NULL AFTER `horses_breedings_date`;

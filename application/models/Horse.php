@@ -20,13 +20,7 @@ class Horse extends CI_Model {
 
 			//pre($horse_id);
 
-			$this->horse['ownership_log'] = $this->db->query('
-					SELECT p.players_nickname, hr.*
-					FROM horse_records hr
-					LEFT JOIN players p ON p.players_id=hr.join_players_id
-					WHERE hr.join_horses_id=? AND hr.horse_records_type="Owner"
-					ORDER BY hr.horse_records_id DESC
-				', array($horse_id))->result_array();
+			$this->horse['ownership_log'] = $this->db->query('SELECT * FROM horse_records  WHERE join_horses_id=? AND horse_records_type="Owner" ORDER BY horse_records_id DESC', array($horse_id))->result_array();
 
 			$this->horse['care_records'] = $this->db->query('
 					SELECT p.players_nickname, hr.*, DATE_FORMAT(hr.horse_records_date, "%Y-%m-%d") AS horse_records_date
@@ -538,14 +532,16 @@ class Horse extends CI_Model {
 			} */
 			
 		}elseif($player['players_id'] == $horse['join_players_id']){						
-			if($data['horses_sale']==1 && empty($data['horses_sale_price']) || !$data['horses_sale_price'] > 0)
+			if($data['horses_sale']==1 && empty($data['horses_sale_price']) || $data['horses_sale']==1 && !$data['horses_sale_price'] > 0)
 			{
 				$errors['horses_sale_price'] = "Please Enter a Sale Price.";
 			}
 			$allowed_fields = array(
 				'horses_sale',
 				'horses_breeding_fee',
-				'horses_sale_price'
+				'horses_sale_price',
+                'horses_adoptable',
+                'horses_deceased'
 			);
 		}else{
 			$errors['horses_name'] = "You do not own this horse.";
@@ -694,7 +690,7 @@ class Horse extends CI_Model {
 		//update horse
 		$CI->db->update('horses', $update_data, "horses_id = " . $horse['horses_id']);
 		$CI->db->query("UPDATE players SET " .$sql . " WHERE players_id=? LIMIT 1", array($player['players_id']));
-		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse['horses_id'], $player['players_id']));
+		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($horse['horses_id'], $player['players_id'], @$player['players_nickname']));
 		$message = "<a href='/horses/view/" . $horse['horses_id'] . "'>". $horse['horses_competition_title'] . " " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #" . $horse['horses_id'] . "</a> has been adopted.";
 		$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($player['players_id'], $message));
 
@@ -704,21 +700,14 @@ class Horse extends CI_Model {
 
 	}
 
-
-
-
-
-
-
-
-
 	public static function transfer($player, $horse, $data){
 		$CI =& get_instance();
 		$EXPORT_ID = EXPORT_ID;
 		$HUMANE_ID = HUMANE_ID;
 		$RETIRE_ID = RETIRE_ID;
 		$CEMETERY_ID = CEMETERY_ID;
-
+		$data['horses_sale'] = 0;
+		$data['horses_sale_price'] = 0;
 		if($player['players_id'] != $horse['join_players_id']){
 			$errors['recipient'] = "You do not own this horse.";
 		}
@@ -733,6 +722,8 @@ class Horse extends CI_Model {
 			$update_data = filter_keys($data, array(
 					'join_players_id',
 					'horses_adoptable',
+					'horses_sale',
+					'horses_sale_price',
 			));
 			if(!$data['join_players_id']){
 				$errors['players_id'] = "Invalid member.";
@@ -743,6 +734,8 @@ class Horse extends CI_Model {
 			$update_data = filter_keys($data, array(
 					'join_players_id',
 					'horses_adoptable',
+					'horses_sale',
+					'horses_sale_price',
 			));
 		}elseif($data['recipient'] == "Retirement Home"){
 			$data['join_players_id'] = $REITRE_ID;
@@ -750,6 +743,8 @@ class Horse extends CI_Model {
 			$update_data = filter_keys($data, array(
 					'join_players_id',
 					'horses_adoptable',
+					'horses_sale',
+					'horses_sale_price',
 			));
 		}elseif($data['recipient'] == "Cemetery"){
 			$data['join_players_id'] = $CEMETERY_ID;
@@ -759,6 +754,8 @@ class Horse extends CI_Model {
 					'join_players_id',
 					'horses_adoptable',
 					'horses_deceased',
+					'horses_sale',
+					'horses_sale_price',
 			));
 		}elseif($data['recipient'] == "Export"){
 			$data['horses_pending_export'] = 1;
@@ -768,6 +765,8 @@ class Horse extends CI_Model {
 					'horses_pending_export',
 					'horses_pending_export_date',
 					'horses_adoptable',
+					'horses_sale',
+					'horses_sale_price',
 			));
 			$skip_record_insert = true;
 		}else{
@@ -782,8 +781,12 @@ class Horse extends CI_Model {
 		//update horse
 		$CI->db->update('horses', $update_data, "horses_id = " . $horse['horses_id']);
 
+        $notice = "Congratulations! You have purchases the <a href=/horses/view/" . $horse['horses_id'] . ">" . $horse['horses_name'] . " #" . generateId($horse['horses_id']) . ".</a>";
+        $CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $data['join_players_id']));
+
 		if(!$skip_record_insert){
-			$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse['horses_id'], $data['join_players_id']));
+			$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array($data['join_players_id']))->row_array();
+			$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($horse['horses_id'], $player['players_id'], @$player['players_nickname']));
 		}
 
 		$CI->session->set_flashdata('notice', "Horse transferred.");
@@ -1162,7 +1165,8 @@ class Horse extends CI_Model {
 
 		$horse['join_players_id'] = $data['horses_breedings_owner'];
 		/* $horse['horses_name'] = $post['horses_birthyear'] . ' Foal (#' . generateId($stallion['horses_id']) .' x #' . generateId($mare['horses_id']) . ')'; */
-		$horse['horses_name'] = $data['horses_breedings_name'].' Foal (#' . generateId($stallion['horses_id']) .' x #' . generateId($mare['horses_id']) . ')';
+        // $horse['horses_name'] = $data['horses_breedings_name'].' Foal (#' . generateId($stallion['horses_id']) .' x #' . generateId($mare['horses_id']) . ')';
+		$horse['horses_name'] = $data['horses_breedings_name'];
 		$horse['horses_breed'] = $post['horses_breedings_breed'];
 		$horse['horses_birthyear'] = $data['horses_birthyear'];
 		$horse['horses_gender'] = $data['horses_breedings_gender'];
@@ -1258,8 +1262,10 @@ class Horse extends CI_Model {
 			}
 		}
 
-		//update credits
-		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse_id, $data['horses_breedings_owner']));
+		//update credits		
+			$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array($data['horses_breedings_owner']))->row_array();
+			$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($horse_id, $player['players_id'], @$player['players_nickname']));
+
 		//set breeding as complete
 		$CI->db->query("DELETE FROM horses_breedings WHERE horses_breedings_id=? LIMIT 1", array($post['horses_breedings_id']));
 
@@ -1768,7 +1774,8 @@ class Horse extends CI_Model {
 		$result = $CI->db->query("UPDATE horses SET join_players_id=?, horses_pending_export=0, horses_pending_export_date='0000-00-00 00:00:00' WHERE horses_id=? LIMIT 1", array($EXPORT_ID, $horse['horses_id']));
 
 		//create record
-		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse['horses_id'], $horse['join_players_id']));
+		$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array($horse['join_players_id']))->row_array();
+		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($horse['horses_id'], $player['players_id'], @$player['players_nickname']));		
 
 		//send message
 		$message = "<b>Horse exported. <a href='/horses/view/" . $horse['horses_id'] ."'>" . $horse['horses_name'] ." #" . generateId($horse['horses_id']) . "</a>";
@@ -1838,8 +1845,10 @@ class Horse extends CI_Model {
 		$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($import['join_players_id'], $message));
 
 
-		//create record
-		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($data['horses_id'], $import['join_players_id']));
+		//create record		
+		$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array($import['join_players_id']))->row_array();
+		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($data['horses_id'], $player['players_id'], @$player['players_nickname']));
+
 
 		if($data['body']){
 			$sn = SITE_NAME;
@@ -2172,6 +2181,10 @@ class Horse extends CI_Model {
 		$stallion = new Horse($data['join_horses_id']);
 		$mare = $mare->horse;
 		$stallion = $stallion->horse;
+        $mare_birthyear = self::getBirthYear($data['join_mares_id']);
+        $stallion_birthyear = self::getBirthYear($data['join_horses_id']);
+//        echo $post['horses_birthyear'] < ($mare_birthyear+2)  &&  $post['horses_birthyear']  <  ($stallion_birthyear+2); die();
+//        var_dump(($post['horses_birthyear'] < ($mare_birthyear+2)) && ($post['horses_birthyear'] < ($stallion_birthyear+2))); die();
 		$name_exists = $CI->db->query("SELECT horses_id FROM horses WHERE horses_name=? LIMIT 1", array($post['horses_name']))->row_array();
 		if(!$post['horses_name']){
 			$errors['horses_name'] = "Name is required.";
@@ -2202,18 +2215,20 @@ class Horse extends CI_Model {
 			$post['disciplines'] = implode(',', $post['disciplines']);
 		}
 
+        if(!empty($mare['horses_id'])){
+            $year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($post['horses_birthyear'],$mare['horses_id']))->row_array();
+        }
+
 		/* check horse is foal year born  */
 		if(!$post['horses_birthyear']){
 			$errors['horses_birthyear'] = "Birth year is required.";
 		}elseif($post['horses_birthyear'] > date('Y') || $post['horses_birthyear'] < "1950"){
 			$errors['horses_birthyear'] = "Invalid birth year.";
-		}elseif(!empty($mare['horses_id']))
-		{										
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($post['horses_birthyear'],$mare['horses_id']))->row_array();
-			if($year_exists){
-				$errors['horses_birthyear'] = "The Mare has a foal born that year.";
-			}
-		}
+		}elseif($year_exists){
+            $errors['horses_birthyear'] = "The Mare has a foal born that year.";
+        }elseif(($post['horses_birthyear'] < ($mare_birthyear+2)) && ($post['horses_birthyear'] < ($stallion_birthyear+2))){
+            $errors['horses_birthyear'] = "The Foal must be younger.";
+        }
 		/* check horse is foal year born  end*/
 
 		if(count($errors) > 0){
@@ -2322,7 +2337,8 @@ class Horse extends CI_Model {
 
 
 		//insert owner log
-		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse['horses_id'], $player['players_id']));
+		$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array($player['players_id']))->row_array();
+		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($horse['horses_id'], $player['players_id'], @$player['players_nickname']));
 
 		$message = "<a href='/horses/view/" . $horse['horses_id'] . "'>". $horse['horses_competition_title'] . " " . $horse['horses_breeding_title'] . " " . $horse['horses_name'] . " #" . generateId($horse['horses_id']) . "</a> has been imported.";
 
@@ -2752,7 +2768,8 @@ class Horse extends CI_Model {
 		$CI->db->query("UPDATE players SET players_credits_creation=players_credits_creation-1 WHERE players_id=? LIMIT 1", array($player->player['players_id']));
 	  }	
 		
-		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($horse_id, $player->player['players_id']));
+		$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array($player->player['players_id']))->row_array();
+		$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($horse_id, $player['players_id'], @$player['players_nickname']));
 
 		$CI->session->set_flashdata('notice', "Your horse is now pending registration.");
 

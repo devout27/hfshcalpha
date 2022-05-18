@@ -67,6 +67,8 @@ class Horses extends MY_Controller {
 			$this->data['breeds'] = $this->horse->get_breeds();
 			$this->data['lines'] = $this->horse->get_lines();
 			$this->data['disciplines'] = $this->horse->get_disciplines();
+            $this->data['base_colors'] = $this->horse->get_base_colors();
+            $this->data['base_patterns'] = $this->horse->get_base_patterns();
 			$this->data['requests'] = Horse::get_breeding_requests(false,$this->data['player']['players_id']);
 			$this->data['page']['title'] = "Manage Horses";
 			$this->data['dataTableElement'] = 'dt-my-horses-list';

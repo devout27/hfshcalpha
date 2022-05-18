@@ -330,19 +330,16 @@ class Player extends CI_Model {
 
 
 	public static function admin_remove($data){
-		$CI =& get_instance();
-		//this function removes a player from the game. Horses are sent to the HS. Bank accounts are closed. Player is marked as deleted.
+		$CI =& get_instance();		
 		$horses = self::get_owned_horses($data['players_id']);
+		$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array(HUMANE_ID))->row_array();
 		foreach((array)$horses AS $k => $v){
-			//insert owner log
-			$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type) VALUES(?, ?, "Owner")', array($v['horses_id'], HUMANE_ID));
+			//insert owner log			
+			$CI->db->query('INSERT INTO horse_records(join_horses_id, join_players_id, horse_records_type, owner_name) VALUES(?, ?, "Owner", ?)', array($v['horses_id'], HUMANE_ID, @$player['players_nickname']));
 		}
-
-
 		$CI->db->query("UPDATE horses SET horses_sale=0, join_stables_id=?, join_players_id=? WHERE join_players_id=?", array(HUMANE_ID, HUMANE_ID, $data['players_id']));
 		$CI->db->query("UPDATE bank SET bank_closed=1 WHERE join_players_id=?", array($data['players_id']));
 		$CI->db->query("UPDATE players SET players_deleted=1 WHERE players_id=? LIMIT 1", array($data['players_id']));
-
 		return true;
 	}
 
@@ -370,7 +367,7 @@ class Player extends CI_Model {
 			//update the player's profile
 			$this->form_validation->set_rules(array(
 				array(
-					'field' => 'players_nickname',
+					'field		' => 'players_nickname',
 					'label' => 'Nickname',
 					'rules' => 'required|strip_tags|min_length[3]|max_length[25]'
 				),
@@ -410,7 +407,9 @@ class Player extends CI_Model {
 				$update_data = filter_keys($data, $allowed_fields);
 				$this->db->where('players_id', $data['players_id']);
 				$this->db->update('players', $update_data);
-
+				
+				$this->db->where('join_players_id', $data['players_id']);
+				$this->db->update('horse_records', ['owner_name'=>$update_data['players_nickname']]);
 			}
 
 			foreach($_POST AS $v => $e){

@@ -73,7 +73,7 @@ class City extends MY_Controller {
 		$this->data['article'] = $this->articles->get_article(15);
 
 		$params = array(
-				'join_players_id' => HUMANE_ID,
+
 				'horses_adoptable' => 1,
 			);
 		$this->data['search'] = $this->horse->search($params);

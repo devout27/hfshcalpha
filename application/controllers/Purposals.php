@@ -38,7 +38,7 @@ class Purposals extends MY_Controller {
 			foreach($res as $v){
                 $i++;
 				$horse = '<a href="/horses/view/'.$v["join_horse_id"].'">'.'#'.generateId($v['join_horse_id']).' '.$v['join_horses_name'].'</a>';
-				$info = "<p><b>Member Id:</b> ".$v['join_players_id']."<br><b>Name:</b> ".$v['join_players_username']."<br><b>Email:</b> ".$v['email']."<br><b>Phone Number: </b>".$v['phone_number']."</p>";
+				$info = "<p><b>Member Id:</b> ".$v['join_players_id']."<br><b>Name:</b> ".$v['join_players_username']."<br><b>Email:</b> ".$v['email']."</p>";
                 $title = $v['title'];
 				$description = $v['description'];
 				$price = '$'.$v['price'];
@@ -52,7 +52,7 @@ class Purposals extends MY_Controller {
             );
             echo json_encode($output);exit;
 		}else{
-			$this->data['page']['title'] = "Manage Horses Sale Purposals";
+			$this->data['page']['title'] = "My Horses for Sale";
 			$this->data['dataTableElement'] = 'dt-my-purposals-list';
 			$this->data['dataTableURL'] = base_url('manage-sale-purposals');
 			$this->load->view('layout/header', $this->data);

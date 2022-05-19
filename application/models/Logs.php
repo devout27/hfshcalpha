@@ -13,12 +13,9 @@ class Logs extends CI_Model {
 		$selects = $joins = $wheres = $params = array();
 
         $selects = array(
-            'l.*',
-            'p.players_nickname',
+            'l.*',            
             'DATE_FORMAT(log_date, "%M %D, %Y at %l:%i %p") AS log_date2',
-        );
-
-        $joins[] = 'LEFT JOIN players p ON p.players_id=l.join_players_id';
+        );        
 
 		//---------- WHERES --------------
 		if($data['join_players_id']){
@@ -138,8 +135,7 @@ class Logs extends CI_Model {
 		}
 		public function get_list_query($player_id,$postData,$where=false)
 		{													
-			$this->db->select( 'log.*,p.players_nickname,DATE_FORMAT(log_date, "%M %D, %Y at %l:%i %p") AS log_date2');			
-			$this->db->join('players p','p.players_id=log.join_players_id','LEFT');
+			$this->db->select( 'log.*,DATE_FORMAT(log_date, "%M %D, %Y at %l:%i %p") AS log_date2');						
 			$this->db->from('log');
 			if(is_numeric($player_id))
 			{							

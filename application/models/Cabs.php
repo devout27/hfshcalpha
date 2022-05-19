@@ -6,9 +6,8 @@ class Cabs extends CI_Model {
 		$this->data['player_id'] = $this->session->userdata('players_id');
 		if($cabs_id){
 			$this->cabs = $this->db->query('SELECT
-				c.*, p.players_nickname, DATE_FORMAT(p.players_last_active, "%M %D, %Y at %l:%i %p") AS players_last_active
-				FROM cabs c
-				LEFT JOIN players p ON p.players_id=c.join_players_id
+				c.*  DATE_FORMAT(p.players_last_active, "%M %D, %Y at %l:%i %p") AS players_last_active
+				FROM cabs c				
 				WHERE c.cabs_id = ? LIMIT 1
 			', array($cabs_id))->row_array();
 			$this->cabs['events'] = $this->db->query("SELECT * FROM events WHERE join_cabs_id=?", $this->cabs['cabs_id'])->result_array();
@@ -80,7 +79,7 @@ class Cabs extends CI_Model {
 
 	public static function admin_get_pending(){
 		$CI =& get_instance();
-		return $CI->db->query("SELECT c.*, p.players_nickname FROM cabs c LEFT JOIN players p ON p.players_id=c.join_players_id  WHERE c.cabs_pending=1 ORDER BY c.cabs_id ASC")->result_array();
+		return $CI->db->query("SELECT c.* FROM cabs c WHERE c.cabs_pending=1 ORDER BY c.cabs_id ASC")->result_array();
 	}
 
 
@@ -136,18 +135,20 @@ class Cabs extends CI_Model {
 
 		//save it
 		$data['join_players_id'] = $player['players_id'];
+		$data['players_nickname'] = $player['players_nickname'];
 		$data['cabs_name'] = $CI->security->xss_clean($data['cabs_name']);
 		$data['cabs_content'] = "This is a brand new CAB. Please allow the owner time to put up a page :)";
 		$data['cabs_pending'] = 1;
 		$allowed_fields = array(
 			'join_players_id',
+			'players_nickname',
 			'cabs_name',
 			'cabs_type',
 			'cabs_content',
 			'cabs_pending',
 		);
 		$create_data = filter_keys($data, $allowed_fields);
-		$CI->db->query("INSERT INTO cabs(join_players_id, cabs_name, cabs_type, cabs_content, cabs_pending) VALUES(?, ?, ?, ?, ?)", $create_data);
+		$CI->db->query("INSERT INTO cabs(join_players_id, players_nickname, cabs_name, cabs_type, cabs_content, cabs_pending) VALUES(?, ?, ?, ?, ?)", $create_data);
 
 		//return the good news
 		return array('errors' => $errors, 'notice' => 'CAB is now pending.');
@@ -159,12 +160,7 @@ class Cabs extends CI_Model {
 
 		//pre($data);exit;
 
-        $selects = array(
-            'c.*',
-            'p.players_nickname',
-        );
-
-        $joins[] = 'LEFT JOIN players p ON p.players_id=c.join_players_id';
+        $selects = array('c.*');        
 
 		//---------- WHERES --------------
 		if($data['cabs_id']){
@@ -240,9 +236,7 @@ class Cabs extends CI_Model {
 		//---------- ACTUAL QUERY --------------
 		$cabs = $CI->db->query('
 			SELECT '. implode(', ', $selects) .'
-			FROM cabs AS c
-			'. implode("\n", $joins) .'
-			'. $wheres .'
+			FROM cabs AS c '. $wheres .'
 		', $params)->result_array();
 		//pre($data);
 		//pre($CI->db->last_query());exit;

@@ -9,9 +9,8 @@ class Horse extends CI_Model {
 		$CI->data['player_id'] = $this->session->userdata('players_id');
 		if($horse_id){
 			$this->horse = $this->db->query('SELECT
-				h.*, p.players_nickname, s.stables_name, sire.horses_name AS horses_sire_name, dam.horses_name AS horses_dam_name
-				FROM horses h
-				LEFT JOIN players p ON p.players_id=h.join_players_id
+				h.*, s.stables_name, sire.horses_name AS horses_sire_name, dam.horses_name AS horses_dam_name
+				FROM horses h				
 				LEFT JOIN stables s ON s.stables_id=h.join_stables_id
 				LEFT JOIN horses sire ON sire.horses_id=h.horses_sire
 				LEFT JOIN horses dam ON dam.horses_id=h.horses_dam
@@ -23,17 +22,15 @@ class Horse extends CI_Model {
 			$this->horse['ownership_log'] = $this->db->query('SELECT * FROM horse_records  WHERE join_horses_id=? AND horse_records_type="Owner" ORDER BY horse_records_id DESC', array($horse_id))->result_array();
 
 			$this->horse['care_records'] = $this->db->query('
-					SELECT p.players_nickname, hr.*, DATE_FORMAT(hr.horse_records_date, "%Y-%m-%d") AS horse_records_date
-					FROM horse_records hr
-					LEFT JOIN players p ON p.players_id=hr.join_players_id
+					SELECT hr.*, DATE_FORMAT(hr.horse_records_date, "%Y-%m-%d") AS horse_records_date
+					FROM horse_records hr					
 					WHERE hr.join_horses_id=? AND (hr.horse_records_type="Vet" OR hr.horse_records_type="Farrier")
 					ORDER BY hr.horse_records_id DESC
 				', array($horse_id))->result_array();
 
 			$this->horse['event_records'] = $this->db->query('
-					SELECT p.players_nickname, hr.*, DATE_FORMAT(hr.horse_records_date, "%Y-%m-%d") AS horse_records_date
-					FROM horse_records hr
-					LEFT JOIN players p ON p.players_id=hr.join_players_id
+					SELECT hr.*, DATE_FORMAT(hr.horse_records_date, "%Y-%m-%d") AS horse_records_date
+					FROM horse_records hr					
 					WHERE hr.join_horses_id=? AND (hr.horse_records_type="Show"  OR hr.horse_records_type="WEGs" OR hr.horse_records_type="Olympic" OR hr.horse_records_type="Race" OR hr.horse_records_type="Event")
 					ORDER BY hr.horse_records_id DESC
 				', array($horse_id))->result_array();
@@ -341,6 +338,8 @@ class Horse extends CI_Model {
 		$CI =& get_instance();
 		// if player is regular player, only allow update of breeding fee & sale.
 
+		$data['players_nickname'] = new Player($data['join_players_id']);
+		$data['players_nickname'] = $data['players_nickname']->player;
 		//pre($data);exit;
 		$data['horses_sale_price']=(float)filter_var($data['horses_sale_price'], FILTER_SANITIZE_NUMBER_FLOAT);		
 		if($player['privileges']['privileges_horses']){ //admin can update everything else
@@ -677,6 +676,7 @@ class Horse extends CI_Model {
 
 
 		$data['join_players_id'] = $player['players_id'];
+		$data['players_nickname'] = $player['players_nickname'];
 		$data['horses_adoptable'] = 0;
 		$update_data = filter_keys($data, array(
 				'join_players_id',
@@ -714,10 +714,11 @@ class Horse extends CI_Model {
 
 		if($data['players_id'] == $horse['join_players_id']){
 			$errors['recipient'] = "You cannot send a horse to yourself.";
-		}
-
+		}		
 		if($data['recipient'] == "Member"){
 			$data['join_players_id'] = $data['players_id'];
+			$data['players_nickname'] = new Player($data['join_players_id']);
+			$data['players_nickname'] = $data['players_nickname']->player;
 			$data['horses_adoptable'] = 0;
 			$update_data = filter_keys($data, array(
 					'join_players_id',
@@ -730,6 +731,8 @@ class Horse extends CI_Model {
 			}
 		}elseif($data['recipient'] == "Humane Society"){
 			$data['join_players_id'] = $HUMANE_ID;
+			$data['players_nickname'] = new Player($data['join_players_id']);
+			$data['players_nickname'] = $data['players_nickname']->player;
 			$data['horses_adoptable'] = 1;
 			$update_data = filter_keys($data, array(
 					'join_players_id',
@@ -739,6 +742,8 @@ class Horse extends CI_Model {
 			));
 		}elseif($data['recipient'] == "Retirement Home"){
 			$data['join_players_id'] = $REITRE_ID;
+			$data['players_nickname'] = new Player($data['join_players_id']);
+			$data['players_nickname'] = $data['players_nickname']->player;
 			$data['horses_adoptable'] = 0;
 			$update_data = filter_keys($data, array(
 					'join_players_id',
@@ -748,6 +753,8 @@ class Horse extends CI_Model {
 			));
 		}elseif($data['recipient'] == "Cemetery"){
 			$data['join_players_id'] = $CEMETERY_ID;
+			$data['players_nickname'] = new Player($data['join_players_id']);
+			$data['players_nickname'] = $data['players_nickname']->player;
 			$data['horses_adoptable'] = 0;
 			$data['horses_deceased'] = 1;
 			$update_data = filter_keys($data, array(
@@ -781,8 +788,11 @@ class Horse extends CI_Model {
 		//update horse
 		$CI->db->update('horses', $update_data, "horses_id = " . $horse['horses_id']);
 
-        $notice = "Congratulations! You have purchases the <a href=/horses/view/" . $horse['horses_id'] . ">" . $horse['horses_name'] . " #" . generateId($horse['horses_id']) . ".</a>";
-        $CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $data['join_players_id']));
+		$notice = "Congratulations! You have purchased <a href=/horses/view/" . $horse['horses_id'] . ">" . $horse['horses_name'] . " #" . generateId($horse['horses_id']) . ".</a>";
+		$CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $data['join_players_id']));
+
+		$notice = "Congratulations! You have sold <a href=/horses/view/" . $horse['horses_id'] . ">" . $horse['horses_name'] . " #" . generateId($horse['horses_id']) . ".</a>";
+		$CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $player['players_id']));
 
 		if(!$skip_record_insert){
 			$player = $CI->db->query("SELECT * FROM players WHERE players_id=?", array($data['join_players_id']))->row_array();
@@ -864,9 +874,8 @@ class Horse extends CI_Model {
 		$CI =& get_instance();
 		$result = $CI->db->query("
 			SELECT
-				h.*, p.players_nickname, s.stables_name, sire.horses_name AS horses_sire_name, dam.horses_name AS horses_dam_name
-				FROM horses h
-				LEFT JOIN players p ON p.players_id=h.join_players_id
+				h.*, s.stables_name, sire.horses_name AS horses_sire_name, dam.horses_name AS horses_dam_name
+				FROM horses h				
 				LEFT JOIN stables s ON s.stables_id=h.join_stables_id
 				LEFT JOIN horses sire ON sire.horses_id=h.horses_sire
 				LEFT JOIN horses dam ON dam.horses_id=h.horses_dam
@@ -887,7 +896,7 @@ class Horse extends CI_Model {
 
 
 
-	public static function register_horse($horse, $allowed, $mod_id){
+	public static function register_horse($horse, $allowed, $mod_id){		
 		$CI =& get_instance();
 		$CI->load->model('messages');
 		/*$horse = new Horse($data['horses_id']);
@@ -1164,6 +1173,8 @@ class Horse extends CI_Model {
 		}
 
 		$horse['join_players_id'] = $data['horses_breedings_owner'];
+		$owner = new Player($data['horses_breedings_owner']);
+		$horse['players_nickname'] = $owner->player['players_nickname'];
 		/* $horse['horses_name'] = $post['horses_birthyear'] . ' Foal (#' . generateId($stallion['horses_id']) .' x #' . generateId($mare['horses_id']) . ')'; */
         // $horse['horses_name'] = $data['horses_breedings_name'].' Foal (#' . generateId($stallion['horses_id']) .' x #' . generateId($mare['horses_id']) . ')';
 		$horse['horses_name'] = $data['horses_breedings_name'];
@@ -1179,8 +1190,12 @@ class Horse extends CI_Model {
 		$horse['horses_dam'] = $data['join_mares_id'];
 		$horse['horses_pending_date'] = date('Y-m-d H:i:s');
 		$horse['horses_pending'] = 0;		
+
+		
+
 		$allowed_fields = array(
 			'join_players_id',
+			'players_nickname',
 			'horses_name',
 			'horses_breed',
 			'horses_birthyear',
@@ -1717,7 +1732,7 @@ class Horse extends CI_Model {
 
 	public static function admin_get_registration(){
 		$CI =& get_instance();
-		$horses = $CI->db->query("SELECT h.*, p.players_nickname FROM horses h LEFT JOIN players p ON p.players_id=h.join_players_id WHERE h.horses_pending=1 ORDER BY h.horses_id ASC")->result_array();
+		$horses = $CI->db->query("SELECT h.* FROM horses h WHERE h.horses_pending=1 ORDER BY h.horses_id ASC")->result_array();
 		foreach((array)$horses AS $k => $h){
 			$d = $CI->db->query("SELECT disciplines_name FROM horses_x_disciplines WHERE join_horses_id=? ORDER BY disciplines_name ASC", array($h['horses_id']))->result_array();
 			//normalize
@@ -1734,16 +1749,14 @@ class Horse extends CI_Model {
 	public static function admin_get_breedings(){
 		$CI =& get_instance();
 		$breedings = $CI->db->query("
-				SELECT hb.*, h1.*, p1.players_nickname AS p1_nickname,
+				SELECT hb.*, h1.*, h1.players_nickname AS p1_nickname,
 					h2.horses_id AS h2_id, h2.horses_name AS h2_name, h2.horses_birthyear AS h2_birthyear, h2.horses_gender AS h2_gender, h2.horses_breed AS h2_breed, h2.horses_breed2 AS h2_breed2,
-					p2.players_nickname AS p2_nickname,
-					p2.players_id AS p2_id,
+					h2.players_nickname AS p2_nickname,
+					h2.join_players_id AS p2_id,
 					DATE_FORMAT(hb.horses_breedings_date, '%Y/%m/%d') AS horses_breedings_date
 				FROM horses_breedings hb
 					LEFT JOIN horses h1 ON h1.horses_id=hb.join_horses_id
-					LEFT JOIN horses h2 ON h2.horses_id=hb.join_mares_id
-					LEFT JOIN players p1 ON p1.players_id=h1.join_players_id
-					LEFT JOIN players p2 ON p2.players_id=h2.join_players_id
+					LEFT JOIN horses h2 ON h2.horses_id=hb.join_mares_id					
 				WHERE hb.horses_breedings_accepted=1
 				ORDER BY hb.horses_breedings_date ASC")->result_array();
 		foreach((array)$breedings AS $k => $v){
@@ -1759,7 +1772,7 @@ class Horse extends CI_Model {
 	public static function admin_get_export(){
 		$CI =& get_instance();
 		//$EXPORT_ID = EXPORT_ID;
-		return $CI->db->query("SELECT h.*, p.players_nickname FROM horses h LEFT JOIN players p ON p.players_id=h.join_players_id WHERE h.horses_pending_export=1 ORDER BY h.horses_pending_export_date ASC")->result_array();
+		return $CI->db->query("SELECT h.* FROM horses h WHERE h.horses_pending_export=1 ORDER BY h.horses_pending_export_date ASC")->result_array();
 	}
 
 	public static function accept_export($data, $mod_id){
@@ -2568,7 +2581,7 @@ class Horse extends CI_Model {
 		return false;
 	}
 	/**** create horse  ****/
-	public static function register($player, $horse, $allowed){
+	public static function register($player, $horse, $allowed){		
 		//allowed is the list of each breed, color, etc. that is allowed as an option
 		$CI =& get_instance();		
 		//does player have adoption credit?
@@ -2585,37 +2598,10 @@ class Horse extends CI_Model {
 		}
 		if($horse['horses_birthyear'] > date('Y') || $horse['horses_birthyear'] < "1950"){
 			$errors['horses_birthyear'] = "Invalid birth year.";
-		}
-		
-	
+		}		
+		/*  */
 
-		
-		/*  */
-		
 			
-		if($horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']))
-		{
-			$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($age < 3 || $age > 29)
-			{
-				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-			}
-		}			
-		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']))
-		{
-			$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($age < 3 || $age > 25)
-			{
-				$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
-			}
-		}			
-		/*  */
-		$sire = self::getHorseById($horse['horses_sire'],true);
-		$dam = self::getHorseById($horse['horses_dam'],true);		
 		if($horse['horses_registration_type']=="breed" && empty($horse['horses_sire']))
 		{
 			$errors['horses_sire'] = "Sire is required.";
@@ -2624,8 +2610,46 @@ class Horse extends CI_Model {
 		{
 			$errors['horses_dam'] = "Dam is required.";
 		}
+		
+		if(empty(@$errors['horses_sire']) && self::getBirthYear($horse['horses_sire']) == $horse['horses_birthyear'])
+		{
+			$errors['horses_sire']="Foal Birth Year Matched with Sire birth year.";
+		}elseif(empty(@$errors['horses_sire']) &&  $horse['horses_birthyear'] < self::getBirthYear($horse['horses_sire']))
+		{
+			$errors['horses_sire']="Foal birth year is not greather than his Sire.";
+		}		
+		if(empty(@$errors['horses_dam']) && self::getBirthYear($horse['horses_dam']) == $horse['horses_birthyear'])
+		{
+			$errors['horses_dam']="Foal Birth Year Matched with Dam birth year.";
+		}elseif(empty(@$errors['horses_dam']) && $horse['horses_birthyear'] < self::getBirthYear($horse['horses_dam']))
+		{
+			$errors['horses_dam']="Foal Birth Year is not greather than his Dam.";
+		}
 
-		if( !empty($horse['horses_sire']) )
+		if($horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']) && empty(@$errors['horses_sire']))
+		{
+			$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
+			$birthDate = explode("/", $birthDate);
+			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+			if($age < 3 || $age > 29)
+			{
+				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+			}
+		}	
+		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']) && empty(@$errors['horses_dam']))
+		{
+			$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
+			$birthDate = explode("/", $birthDate);
+			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+			if($age < 3 || $age > 25)
+			{
+				$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
+			}
+		}		
+		/*  */		
+		$sire = self::getHorseById($horse['horses_sire'],true);
+		$dam = self::getHorseById($horse['horses_dam'],true);	
+		if(!empty($horse['horses_sire']) && empty(@$errors['horses_sire']))
 		{
 		  if( !ctype_digit($horse['horses_sire']) )
 		  {
@@ -2636,41 +2660,29 @@ class Horse extends CI_Model {
 		  }
 		}
 		
-		if($horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
+		if(empty(@$errors['horses_sire']) &&  $horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
 		{
 			$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
 		}
 		
-		if( !empty($horse['horses_dam']) )
+		if(empty(@$errors['horses_dam']) && !empty($horse['horses_dam']))
 		{  
 		  if( !ctype_digit($horse['horses_dam']) )
 		  {
 				$errors['horses_dam']="Enter dam ID.";
 		  }elseif(!$dam || $dam['horses_gender']!="Mare")
 		  {
-			$errors['horses_dam'] = "This Dam Doesn't exist.";
+				$errors['horses_dam'] = "This Dam Doesn't exist.";
 		  }
 		}
 	
-		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']) && !isset($errors['horses_gender']) && !isset($errors['horses_dam']) )
-		{										
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();	
-		
+		if(empty(@$errors['horses_dam']) && !empty($horse['horses_dam']))
+		{
+			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();
 			if($year_exists){
 				$errors['horses_dam'] = "The Mare has a foal born that year.";
 			}
-		}
-/* check horse is foal year born  */
-		if(!empty($horse['horses_dam']) && !isset($errors['horses_gender']) && !isset($errors['horses_dam']) )
-		{										
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();			
-			if($year_exists){
-				$errors['horses_dam'] = "The Mare has a foal born that year.";
-			}
-		}
-/* check horse is foal year born  end*/
-		
-	
+		}	
 		if( !empty($horse['horses_breed'])  && !empty($horse['horses_sire']) && !empty($horse['horses_dam']) )
 		{		
 		
@@ -2688,7 +2700,7 @@ class Horse extends CI_Model {
              array_push($hold,$dam_breed['horses_breed']);
 			}
 			
-            if( !in_array($horse['horses_breed'],$hold) ){ 
+      if( !in_array($horse['horses_breed'],$hold) ){ 
 			 $errors['horses_breed'] = "Breed must match with sire or dam.";
 			}
 		}
@@ -2732,9 +2744,11 @@ class Horse extends CI_Model {
 		}
 		//create horse
 		$horse['join_players_id'] = $player->player['players_id'];
+		$horse['players_nickname'] = $player->player['players_nickname'];
 		$horse['horses_pending_date'] = date('Y-m-d H:i:s');
 		$allowed_fields = array(
 			'join_players_id',
+			'players_nickname',
 			'horses_name',
 			'horses_breed',
 			'horses_created',
@@ -2799,11 +2813,9 @@ class Horse extends CI_Model {
         $selects = array(
             'hr.*',
             'hr.horse_records_id, hr.join_players_id AS horse_owner, DATE_FORMAT(hr.horse_records_date, "%Y/%m/%d") AS horse_records_date',
-            'h.*',
-            'p.players_nickname',
+            'h.*'            
         );
-
-        $joins[] = 'LEFT JOIN players p ON p.players_id=hr.join_players_id';
+        
         $joins[] = 'LEFT JOIN horses h ON h.horses_id=hr.join_horses_id';
 
         $wheres[] = 'hr.horse_records_type="Owner"';
@@ -2924,11 +2936,9 @@ class Horse extends CI_Model {
 		*/
 
         $selects = array(
-            'h.*',
-            'p.players_nickname',
+            'h.*'            
         );
-
-        $joins[] = 'LEFT JOIN players p ON p.players_id=h.join_players_id';
+        
 
 		$wheres[] = 'horses_pending = 0';
 

@@ -37,3 +37,28 @@ ALTER TABLE `horses_sale_purposals` ADD `join_horse_id` INT(11) NOT NULL AFTER `
 ALTER TABLE `horses_sale_purposals` ADD `join_horses_name` VARCHAR(255) NOT NULL AFTER `join_players_username`;
 ALTER TABLE `horses_sale_purposals` ADD `seen_status` INT(1) NOT NULL DEFAULT '0' AFTER `price`;
 ALTER TABLE `horses_breedings` ADD `horses_breedings_name` VARCHAR(255) NULL AFTER `horses_breedings_date`;
+
+--19-May-2022--
+ALTER TABLE `horse_records` ADD `owner_name` VARCHAR(255) NULL;
+
+ALTER TABLE `auctions_bids` ADD `join_players_name` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+ALTER TABLE `stables` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+ALTER TABLE `stables` ADD `players_email` VARCHAR(255) NULL AFTER `players_nickname`;
+
+ALTER TABLE `bank` ADD `players_nickname` VARCHAR(255) NULL AFTER `join_players_id`;
+
+ALTER TABLE `bank_loans` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+ALTER TABLE `cabs` ADD `players_nickname` VARCHAR(255) NULL AFTER `join_players_id`;
+
+ALTER TABLE `events` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+ALTER TABLE `horses` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+ALTER TABLE `import_requests` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+ALTER TABLE `inventory` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+ALTER TABLE `log` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;

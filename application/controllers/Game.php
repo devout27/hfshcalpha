@@ -197,6 +197,39 @@ class Game extends MY_Controller {
 				$this->db->where('players_id', $this->session->userdata('players_id'));
 				$this->db->update('players', $update_data);
 
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('horse_records', ['owner_name'=>$update_data['players_nickname']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('auctions_bids', ['players_nickname'=>$update_data['players_nickname']]);				
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('stables', ['players_nickname'=>$update_data['players_nickname'],'players_email'=>$update_data['players_email']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('bank', ['players_nickname'=>$update_data['players_nickname']]);
+				
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('bank_loans', ['players_nickname'=>$update_data['players_nickname']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('cabs', ['players_nickname'=>$update_data['players_nickname']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('events', ['players_nickname'=>$update_data['players_nickname']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('horses', ['players_nickname'=>$update_data['players_nickname']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('import_requests', ['players_nickname'=>$update_data['players_nickname']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('inventory', ['players_nickname'=>$update_data['players_nickname']]);
+
+				$this->db->where('join_players_id', $this->session->userdata('players_id'));
+				$this->db->update('log', ['players_nickname'=>$update_data['players_nickname']]);
+
 				$this->session->set_flashdata('notice', "Your profile has been updated!");
 				redirect('game/profile');
 			}
@@ -245,7 +278,7 @@ class Game extends MY_Controller {
 				$update_data = filter_keys($data, $allowed_fields);
 				$this->db->where('players_id', $this->session->userdata('players_id'));
 				$this->db->update('players', $update_data);
-
+				
 				$this->session->set_flashdata('notice', "Your email has been updated!");
 				redirect('game/profile');
 
@@ -444,9 +477,10 @@ class Game extends MY_Controller {
 			
             $this->form_validation->set_rules($set_rules);
             if($this->form_validation->run()===TRUE)
-			{                
+						{                
                 unset($_POST['submit']);
-				$_POST['join_players_id']=$this->session->userdata('players_id');
+								$_POST['join_players_id']=$this->session->userdata('players_id');
+								$_POST['players_nickname']=$this->data['player']['players_nickname']; 
                 $response = $this->Inventory_Model->saveInventory($_POST);
                 if($response)
                 {

@@ -75,7 +75,7 @@ class Stables extends Admin_Controller
             redirect($this->class_name);
         }
         $this->data['page_title'] = $postData['stables_name'] . " #" . $postData['stables_id'];
-        if($this->input->post()){            
+        if($this->input->post()){
             $this->load->library('form_validation');
             $set_rules=$this->Stable_Model->config_edit;
             $this->form_validation->set_rules($set_rules);

@@ -12,6 +12,8 @@
                         <div class="row justify-content-center">
                             <form method="post" action="<?=$BASE_URL.$class_name?>manage/<?= $postData['stables_id'] ?>">
                                 <?= hf_hidden('stables_id', $postData['stables_id']) ?>
+                                <?= hf_hidden('players_email', $postData['players_email']) ?>
+                                <?= hf_hidden('players_nickname', $postData['players_nickname']) ?>
                                 <?= hf_hidden('stables_boarding_public',0) ?>
                                 <div class="col-12">
                                     <?= hf_input('stables_name', 'Stable Name', $postData, array('placeholder' => 'Upton Downs'), $errors) ?>

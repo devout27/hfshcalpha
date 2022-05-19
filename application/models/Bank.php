@@ -131,6 +131,8 @@ class Bank extends CI_Model {
         $data['bank_balance'] = 0;
         $data['bank_interest_incurred'] = 0.01;
         $data['bank_nickname'] = 'Savings for ' . $player['players_nickname'];
+        $data['players_nickname'] = $player['players_nickname'];
+        
 
         $CI->db->insert('bank', $data);
 
@@ -165,7 +167,7 @@ class Bank extends CI_Model {
         $data['bank_type'] = 'Business';
         $data['bank_balance'] = 0;
         $data['bank_nickname'] = 'Business for ' . $player['players_nickname'];
-
+        $data['players_nickname'] = $player['players_nickname'];
         $CI->db->insert('bank', $data);
 
         $message = "You requested to open a Business Account.";
@@ -247,7 +249,7 @@ class Bank extends CI_Model {
         $data2['bank_balance'] = 0;
         $data2['bank_interest_incurred'] = 0.02;
         $data2['bank_nickname'] = 'Loan for ' . $player['players_nickname'];
-
+        $data2['players_nickname'] = $player['players_nickname'];
         $CI->db->insert('bank', $data2);
         $loan_id = $CI->db->insert_id();
         $data_insert['join_bank_id'] = $loan_id;
@@ -727,13 +729,13 @@ class Bank extends CI_Model {
 
     public static function admin_get_pending(){
         $CI =& get_instance();
-        return $CI->db->query("SELECT bl.*, p.players_nickname, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank_loans bl LEFT JOIN players p ON p.players_id=bl.join_players_id  WHERE bl.pending=0 ORDER BY bl.bank_loans_id ASC")->result_array();
+        return $CI->db->query("SELECT bl.*, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank_loans bl LEFT JOIN players p ON p.players_id=bl.join_players_id  WHERE bl.pending=0 ORDER BY bl.bank_loans_id ASC")->result_array();
         
     }
 
     public static function admin_get_pending_bank(){ 
         $CI =& get_instance();
-       return $CI->db->query("SELECT b.*, p.players_nickname, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank b LEFT JOIN players p ON p.players_id=b.join_players_id  WHERE b.bank_pending=1 ORDER BY b.bank_id ASC")->result_array();
+        return $CI->db->query("SELECT b.*, DATE_FORMAT(players_join_date, '%M %D, %Y at %l:%i %p') AS players_join_date2, DATE_FORMAT(players_last_active, '%M %D, %Y at %l:%i %p') AS players_last_active2 FROM bank b LEFT JOIN players p ON p.players_id=b.join_players_id  WHERE b.bank_pending=1 ORDER BY b.bank_id ASC")->result_array();
     
     }
 
@@ -762,8 +764,9 @@ class Bank extends CI_Model {
 
         $loan = $CI->db->query("SELECT * FROM bank_loans WHERE bank_loans_id=?", array($data['bank_loans_id']))->row_array();
         
-        //create account
+        //create account        
         $insert_data['join_players_id'] = $loan['join_players_id'];
+        $insert_data['players_nickname'] = $loan['players_nickname'];
         $insert_data['bank_type'] = 'Loan';
         $insert_data['bank_balance'] = $loan['amount_requested'];
         $insert_data['bank_credit_limit'] = $loan['amount_requested'];
@@ -797,11 +800,8 @@ class Bank extends CI_Model {
     public static function admin_get_overdue_loans(){
         $CI =& get_instance();
         return $CI->db->query("
-                SELECT b.*, p.players_nickname, DATEDIFF(NOW(), bank_credit_payment_due) AS days_late
-                FROM bank b
-                    LEFT JOIN players p ON p.players_id=b.join_players_id
-                WHERE
-                    b.bank_balance>0 AND b.bank_credit_payment_due!='0000-00-00' AND b.bank_credit_payment_due<NOW()
+                SELECT b.*, DATEDIFF(NOW(), bank_credit_payment_due) AS days_late
+                FROM bank b WHERE b.bank_balance > 0 AND b.bank_credit_payment_due!='0000-00-00' AND b.bank_credit_payment_due < NOW()
                 ORDER BY bank_credit_payment_due ASC
             ")->result_array();
     }
@@ -816,16 +816,14 @@ class Bank extends CI_Model {
             'b.bank_nickname AS b1_bank_nickname',
             'b2.bank_type AS b2_bank_type',
             'b2.bank_nickname AS b2_bank_nickname',
-            'p.players_nickname AS p1_nickname',
-            'p.players_id AS p1_id',
-            'p2.players_nickname AS p2_nickname',
-            'p2.players_id AS p2_id',
+            'b.players_nickname AS p1_nickname',
+            'b.join_players_id AS p1_id',
+            'b2.players_nickname AS p2_nickname',
+            'b2.join_players_id AS p2_id',
         );
 
         $joins[] = 'LEFT JOIN bank b ON b.bank_id=bc.join_bank_id';
-        $joins[] = 'LEFT JOIN bank b2 ON b.bank_id=bc.bank_checks_to_id';
-        $joins[] = 'LEFT JOIN players p ON p.players_id=b.join_players_id';
-        $joins[] = 'LEFT JOIN players p2 ON p2.players_id=bc.bank_checks_to_id';
+        $joins[] = 'LEFT JOIN bank b2 ON b.bank_id=bc.bank_checks_to_id';        
 
         //---------- WHERES --------------
         $wheres [] = "bc.bank_checks_id>0";
@@ -915,14 +913,9 @@ class Bank extends CI_Model {
 
     public static function search($data){
         $CI =& get_instance(); //allow us to use the db...
-        $selects = $joins = $wheres = $params = array();
+        $selects = $wheres = $params = array();
 
-        $selects = array(
-            'b.*',
-            'p.players_nickname',
-        );
-
-        $joins[] = 'LEFT JOIN players p ON p.players_id=b.join_players_id';
+        $selects = array('b.*');        
 
         //---------- WHERES --------------
         if($data['bank_owner']){
@@ -992,11 +985,8 @@ class Bank extends CI_Model {
         //---------- ACTUAL QUERY --------------
         $accounts = $CI->db->query('
             SELECT '. implode(', ', $selects) .'
-            FROM bank AS b
-            '. implode("\n", $joins) .'
-            '. $wheres .'
-        ', $params)->result_array();
-        //pre($CI->db->last_query());exit;
+            FROM bank AS b '. $wheres .'
+        ', $params)->result_array();        
 
         return $accounts;
     }
@@ -1022,9 +1012,7 @@ class Bank extends CI_Model {
             return $this->db->count_all_results();
         }
         public function get_list_query($player_id,$postData,$where=false)
-        {
-            $this->db->select('bank.*,p.players_nickname');
-            $this->db->join('players p','p.players_id=bank.join_players_id','LEFT');
+        {            
             $this->db->from('bank');
             if(is_numeric($player_id))
             {

@@ -7,10 +7,9 @@ class Events extends CI_Model {
 		$this->data['player_id'] = $this->session->userdata('players_id');
 		if($events_id){
 			$this->event = $this->db->query('SELECT
-				e.*, /*exc.*,*/ p.players_nickname, cabs.cabs_name
+				e.*, /*exc.*,*/ cabs.cabs_name
 				FROM events e
-				/*LEFT JOIN events_x_classes exc ON exc.join_events_id=e.events_id*/
-				LEFT JOIN players p ON p.players_id=e.join_players_id
+				/*LEFT JOIN events_x_classes exc ON exc.join_events_id=e.events_id*/				
 				LEFT OUTER JOIN cabs ON cabs.cabs_id=e.join_cabs_id
 				WHERE e.events_id = ? LIMIT 1
 			', array($events_id))->row_array();
@@ -37,11 +36,11 @@ class Events extends CI_Model {
 
 	function get_class($id){
 		$class = $this->db->query("SELECT exc.*, cd.* FROM events_x_classes exc LEFT JOIN classlists_divisions cd ON cd.classlists_divisions_id=exc.join_divisions_id WHERE events_x_classes_id=?", array($id))->row_array();
-		$class['entrants'] = $this->db->query("SELECT ee.*, h.horses_name, h.horses_breed, p.players_nickname FROM events_entrants ee LEFT JOIN horses h ON h.horses_id=ee.join_horses_id LEFT JOIN players p ON p.players_id=h.join_players_id WHERE join_events_x_classes_id=? ORDER BY ee.events_entrants_place ASC", array($id))->result_array();
+		$class['entrants'] = $this->db->query("SELECT ee.*, h.horses_name, h.horses_breed, h.players_nickname FROM events_entrants ee LEFT JOIN horses h ON h.horses_id=ee.join_horses_id WHERE join_events_x_classes_id=? ORDER BY ee.events_entrants_place ASC", array($id))->result_array();
 		foreach((array)$class['entrants'] AS $e):
-			$class['entrants_ids'] []= $e['join_horses_id'];
+			$class['entrants_ids'][] = $e['join_horses_id'];
 		endforeach;
-		$class['division_results'] = $this->db->query("SELECT ed.*, h.horses_name, h.horses_breed, p.players_nickname FROM events_divisions ed LEFT JOIN horses h ON h.horses_id=ed.join_horses_id LEFT JOIN players p ON p.players_id=h.join_players_id WHERE ed.join_events_id=? AND join_divisions_id=? ORDER BY ed.events_divisions_place ASC", array($class['join_events_id'], $class['join_divisions_id']))->result_array();
+		$class['division_results'] = $this->db->query("SELECT ed.*, h.horses_name, h.horses_breed, h.players_nickname FROM events_divisions ed LEFT JOIN horses h ON h.horses_id=ed.join_horses_id WHERE ed.join_events_id=? AND join_divisions_id=? ORDER BY ed.events_divisions_place ASC", array($class['join_events_id'], $class['join_divisions_id']))->result_array();
 		return $class;
 	}
 
@@ -70,9 +69,8 @@ class Events extends CI_Model {
 
 	public static function admin_get_pending(){
 		$CI =& get_instance();
-		return $CI->db->query("SELECT e.*, p.players_nickname, c.cabs_name FROM events e
+		return $CI->db->query("SELECT e.*, c.players_nickname, c.cabs_name FROM events e
 				LEFT OUTER JOIN cabs c ON c.cabs_id=e.join_cabs_id
-				LEFT JOIN players p ON p.players_id=c.join_players_id
 				WHERE e.events_pending=2 ORDER BY e.events_id ASC
 			")->result_array();
 	}
@@ -733,6 +731,7 @@ class Events extends CI_Model {
 		}
 		//save it
 		$data['join_players_id'] = $player['players_id'];
+		$data['players_nickname'] = $player['players_nickname'];
 		$data['events_name'] = $CI->security->xss_clean($data['events_name']);
 		$data['events_pending'] = 1;
 		$data['join_cabs_id'] = $data['events_host'];
@@ -740,6 +739,7 @@ class Events extends CI_Model {
 		//$data['events_type'] = $data['events_type'];
 		$allowed_fields = array(
 			'join_players_id',
+			'players_nickname',
 			'events_name',
 			'events_pending',
 			'events_date1',
@@ -752,7 +752,7 @@ class Events extends CI_Model {
 		);
 		$create_data = filter_keys($data, $allowed_fields);
 
-		$CI->db->query("INSERT INTO events(join_players_id, events_name, events_pending, events_date1, events_date2, events_date3, join_cabs_id, join_classlists_id, events_type, join_bank_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", $create_data);
+		$CI->db->query("INSERT INTO events(join_players_id,players_nickname, events_name, events_pending, events_date1, events_date2, events_date3, join_cabs_id, join_classlists_id, events_type, join_bank_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", $create_data);
 		$event_id = $CI->db->insert_id();
 
 		//create the classlist based off the one chosen
@@ -878,12 +878,7 @@ class Events extends CI_Model {
 		$CI =& get_instance(); //allow us to use the db...
 		$selects = $joins = $wheres = $params = array();
 
-        $selects = array(
-            'e.*',
-            'p.players_nickname',
-        );
-
-        $joins[] = 'LEFT JOIN players p ON p.players_id=e.join_players_id';
+        $selects = array('e.*');        
         $joins[] = 'LEFT JOIN cabs c ON c.cabs_id=e.join_cabs_id';
         $joins[] = 'LEFT JOIN classlists cl ON cl.classlists_id=e.join_classlists_id';
 
@@ -897,7 +892,7 @@ class Events extends CI_Model {
 				$wheres [] = "e.join_players_id=?";
 				$params [] = $data['events_owner'];
 			}else{
-				$wheres [] = "p.players_nickname LIKE ?";
+				$wheres [] = "e.players_nickname LIKE ?";
 				$params [] = '%' . $data['events_owner'] . '%';
 			}
 		}
@@ -965,9 +960,9 @@ class Events extends CI_Model {
 		$futureWeeks = strtotime("+ ".$weeks." weeks");				
 		$endDate = date("Y-m-d", $futureWeeks);
 		$startDate = Date("Y-m-d");
-		$res1 = $this->db->select('events.*,players.players_nickname',)->join('players','players_id=join_players_id')->where('events_date1 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();
-		$res2 = $this->db->select('events.*,players.players_nickname',)->join('players','players_id=join_players_id')->where('events_date2 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();
-		$res3 = $this->db->select('events.*,players.players_nickname',)->join('players','players_id=join_players_id')->where('events_date3 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();		
+		$res1 = $this->db->select('events.*')->where('events_date1 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();
+		$res2 = $this->db->select('events.*')->where('events_date2 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();
+		$res3 = $this->db->select('events.*')->where('events_date3 BETWEEN "'.$startDate.'" AND "'.$endDate.'"')->get($this->table)->result_array();		
 		return [$res1,$res2,$res3];
 	}
 }

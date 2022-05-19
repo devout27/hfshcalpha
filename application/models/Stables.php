@@ -6,7 +6,7 @@ class Stables extends CI_Model {
 	function __construct($stables_id = NULL){
 		$this->data['player_id'] = $this->session->userdata('players_id');
 		if($stables_id){
-			$stable = $this->db->query("SELECT s.*, p.players_nickname FROM stables s LEFT JOIN players p ON p.players_id=s.join_players_id WHERE stables_id=?", array($stables_id))->row_array();
+			$stable = $this->db->query("SELECT s.* FROM stables s WHERE stables_id=?", array($stables_id))->row_array();
 			$stable['amenities'] = $this->db->query("SELECT sxa.*, a.* FROM stables_x_amenities sxa LEFT JOIN amenities a ON a.amenities_id=sxa.join_amenities_id WHERE sxa.join_stables_id=?", $stable['stables_id'])->result_array();
 			$land = $paddocks = $stalls = $buildings = $courses = $misc = $used_acres = 0;
 
@@ -388,12 +388,7 @@ class Stables extends CI_Model {
 		$CI =& get_instance(); //allow us to use the db...
 		$selects = $joins = $wheres = $params = array();
 
-        $selects = array(
-            'e.*',
-            'p.players_nickname',
-        );
-
-        $joins[] = 'LEFT JOIN players p ON p.players_id=e.join_players_id';
+        $selects = array('e.*');        
         $joins[] = 'LEFT JOIN cabs c ON c.cabs_id=e.join_cabs_id';
         $joins[] = 'LEFT JOIN classlists cl ON cl.classlists_id=e.join_classlists_id';
 
@@ -407,7 +402,7 @@ class Stables extends CI_Model {
 				$wheres [] = "e.join_players_id=?";
 				$params [] = $data['events_owner'];
 			}else{
-				$wheres [] = "p.players_nickname LIKE ?";
+				$wheres [] = "players_nickname LIKE ?";
 				$params [] = '%' . $data['events_owner'] . '%';
 			}
 		}

@@ -69,7 +69,7 @@ Class Stable_Model extends MY_Model {
         ),
     );
 	public function getStableDataById($stables_id){		        
-        $stable = $this->db->query("SELECT s.*, p.players_nickname FROM stables s LEFT JOIN players p ON p.players_id=s.join_players_id WHERE stables_id=?", array($stables_id))->row_array();
+        $stable = $this->db->query("SELECT s.* FROM stables s WHERE stables_id=?", array($stables_id))->row_array();
         if(count($stable) > 0)
         {
             $stable['amenities'] = $this->db->query("SELECT sxa.*, a.* FROM stables_x_amenities sxa LEFT JOIN amenities a ON a.amenities_id=sxa.join_amenities_id WHERE sxa.join_stables_id=?", $stable['stables_id'])->result_array();
@@ -132,7 +132,7 @@ Class Stable_Model extends MY_Model {
     }
 	public function saveStable($data) {         
 		$id=isset($data['stables_id']) ? $data['stables_id']:'';        
-		if(!empty($id)){			
+		if(!empty($id)){
 			$this->db->where('stables_id', $id);
 			$query = $this->db->update($this->table, $data);
 			if ($query) {
@@ -169,8 +169,7 @@ Class Stable_Model extends MY_Model {
     }
     public function get_stables_list_query($player_id=null,$postData,$where=false)
     {
-        $this->db->select('stables.*,players.players_nickname,players.players_email');
-        $this->db->join('players','players.players_id=stables.join_players_id','left');
+        $this->db->select('stables.*');        
 		$condition=array();
 		if($player_id){
 			$condition['join_players_id']=$player_id;

@@ -195,7 +195,8 @@ class Auction extends CI_Model {
 
 		//pre($data);exit;
 		//place the bid
-		$CI->db->query("INSERT INTO auctions_bids(join_auctions_id, join_players_id, join_bank_id, auctions_bids_amount, auctions_bids_date) VALUES(?, ?, ?, ?, NOW())", array($data['join_auctions_id'], $player['players_id'], $data['bank_id'], $data['auctions_bids_amount']));
+		$CI->db->query("INSERT INTO auctions_bids(join_auctions_id, join_players_id, join_bank_id, auctions_bids_amount, auctions_bids_date,join_players_name) VALUES(?, ?, ?, ?, NOW(), ?)", array($data['join_auctions_id'], $player['players_id'], $data['bank_id'], $data['auctions_bids_amount'],$player['players_nickname']));
+
 		return array('errors' => $errors, 'notices' => $notices, 'auction_id' => $data['join_auctions_id']);
 	}
 

@@ -72,7 +72,7 @@ Class Inventory_Model extends MY_Model {
         ),
     );
 	public function getInventoryDataById($itemid){		        
-        $inventory = $this->db->query("SELECT s.*, p.players_nickname FROM inventory s LEFT JOIN players p ON p.players_id=s.join_players_id WHERE itemid=?", array($itemid))->row_array();
+        $inventory = $this->db->query("SELECT s.* FROM inventory s WHERE itemid=?", array($itemid))->row_array();
         return $inventory;
 	}    
     public function getInventorysList($player_id,$postData)
@@ -132,7 +132,7 @@ Class Inventory_Model extends MY_Model {
     }
     public function get_inventories_list_query($player_id=null,$postData,$where=false)
     {
-        $this->db->select('inventory.*,players.players_nickname,players.players_email');
+        $this->db->select('inventory.*,players.players_email');
         $this->db->join('players','players.players_id=inventory.join_players_id','left');
 		$condition=array();
 		if($player_id){

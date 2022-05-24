@@ -13,6 +13,8 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
               <h2 class="card-title">Update Horse</h2>
               <p class="card-text">
 				<form method="post" action="/horses/update/<?= $horse['horses_id'] ?>">
+				<?= hf_hidden('horses_created', $horse['horses_created']) ?>
+				<?= hf_hidden('horses_registration_type', $horse['horses_registration_type']) ?>
 				<? if($player['privileges']['privileges_horses']): ?>
 					<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => ''), $errors) ?>
 				<? else: ?>
@@ -37,8 +39,8 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
 
 					<?= hf_dropdown('horses_breed', 'Breed', $_POST ?: $horse, $breeds, array(), $errors, 1) ?>
 					<?= hf_input('horses_breed2', 'Secondary Breed/Pattern (optional)', $_POST ?: $horse, array(), $errors, 1) ?>
-					<?//= hf_dropdown('horses_color', 'Base Color', $_POST ?: $horse, $base_colors, array(), $errors, 1) ?>
-					<?//= hf_dropdown('horses_pattern', 'Pattern Color', $_POST ?: $horse, $base_patterns, array(), $errors, 1) ?>
+					<?= hf_dropdown('horses_color', 'Base Color', $_POST ?: $horse, $base_colors, array(), $errors, 1) ?>
+					<?= hf_dropdown('horses_pattern', 'Pattern Color', $_POST ?: $horse, $base_patterns, array(), $errors, 1) ?>
 					<?= hf_dropdown('horses_line', 'Line (optional)', $_POST ?: $horse, $lines, array(), $errors, 1) ?>
 					<?= hf_input('horses_sire', 'Sire ID', $_POST ?: $horse, array(), $errors) ?>
 					<?= hf_input('horses_dam', 'Mare ID', $_POST ?: $horse, array(), $errors) ?>

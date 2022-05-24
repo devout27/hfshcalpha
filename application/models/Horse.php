@@ -334,13 +334,14 @@ class Horse extends CI_Model {
 	}
 
 	public static function update($player, $horse, $data, $allowed){
+		
 		//allowed is the list of each breed, color, etc. that is allowed as an option
 		$CI =& get_instance();
 		// if player is regular player, only allow update of breeding fee & sale.
 
-		$data['players_nickname'] = new Player($data['join_players_id']);
-		$data['players_nickname'] = $data['players_nickname']->player;
-		//pre($data);exit;
+		$data['players_nickname'] = new Player($horse['join_players_id']);		
+		$data['players_nickname'] = $data['players_nickname']->player['players_nickname'];
+		
 		$data['horses_sale_price']=(float)filter_var($data['horses_sale_price'], FILTER_SANITIZE_NUMBER_FLOAT);		
 		if($player['privileges']['privileges_horses']){ //admin can update everything else
 			$allowed_fields = array(
@@ -362,7 +363,8 @@ class Horse extends CI_Model {
 				'horses_notes',
 				'horses_breeding_fee',
 				'horses_sale_price',				
-				'horses_registration_type'
+				'horses_registration_type',
+				'players_nickname'
 			);
 
 			
@@ -414,7 +416,46 @@ class Horse extends CI_Model {
 			if(!$data['horses_name']){
 				$errors['horses_name'] = "Name is required.";
 			}			
-			
+			/*  */
+			$sire = self::getHorseById($data['horses_sire'],true);
+			$dam = self::getHorseById($data['horses_dam'],true);
+			if($data['horses_registration_type']=="breed" && empty($data['horses_sire']) || $data['horses_registration_type']=="breed" && !ctype_digit($data['horses_sire']))
+			{
+				$errors['horses_sire'] = "Sire is required.";
+			}elseif($data['horses_registration_type']=="breed" && !$sire || $data['horses_registration_type']=="breed" && $sire['horses_gender'] != 'Stallion')
+			{								
+				$errors['horses_sire'] = "This Sire Doesn't exist.";
+			}elseif($data['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
+			{
+				$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
+			}elseif($data['horses_registration_type']=="breed" && self::getBirthYear($data['horses_sire']) == $data['horses_birthyear'])
+			{
+				$errors['horses_sire']="Foal Birth Year Matched with Sire birth year.";
+			}elseif($data['horses_registration_type']=="breed" && $data['horses_birthyear'] < self::getBirthYear($data['horses_sire']))
+			{
+				$errors['horses_sire']="Foal birth year is not greather than his Sire.";
+			}
+
+			if($data['horses_registration_type']=="breed" && empty($data['horses_dam']) ||  $data['horses_registration_type']=="breed" && !ctype_digit($data['horses_dam']))
+			{
+				$errors['horses_dam'] = "Dam is required.";
+			}elseif($data['horses_registration_type']=="breed" && !$dam || $data['horses_registration_type']=="breed" && $dam['horses_gender'] != 'Mare')
+			{
+				$errors['horses_dam'] = "This Dam Doesn't exist.";
+			}elseif($data['horses_registration_type']=="breed" && self::getBirthYear($data['horses_dam']) == $data['horses_birthyear'])
+			{
+				$errors['horses_dam']="Foal Birth Year Matched with Dam birth year.";
+			}elseif($data['horses_registration_type']=="breed" && $data['horses_birthyear'] < self::getBirthYear($data['horses_dam']))
+			{
+				$errors['horses_dam']="Foal Birth Year is not greather than his Dam.";
+			}elseif($data['horses_registration_type']=="breed" && !empty($data['horses_dam']))
+			{
+				$horse_id = $horse['horses_id'];
+				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? AND horses_id != ? LIMIT 1", array($data['horses_birthyear'],$data['horses_dam'],$horse_id))->row_array();
+				if($year_exists){
+					$errors['horses_dam'] = "The Mare has a foal born that year.";
+				}
+			}
 			if($data['horses_gender']=="Stallion" && !empty($data['horses_sire']))
 			{
 				$birthDate = "01/01/".self::getBirthYear($data['horses_sire']);
@@ -434,75 +475,8 @@ class Horse extends CI_Model {
 				{
 					$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
 				}
-			}	
-			/*  */
-					$sire = self::getHorseById($data['horses_sire'],true);
-					$dam = self::getHorseById($data['horses_dam'],true);
-					if($data['horses_registration_type']=="breed" && empty($data['horses_sire']))
-					{
-						$errors['horses_sire'] = "Sire is required.";
-					}
-					if($data['horses_registration_type']=="breed" && empty($data['horses_dam']))
-					{
-						$errors['horses_dam'] = "Dam is required.";
-					}	
-
-					if( !empty($data['horses_sire']) )
-					{
-						if( !ctype_digit($data['horses_sire']) )
-						{
-								$errors['horses_sire']="Enter sire ID.";
-						}elseif(!$sire || $sire['horses_gender'] != 'Stallion')
-						{
-							$errors['horses_sire'] = "This Sire Doesn't exist.";
-						}
-					}
-					if($data['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
-					{
-						$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
-					}
-					if( !empty($data['horses_dam']) )
-					{
-						if( !ctype_digit($data['horses_dam']) )
-						{
-								$errors['horses_dam']="Enter dam ID.";
-						}elseif(!$dam || $dam['horses_gender'] != 'Mare')
-						{
-							$errors['horses_dam'] = "This Dam Doesn't exist.";
-						}
-					}
-			/*  */			
-			if( $data['horses_gender']=="Mare" && !empty($horse['horses_dam']) )
-			{				
-				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_id <> ? AND horses_dam = ? LIMIT 1", array($data['horses_birthyear'],$horse['horses_id'],$horse['horses_dam']))->row_array();				
-				if($year_exists){
-					$errors['horses_dam'] = "The Mare has a foal born that year.";
-				}
 			}
-
-		/* check horse is foal year born  */
-			if(!empty($horse['horses_dam']) && !isset($errors['horses_gender']) && !isset($errors['horses_dam']) )
-			{										
-				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_id <>  ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_id'],$horse['horses_dam']))->row_array();			
-				if($year_exists){
-					$errors['horses_dam'] = "The Mare has a foal born that year.";
-				}
-			}
-		/* check horse is foal year born  end*/
-
-			/*  */
-			if(!empty($horse['horses_dam']))
-			{				
-				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_id != ? AND horses_dam = ? LIMIT 1", array($data['horses_birthyear'],$horse['horses_id'],$data['horses_dam']))->row_array();
-				if($year_exists){
-					$errors['horses_dam'] = "The Mare has a foal born that year.";
-				}
-			}
-			/*  */
-
-
-
-
+		/*  */
     	if( !empty($horse['horses_breed'])  && !empty($horse['horses_sire']) && !empty($horse['horses_dam']) )
 			{		
 			
@@ -539,8 +513,9 @@ class Horse extends CI_Model {
 				'horses_sale',
 				'horses_breeding_fee',
 				'horses_sale_price',
-                'horses_adoptable',
-                'horses_deceased'
+				'horses_adoptable',
+				'horses_deceased',
+				'players_nickname'
 			);
 		}else{
 			$errors['horses_name'] = "You do not own this horse.";
@@ -557,7 +532,6 @@ class Horse extends CI_Model {
 		}
 
 		$update_data = filter_keys($data, $allowed_fields);
-
 		if(count($errors) > 0){
 			return array('errors' => $errors);
 		}
@@ -718,7 +692,7 @@ class Horse extends CI_Model {
 		if($data['recipient'] == "Member"){
 			$data['join_players_id'] = $data['players_id'];
 			$data['players_nickname'] = new Player($data['join_players_id']);
-			$data['players_nickname'] = $data['players_nickname']->player;
+			$data['players_nickname'] = $data['players_nickname']->player['players_nickname'];
 			$data['horses_adoptable'] = 0;
 			$update_data = filter_keys($data, array(
 					'join_players_id',
@@ -732,7 +706,7 @@ class Horse extends CI_Model {
 		}elseif($data['recipient'] == "Humane Society"){
 			$data['join_players_id'] = $HUMANE_ID;
 			$data['players_nickname'] = new Player($data['join_players_id']);
-			$data['players_nickname'] = $data['players_nickname']->player;
+			$data['players_nickname'] = $data['players_nickname']->player['players_nickname'];
 			$data['horses_adoptable'] = 1;
 			$update_data = filter_keys($data, array(
 					'join_players_id',
@@ -743,7 +717,7 @@ class Horse extends CI_Model {
 		}elseif($data['recipient'] == "Retirement Home"){
 			$data['join_players_id'] = $REITRE_ID;
 			$data['players_nickname'] = new Player($data['join_players_id']);
-			$data['players_nickname'] = $data['players_nickname']->player;
+			$data['players_nickname'] = $data['players_nickname']->player['players_nickname'];
 			$data['horses_adoptable'] = 0;
 			$update_data = filter_keys($data, array(
 					'join_players_id',
@@ -754,7 +728,7 @@ class Horse extends CI_Model {
 		}elseif($data['recipient'] == "Cemetery"){
 			$data['join_players_id'] = $CEMETERY_ID;
 			$data['players_nickname'] = new Player($data['join_players_id']);
-			$data['players_nickname'] = $data['players_nickname']->player;
+			$data['players_nickname'] = $data['players_nickname']->player['players_nickname'];
 			$data['horses_adoptable'] = 0;
 			$data['horses_deceased'] = 1;
 			$update_data = filter_keys($data, array(
@@ -892,11 +866,7 @@ class Horse extends CI_Model {
 	public static function get_ownership_log($horse_id){
 
 	}
-
-
-
-
-	public static function register_horse($horse, $allowed, $mod_id){		
+	public static function register_horse($horse, $allowed, $mod_id){				
 		$CI =& get_instance();
 		$CI->load->model('messages');
 		/*$horse = new Horse($data['horses_id']);
@@ -907,27 +877,23 @@ class Horse extends CI_Model {
 		}
 		$horse['disciplines'] = $d;*/
         
-		if( !empty($horse['horses_breed'])  && !empty($horse['horses_sire']) && !empty($horse['horses_dam']) )
+		if(!empty($horse['horses_breed'])  && !empty($horse['horses_sire']) && !empty($horse['horses_dam']) )
 		{		
-		
-			$horses_breed = $CI->db->query("SELECT breed_id FROM breeds WHERE breed_name= ?  LIMIT 1", array($horse['horses_breed']))->row_array();	
-		
+			$horses_breed = $CI->db->query("SELECT breed_id FROM breeds WHERE breed_name= ?  LIMIT 1", array($horse['horses_breed']))->row_array();			
 			$hold=[];	
-			$sire_breed = $CI->db->query("SELECT horses_breed FROM horses WHERE horses_id= ?  LIMIT 1", array($horse['horses_sire']))->row_array();	
-		
+			$sire_breed = $CI->db->query("SELECT horses_breed FROM horses WHERE horses_id= ?  LIMIT 1", array($horse['horses_sire']))->row_array();			
 			if($sire_breed){
-             array_push($hold,$sire_breed['horses_breed']);
+        array_push($hold,$sire_breed['horses_breed']);
 			}
 			$dam_breed = $CI->db->query("SELECT horses_breed FROM horses WHERE horses_id= ?  LIMIT 1", array($horse['horses_dam']))->row_array();	
 		
 			if($dam_breed){
-             array_push($hold,$dam_breed['horses_breed']);
+        array_push($hold,$dam_breed['horses_breed']);
 			}			
-            if( !in_array($horse['horses_breed'],$hold) ){ 
+      if( !in_array($horse['horses_breed'],$hold) ){ 
 			 $errors['horses_breed'] = "Breed must match with sire or dam.";
 			}
-		}
-        
+		}        
 		$check = in_array($horse['horses_breed'], $allowed['breeds']);
 		if(!$check){
 			$errors['horses_breed'] = "Invalid breed.";
@@ -962,83 +928,69 @@ class Horse extends CI_Model {
 		$name_exists = $CI->db->query("SELECT horses_id FROM horses WHERE horses_name=? AND horses_id!=? LIMIT 1", array($horse['horses_name'], $horse['horses_id']))->row_array();
 		if($name_exists){
 			$errors['horses_name'] = "That horse name is already in use.";
-		}
-
-		if($horse['horses_gender']=="Mare"  && !empty($horse['horses_dam']))
-		{							
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_gender = 'Mare' AND horses_birthyear = ? AND horses_dam = ? AND horses_id <> ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam'],$horse['horses_id']))->row_array();
-			if($year_exists){
-				$errors['horses_dam'] = "The Mare has a foal born that year.";
-			}
-		}
-
+		}							
 		/*  */
-		if(!empty($horse['horses_dam']))
-		{				
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_id <> ? AND horses_dam = ? LIMIT 1", array($data['horses_birthyear'],$horse['horses_id'],$horse['horses_dam']))->row_array();
-			
-			if($year_exists){
-				$errors['horses_dam'] = "The Mare has a foal born that year.";
-			}
-		}
-		/*  */
-
-		/*  */
-		if($horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']))
-		{
-			$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($age < 3 || $age > 29)
+			$sire = self::getHorseById($horse['horses_sire'],true);
+			$dam = self::getHorseById($horse['horses_dam'],true);
+			if($horse['horses_registration_type']=="breed" && empty($horse['horses_sire']) || $horse['horses_registration_type']=="breed" && !ctype_digit($horse['horses_sire']))
 			{
-				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-			}
-		}			
-		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']))
-		{
-			$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($age < 3 || $age > 25)
+				$errors['horses_sire'] = "Sire is required.";
+			}elseif($horse['horses_registration_type']=="breed" &&  !$sire || $horse['horses_registration_type']=="breed" &&  $sire['horses_gender'] != 'Stallion')
+			{								
+				$errors['horses_sire'] = "This Sire Doesn't exist.";
+			}elseif($horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
 			{
-				$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
+				$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
+			}elseif($horse['horses_registration_type']=="breed" &&  self::getBirthYear($horse['horses_sire']) == $horse['horses_birthyear'])
+			{
+				$errors['horses_sire']="Foal Birth Year Matched with Sire birth year.";
+			}elseif($horse['horses_registration_type']=="breed" &&  $horse['horses_birthyear'] < self::getBirthYear($horse['horses_sire']))
+			{
+				$errors['horses_sire']="Foal birth year is not greather than his Sire.";
 			}
-		}			
+
+			if($horse['horses_registration_type']=="breed" && empty($horse['horses_dam']) ||  $horse['horses_registration_type']=="breed" && !ctype_digit($horse['horses_dam']))
+			{
+				$errors['horses_dam'] = "Dam is required.";
+			}elseif($horse['horses_registration_type']=="breed" &&  !$dam || $horse['horses_registration_type']=="breed" && $dam['horses_gender'] != 'Mare')
+			{
+				$errors['horses_dam'] = "This Dam Doesn't exist.";
+			}elseif($horse['horses_registration_type']=="breed" &&  self::getBirthYear($horse['horses_dam']) == $horse['horses_birthyear'])
+			{
+				$errors['horses_dam']="Foal Birth Year Matched with Dam birth year.";
+			}elseif($horse['horses_registration_type']=="breed" &&  $horse['horses_birthyear'] < self::getBirthYear($horse['horses_dam']))
+			{
+				$errors['horses_dam']="Foal Birth Year is not greather than his Dam.";
+			}elseif($horse['horses_registration_type']=="breed" &&  !empty($horse['horses_dam']))
+			{
+				$horse_id = $horse['horses_id'];
+				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? AND horses_id != $horse_id LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();
+				if($year_exists){
+					$errors['horses_dam'] = "The Mare has a foal born that year.";
+				}
+			}
+			if($horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']))
+			{
+				$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
+				$birthDate = explode("/", $birthDate);
+				$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+				if($age < 3 || $age > 29)
+				{
+					$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+				}
+			}			
+			if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']))
+			{
+				$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
+				$birthDate = explode("/", $birthDate);
+				$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+				if($age < 3 || $age > 25)
+				{
+					$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
+				}
+			}	
+
 		/*  */		
-		$sire = self::getHorseById($horse['horses_sire'],true);
-		$dam = self::getHorseById($horse['horses_dam'],true);
-		if($horse['horses_registration_type']=="breed" && empty($horse['horses_sire']))
-		{
-			$errors['horses_sire'] = "Sire is required.";
-		}
-		if($horse['horses_registration_type']=="breed" && empty($horse['horses_dam']))
-		{
-			$errors['horses_dam'] = "Dam is required.";
-		}		
-		if( !empty($horse['horses_sire']) )
-		{
-		  if( !ctype_digit($horse['horses_sire']) )
-		  {
-				$errors['horses_sire']="Enter sire ID.";
-		  }elseif(!$sire || $sire['horses_gender'] != 'Stallion')
-		  {
-			$errors['horses_sire'] = "This Sire Doesn't exist.";
-		  }
-		}
-		if($horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
-		{
-			$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
-		}
-		if( !empty($horse['horses_dam']) )
-		{
-		  if( !ctype_digit($horse['horses_dam']) )
-		  {
-				$errors['horses_dam']="Enter Dam ID.";
-		  }elseif(!$dam || $dam['horses_gender'] != 'Mare')
-		  {
-			$errors['horses_dam'] = "This Dam Doesn't exist.";
-		  }
-		}		
 		if(count($errors) > 0){
 			return array('errors' => $errors);
 		}
@@ -1310,8 +1262,7 @@ class Horse extends CI_Model {
 		if(!empty(@$_REQUEST['message']))
 		{
 			$msg = $_REQUEST['message'];
-		}
-		print_R($msg);die;
+		}		
 		$message = " <a href='/horses/view/" . $data['join_mares_id'] ."'>" . $mare['horses_competition_title'] ." " . $mare['horses_breeding_title'] . " " . $mare['horses_name'] . " #". generateId($mare['horses_id']) . "</a> x <a href='/horses/view/" . $data['join_horses_id'] ."'>" . $stallion['horses_competition_title'] ." " . $stallion['horses_breeding_title'] . " " . $stallion['horses_name'] . " #". generateId($stallion['horses_id']) . "</a> for <font color=green>$" . $data['horses_breedings_fee'] . "</font>.";
 
 
@@ -2101,12 +2052,22 @@ class Horse extends CI_Model {
 		}
 		return $normalized;
 	}
+	public static function get_breedable_stallions($player_id){
+		//get all mares that are eligible to breed for this player
+		$year_start = date('Y') - 26;
+		$CI =& get_instance();
+		$breeds = $CI->db->query("SELECT * FROM horses WHERE join_players_id=? AND horses_gender='Stallion' AND horses_pending=0 AND horses_exported=0 AND horses_birthyear >= ? AND horses_bred = 0 ORDER BY horses_name ASC", array($player_id, $year_start))->result_array();
+		foreach($breeds AS $k => $v){
+			$normalized[$v['horses_id']] = $v['horses_name'] . ", " . $v['horses_breed'];
+		}
+		return $normalized;
+	}
 
 	public static function is_breedable($horse_id){
 		//check that horse is breedable.
 		$year_start = date('Y') - 32;
 		$CI =& get_instance();
-		$horse = $CI->db->query("SELECT horses_id, horses_breeding_fee, horses_gender FROM horses WHERE horses_id=? AND ((horses_gender='Mare' AND horses_bred=0) OR horses_gender='Stallion') AND horses_pending=0 AND horses_exported=0 AND horses_birthyear>=? LIMIT 1", array($horse_id, $year_start))->row_array();
+		$horse = $CI->db->query("SELECT horses_id, horses_breeding_fee, horses_gender FROM horses WHERE horses_id=? AND ((horses_gender='Mare'  AND horses_bred=0) OR horses_gender='Stallion') AND horses_pending=0 AND horses_exported=0 AND horses_birthyear>=? LIMIT 1", array($horse_id, $year_start))->row_array();
 
 		if($horse['horses_id']){
 			if($horse['horses_gender'] == "Stallion" AND $horse['horses_breeding_fee'] > 0){
@@ -2114,7 +2075,7 @@ class Horse extends CI_Model {
 			}elseif($horse['horses_gender'] == "Mare"){
 				return true;
 			}
-		}
+		}		
 		return false;
 	}
 
@@ -2257,8 +2218,9 @@ class Horse extends CI_Model {
 		}else{
 			$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($stallion['join_players_id'], $message1));
 		}
-
-		$CI->db->query("UPDATE horses_breedings SET  horses_breedings_name=?,horses_birthyear=?, horses_breedings_accepted=1, horses_breedings_gender=?, horses_breedings_owner=?, horses_breedings_breed=?, horses_breedings_breed2=?, horses_breedings_color=?, horses_breedings_pattern=?, horses_breedings_line=?, horses_breedings_disciplines=? WHERE horses_breedings_id=? AND horses_breedings_accepted=0 LIMIT 1", array($post['horses_name'],$post['horses_birthyear'], $post['horses_gender'], $post['horses_owner'], $post['horses_breed'], $post['horses_breed2'], $post['horses_color'], $post['horses_pattern'], $post['horses_line'], $post['disciplines'], $data['horses_breedings_id']));
+		$player = new Player($post['horses_owner']);				
+		$players_nickname = $player->player['players_nickname'];		
+		$CI->db->query("UPDATE horses_breedings SET  horses_breedings_name=?,horses_birthyear=?, horses_breedings_accepted=1, horses_breedings_gender=?, horses_breedings_owner=?,horses_breedings_owner_nickname = ?, horses_breedings_breed=?, horses_breedings_breed2=?, horses_breedings_color=?, horses_breedings_pattern=?, horses_breedings_line=?, horses_breedings_disciplines=? WHERE horses_breedings_id=? AND horses_breedings_accepted=0 LIMIT 1", array($post['horses_name'],$post['horses_birthyear'], $post['horses_gender'], $post['horses_owner'],$players_nickname, $post['horses_breed'], $post['horses_breed2'], $post['horses_color'], $post['horses_pattern'], $post['horses_line'], $post['disciplines'], $data['horses_breedings_id']));
 
 		//pre($CI->db->last_query());
 		//pre("done") ;exit;
@@ -2380,7 +2342,6 @@ class Horse extends CI_Model {
 		if($mare['join_players_id'] != $player['players_id']){
 			$errors[] = "You do not own this mare.";
 		}
-
 		if(self::breeding_request_exists($stallion['horses_id'], $mare['horses_id'])){
 			$errors []= "Breeding request already exists.";
 		}
@@ -2435,6 +2396,7 @@ class Horse extends CI_Model {
 			'join_mares_id',
 			'horses_breedings_fee'
 		);
+		
 		$update_data = filter_keys($horse, $allowed_fields);
 		$CI->db->insert('horses_breedings', $update_data);
 
@@ -2600,89 +2562,66 @@ class Horse extends CI_Model {
 			$errors['horses_birthyear'] = "Invalid birth year.";
 		}		
 		/*  */
-
-			
-		if($horse['horses_registration_type']=="breed" && empty($horse['horses_sire']))
-		{
-			$errors['horses_sire'] = "Sire is required.";
-		}
-		if($horse['horses_registration_type']=="breed" && empty($horse['horses_dam']))
-		{
-			$errors['horses_dam'] = "Dam is required.";
-		}
-		
-		if(empty(@$errors['horses_sire']) && self::getBirthYear($horse['horses_sire']) == $horse['horses_birthyear'])
-		{
-			$errors['horses_sire']="Foal Birth Year Matched with Sire birth year.";
-		}elseif(empty(@$errors['horses_sire']) &&  $horse['horses_birthyear'] < self::getBirthYear($horse['horses_sire']))
-		{
-			$errors['horses_sire']="Foal birth year is not greather than his Sire.";
-		}		
-		if(empty(@$errors['horses_dam']) && self::getBirthYear($horse['horses_dam']) == $horse['horses_birthyear'])
-		{
-			$errors['horses_dam']="Foal Birth Year Matched with Dam birth year.";
-		}elseif(empty(@$errors['horses_dam']) && $horse['horses_birthyear'] < self::getBirthYear($horse['horses_dam']))
-		{
-			$errors['horses_dam']="Foal Birth Year is not greather than his Dam.";
-		}
-
-		if($horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']) && empty(@$errors['horses_sire']))
-		{
-			$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($age < 3 || $age > 29)
+			$sire = self::getHorseById($horse['horses_sire'],true);
+			$dam = self::getHorseById($horse['horses_dam'],true);
+			if($horse['horses_registration_type']=="breed" && empty($horse['horses_sire']) || $horse['horses_registration_type']=="breed" && !ctype_digit($horse['horses_sire']))
 			{
-				$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
-			}
-		}	
-		if($horse['horses_gender']=="Mare" && !empty($horse['horses_dam']) && empty(@$errors['horses_dam']))
-		{
-			$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
-			$birthDate = explode("/", $birthDate);
-			$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
-			if($age < 3 || $age > 25)
-			{
-				$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
-			}
-		}		
-		/*  */		
-		$sire = self::getHorseById($horse['horses_sire'],true);
-		$dam = self::getHorseById($horse['horses_dam'],true);	
-		if(!empty($horse['horses_sire']) && empty(@$errors['horses_sire']))
-		{
-		  if( !ctype_digit($horse['horses_sire']) )
-		  {
-				$errors['horses_sire']="Enter sire ID.";
-		  }elseif(!$sire || $sire['horses_gender']!="Stallion")
-		  {
+				$errors['horses_sire'] = "Sire is required.";
+			}elseif($horse['horses_registration_type']=="breed" &&  !$sire || $horse['horses_registration_type']=="breed" &&  $sire['horses_gender'] != 'Stallion')
+			{								
 				$errors['horses_sire'] = "This Sire Doesn't exist.";
-		  }
-		}
-		
-		if(empty(@$errors['horses_sire']) &&  $horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
-		{
-			$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
-		}
-		
-		if(empty(@$errors['horses_dam']) && !empty($horse['horses_dam']))
-		{  
-		  if( !ctype_digit($horse['horses_dam']) )
-		  {
-				$errors['horses_dam']="Enter dam ID.";
-		  }elseif(!$dam || $dam['horses_gender']!="Mare")
-		  {
-				$errors['horses_dam'] = "This Dam Doesn't exist.";
-		  }
-		}
-	
-		if(empty(@$errors['horses_dam']) && !empty($horse['horses_dam']))
-		{
-			$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();
-			if($year_exists){
-				$errors['horses_dam'] = "The Mare has a foal born that year.";
+			}elseif($horse['horses_registration_type'] == "creation" && $sire['horses_gender'] == "Gelding")
+			{
+				$errors['horses_sire'] = "Gelding Horse does not make Sire Please Provide Valid Sire Horse Entity.";
+			}elseif($horse['horses_registration_type']=="breed" &&  self::getBirthYear($horse['horses_sire']) == $horse['horses_birthyear'])
+			{
+				$errors['horses_sire']="Foal Birth Year Matched with Sire birth year.";
+			}elseif($horse['horses_registration_type']=="breed" && $horse['horses_birthyear'] < self::getBirthYear($horse['horses_sire']))
+			{
+				$errors['horses_sire']="Foal birth year is not greather than his Sire.";
 			}
-		}	
+
+			if($horse['horses_registration_type']=="breed" && empty($horse['horses_dam']) ||  $horse['horses_registration_type']=="breed" && !ctype_digit($horse['horses_dam']))
+			{
+				$errors['horses_dam'] = "Dam is required.";
+			}elseif($horse['horses_registration_type']=="breed" &&  !$dam || $horse['horses_registration_type']=="breed" &&  $dam['horses_gender'] != 'Mare')
+			{
+				$errors['horses_dam'] = "This Dam Doesn't exist.";
+			}elseif($horse['horses_registration_type']=="breed" &&  self::getBirthYear($horse['horses_dam']) == $horse['horses_birthyear'])
+			{
+				$errors['horses_dam']="Foal Birth Year Matched with Dam birth year.";
+			}elseif($horse['horses_registration_type']=="breed" &&  $horse['horses_birthyear'] < self::getBirthYear($horse['horses_dam']))
+			{
+				$errors['horses_dam']="Foal Birth Year is not greather than his Dam.";
+			}elseif($horse['horses_registration_type']=="breed" && !empty($horse['horses_dam']))
+			{
+				$horse_id = $horse['horses_id'];
+				$year_exists = $CI->db->query("SELECT horses_id FROM horses WHERE  horses_birthyear = ? AND horses_dam = ? LIMIT 1", array($horse['horses_birthyear'],$horse['horses_dam']))->row_array();
+				if($year_exists){
+					$errors['horses_dam'] = "The Mare has a foal born that year.";
+				}
+			}
+			if($horse['horses_registration_type']=="breed" && $horse['horses_gender']=="Stallion" && !empty($horse['horses_sire']))
+			{
+				$birthDate = "01/01/".self::getBirthYear($horse['horses_sire']);
+				$birthDate = explode("/", $birthDate);
+				$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+				if($age < 3 || $age > 29)
+				{
+					$errors['horses_sire']="There is a Gender issue or that the horse is too young/old";
+				}
+			}			
+			if($horse['horses_registration_type']=="breed" &&  $horse['horses_gender']=="Mare" && !empty($horse['horses_dam']))
+			{
+				$birthDate = "01/01/".self::getBirthYear($horse['horses_dam']);
+				$birthDate = explode("/", $birthDate);
+				$age = (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md") ? ((date("Y") - $birthDate[2]) - 1) : (date("Y") - $birthDate[2]));
+				if($age < 3 || $age > 25)
+				{
+					$errors['horses_dam']="There is a gender issue or that the horse is too young/old.";
+				}
+			}
+		/*  */		
 		if( !empty($horse['horses_breed'])  && !empty($horse['horses_sire']) && !empty($horse['horses_dam']) )
 		{		
 		
@@ -2764,10 +2703,9 @@ class Horse extends CI_Model {
 			'horses_registration_type',
 		);
 		$horse['horses_created'] = $horse['horses_registration_type'] == "creation" ? 1 : 0;
-		$update_data = filter_keys($horse, $allowed_fields);		
+		$update_data = filter_keys($horse, $allowed_fields);				
 		$CI->db->insert('horses', $update_data);
 		$horse_id = $CI->db->insert_id();
-
 		//insert disciplines
 		if(count($horse['disciplines'])){
 			$disc = self::change_disciplines($horse_id, $horse['disciplines']);

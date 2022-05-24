@@ -62,3 +62,6 @@ ALTER TABLE `import_requests` ADD `players_nickname` VARCHAR(255) NULL DEFAULT N
 ALTER TABLE `inventory` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
 
 ALTER TABLE `log` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `join_players_id`;
+
+--24-May-2022--
+ALTER TABLE `horses_breedings` ADD `horses_breedings_owner_nickname` VARCHAR(255) NULL AFTER `horses_breedings_owner`;

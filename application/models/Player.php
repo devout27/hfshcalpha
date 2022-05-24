@@ -444,6 +444,9 @@ class Player extends CI_Model {
 
 				$this->db->where('join_players_id', $data['players_id']);
 				$this->db->update('log', ['players_nickname'=>$update_data['players_nickname']]);
+
+				$this->db->where('horses_breedings_owner', $this->session->userdata('players_id'));
+				$this->db->update('horses_breedings', ['horses_breedings_owner_nickname'=>$update_data['players_nickname']]);
 			}
 
 			foreach($_POST AS $v => $e){

@@ -160,21 +160,21 @@ class Horses extends MY_Controller {
 
 
 		$this->data['mares'] = Horse::get_breedable_mares($this->session->userdata('players_id'));
-		
+		$this->data['stallions'] = Horse::get_breedable_stallions($this->session->userdata('players_id'));
 		$this->data['requests'] = Horse::get_breeding_requests($this->data['horse']);///////ak
 
-		//$this->data['base_colors'] = $this->horse->get_base_colors();
-		//$this->data['base_patterns'] = $this->horse->get_base_patterns();
+		$this->data['base_colors'] = $this->horse->get_base_colors();
+		$this->data['base_patterns'] = $this->horse->get_base_patterns();
 
 		$allowed = array(
 				'breeds' => $this->data['breeds'],
-		//		'base_colors' => $this->data['base_colors'],
-		//		'base_patterns' => $this->data['base_patterns'],
+				'base_colors' => $this->data['base_colors'],
+				'base_patterns' => $this->data['base_patterns'],
 				'lines' => $this->data['lines'],
 				'disciplines' => $this->data['disciplines']
 			);
 
-		if(!$this->data['horse']['horses_id'] || $this->data['horse']['horses_gender'] != "Stallion"){
+		if(!$this->data['horse']['horses_id']){
 			$this->session->set_flashdata('notice', "Invalid horse.");
 			redirect('manage-horses');
 		}elseif($this->data['horse']['horses_pending']){
@@ -187,34 +187,33 @@ class Horses extends MY_Controller {
 
 		if($this->input->post('breed')){
 			$response = $this->horse->submit_breed_request($this->player, $this->data['horse'], $_POST);
-			if(count($response['errors']) > 0){
-				$this->session->set_flashdata('notice', "There was a problem submitting the breeding request.");
+			if(count($response['errors']) > 0){				
+				$this->session->set_flashdata('notice', "There was a problem submitting the breeding request. because ".$response['errors'][0]);
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
-				redirect('/manage-horses');
+				redirect($_SERVER['HTTP_REFERER']);
 			}
-			redirect('/manage-horses');
-
+			redirect($_SERVER['HTTP_REFERER']);
 		}elseif($this->input->post('reject')){
 			$response = $this->horse->reject_breed_request($this->player, $this->data['horse'], $_POST);
 			if(count($response['errors']) > 0){
 				$this->session->set_flashdata('notice', "There was a problem rejecting the request.");
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
-				redirect('/manage-horses');
+				redirect($_SERVER['HTTP_REFERER']);
 			}
 			$this->session->set_flashdata('notice', "Rejected.");
-			redirect('/manage-horses');
+			redirect($_SERVER['HTTP_REFERER']);
 		}elseif($this->input->post('accept')){
 			$response = $this->horse->accept_breed_request($this->player, $this->data['horse'], $_POST);
 			if(count($response['errors']) > 0){				
 				$this->session->set_flashdata('notice', "There was a problem accepting the request.");
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
-				redirect('/manage-horses');
+				redirect($_SERVER['HTTP_REFERER']);
 			}
 			$this->session->set_flashdata('notice', "Accepted.");
-			redirect('/manage-horses');
+			redirect($_SERVER['HTTP_REFERER']);
 		}
 		/*check...
 			-is stallion available for breeding?

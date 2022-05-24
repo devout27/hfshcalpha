@@ -230,6 +230,9 @@ class Game extends MY_Controller {
 				$this->db->where('join_players_id', $this->session->userdata('players_id'));
 				$this->db->update('log', ['players_nickname'=>$update_data['players_nickname']]);
 
+				$this->db->where('horses_breedings_owner', $this->session->userdata('players_id'));
+				$this->db->update('horses_breedings', ['horses_breedings_owner_nickname'=>$update_data['players_nickname']]);
+
 				$this->session->set_flashdata('notice', "Your profile has been updated!");
 				redirect('game/profile');
 			}

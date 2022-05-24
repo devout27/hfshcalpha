@@ -37,6 +37,8 @@ if($horse['horses_id'] == $post['horses_id']){
 				</div>
 				<div class="row">
 					<div class="col-sm-6">
+						<?= hf_hidden('horses_registration_type', $horse['horses_registration_type']) ?>
+						<?= hf_hidden('horses_created', $horse['horses_created']) ?>						
 						<?= hf_input('horses_name', 'Name', $horse, array(), $errors) ?>
 					</div>
 					<div class="col-sm-3">

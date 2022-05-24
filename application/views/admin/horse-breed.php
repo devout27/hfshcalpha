@@ -34,9 +34,12 @@ if($horse['horses_id'] == $post['horses_id']){
 				        <br/><br/><b>MARE<br/><a href="/horses/view/<?= $horse['h2_id'] ?>"><?= $horse['h2_name'] ?> #<?= $horse['h2_id'] ?></a></b><br/>
 				        	Owned by <a href="/game/profile/<?= $horse['p2_id'] ?>"><?= $horse['p2_nickname'] ?> #<?= $horse['p2_id'] ?></a><br/>
 				        	<?= $horse['h2_birthyear'] ?> <?= $horse['h2_gender'] ?> <?= $horse['h2_breed'] ?>
-				        <br/><br/><b>FOAL</b><br/>
-				        <?= $horse['horses_breedings_gender'] ?> to Player #<?= $horse['horses_breedings_owner'] ?><br/><?= $horse['horses_breedings_date'] ?><br/>$<?= number_format($horse['horses_breedings_fee']) ?><br/><br/>
-
+				        <br/><br/><b>FOAL</b><br/>				         
+								<b>Owner :</b> <?= $horse['horses_breedings_owner_nickname'].' #'.$horse['horses_breedings_owner'] ?><br/>
+								<b>Gender :</b> <?= $horse['horses_breedings_gender'] ?><br/>
+								<b>Birth Year: </b><?= $horse['horses_birthyear'] ?><br/> 
+								<b>Breeding Fee: </b>$<?= number_format($horse['horses_breedings_fee']) ?><br/>
+								<b>Breeding Date : </b><?= $horse['horses_breedings_date'] ?><br/> 
 				        </td>
 				        <td width="60%">
 	<?= hf_hidden('horses_id', $horse['horses_id']) ?>

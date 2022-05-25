@@ -89,31 +89,38 @@ class Player extends CI_Model {
 
 		return $players;
 	}
+	function get_all_players(){
+		$players = $this->db->query('SELECT p.*,DATE_FORMAT(p.players_last_active, "%M %D, %Y at %l:%i %p") AS players_last_active2 FROM players p ORDER BY p.players_id ASC')->result_array();
+		$res = [];
+		foreach ($players as $key => $value) {
+			$res[$value['players_id']] = ucFirst($value['players_nickname']);	
+		}
+		return $res;
+	}
 
 	function add_farrier($data){
-		$exists = $this->db->query("
-				SELECT players_id, players_farrier
-				FROM players
-				WHERE players_id=? AND players_pending=0 AND players_deleted = 0 LIMIT 1
-			", array($data['players_id']))->row_array();
-		if(!count($exists)){
-			$errors['players_id'] = "Invalid Player ID.";
+		if(!@$data['players_id'])
+		{			
+			return array('errors' => ['players_id' => "Please enter a Player ID."]);
+		}else
+		{
+			$exists = $this->db->query("SELECT players_id, players_farrier FROM players WHERE players_id=? AND players_pending=0 AND players_deleted = 0 LIMIT 1 ", array($data['players_id']))->row_array();
+			if(!count($exists)){
+				$errors['players_id'] = "Invalid Player ID.";
+			}
+			if($exists['players_farrier']){
+				$errors['players_id'] = "That player is already a Farrier.";
+			}
+			if(count($errors) > 0){
+				return array('errors' => $errors);
+			}
+			$this->db->query("UPDATE players SET players_farrier=1 WHERE players_id=?", array($data['players_id']));
+			$message = "You are now a Farrier.";
+			//create notice to remind user
+			$this->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($data['players_id'], $message));
+			return array('errors' => $errors, 'notice' => $notice);
 		}
-		if($exists['players_farrier']){
-			$errors['players_id'] = "That player is already a Farrier.";
-		}
-
-		if(count($errors) > 0){
-			return array('errors' => $errors);
-		}
-
-		$this->db->query("UPDATE players SET players_farrier=1 WHERE players_id=?", array($data['players_id']));
-		$message = "You are now a Farrier.";
-
-		//create notice to remind user
-		$this->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($data['players_id'], $message));
-
-		return array('errors' => $errors, 'notice' => $notice);
+		
 	}
 
 	function delete_farrier($id){
@@ -141,29 +148,31 @@ class Player extends CI_Model {
 	}
 
 	function add_vet($data){
-		$exists = $this->db->query("
+		if(@$data['players_id'])
+		{
+			$exists = $this->db->query("
 				SELECT players_id, players_vet
 				FROM players
 				WHERE players_id=? AND players_pending=0 AND players_deleted = 0 LIMIT 1
 			", array($data['players_id']))->row_array();
-		if(!count($exists)){
-			$errors['players_id'] = "Invalid Player ID.";
-		}
-		if($exists['players_vet']){
-			$errors['players_id'] = "That player is already a Vet.";
-		}
-
-		if(count($errors) > 0){
-			return array('errors' => $errors);
-		}
-
-		$this->db->query("UPDATE players SET players_vet=1 WHERE players_id=?", array($data['players_id']));
-		$message = "You are now a Veterinarian.";
-
-		//create notice to remind user
-		$this->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($data['players_id'], $message));
-
-		return array('errors' => $errors, 'notice' => $notice);
+			if(!count($exists)){
+				$errors['players_id'] = "Invalid Player ID.";
+			}
+			if($exists['players_vet']){
+				$errors['players_id'] = "That player is already a Vet.";
+			}
+			if(count($errors) > 0){
+				return array('errors' => $errors);
+			}
+			$this->db->query("UPDATE players SET players_vet=1 WHERE players_id=?", array($data['players_id']));
+			$message = "You are now a Veterinarian.";
+	
+			//create notice to remind user
+			$this->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($data['players_id'], $message));
+	
+			return array('errors' => $errors, 'notice' => $notice);	
+		}			
+		return array('errors' => ['players_id' => 'Please enter a Player ID']);		
 	}
 
 	function delete_vet($id){

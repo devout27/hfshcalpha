@@ -2066,19 +2066,17 @@ class Horse extends CI_Model {
 	public static function is_breedable($horse_id){
 		//check that horse is breedable.
 		$year_start = date('Y') - 32;
-		$CI =& get_instance();
+		$CI =& get_instance();		
 		$horse = $CI->db->query("SELECT horses_id, horses_breeding_fee, horses_gender FROM horses WHERE horses_id=? AND ((horses_gender='Mare'  AND horses_bred=0) OR horses_gender='Stallion') AND horses_pending=0 AND horses_exported=0 AND horses_birthyear>=? LIMIT 1", array($horse_id, $year_start))->row_array();
-
 		if($horse['horses_id']){
 			if($horse['horses_gender'] == "Stallion" AND $horse['horses_breeding_fee'] > 0){
 				return true;
 			}elseif($horse['horses_gender'] == "Mare"){
 				return true;
 			}
-		}		
+		}
 		return false;
 	}
-
 	public static function change_disciplines($horse_id, $disciplines){
 		//delete the old
 		$CI =& get_instance();
@@ -2262,7 +2260,7 @@ class Horse extends CI_Model {
 			$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($stallion['join_players_id'], $message));
 		}
 
-		//$CI->db->query("DELETE FROM horses_breedings WHERE horses_breedings_id=? AND join_horses_id=? LIMIT 1", array($data['horses_breedings_id'], $horse['horses_id']));
+		$CI->db->query("DELETE FROM horses_breedings WHERE horses_breedings_id=? AND join_horses_id=? LIMIT 1", array($data['horses_breedings_id'], $horse['horses_id']));
 
 		return array('errors' => $errors, 'notices' => $notices, 'horse_id' => $horse['horses_id']);
 	}
@@ -2335,9 +2333,35 @@ class Horse extends CI_Model {
 		//do stallion & mare validation
 		if(!self::is_breedable($stallion['horses_id'])){
 			$errors[] = "Stallion is not breedable.";
+		}else
+		{
+			$x = new Player($stallion['join_players_id']);
+			$players_vet = $x->player['players_vet'];
+			$players_farrier = $x->player['players_farrier'];
+			if($players_farrier === 0)
+			{
+				$errors[] = "Stallion Farrier not up to date";	
+			} 
+			if($players_vet === 0)
+			{
+				$errors[] = "Stallion Vet not up to date";	
+			}
 		}
 		if(!self::is_breedable($mare['horses_id'])){
 			$errors[] = "Mare is not breedable.";
+		}else
+		{
+			$x = new Player($mare['join_players_id']);
+			$players_vet = $x->player['players_vet'];
+			$players_farrier = $x->player['players_farrier'];
+			if($players_farrier === 0)
+			{
+				$errors[] = "Mare Farrier not up to date";	
+			} 
+			if($players_vet === 0)
+			{
+				$errors[] = "Mare Vet not up to date";
+			}
 		}
 		if($mare['join_players_id'] != $player['players_id']){
 			$errors[] = "You do not own this mare.";

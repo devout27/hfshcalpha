@@ -1,4 +1,3 @@
-<? //pre($horse) ?>
 <? if($horse['horses_deceased']): ?>
 <h2>Horse is deceased.</h2>
 <? endif; ?>
@@ -27,12 +26,14 @@ Stable: <a href="/game/stables/<?= $horse['join_stables_id'] ?>"><?= $horse['sta
 <?= date('Y') - $horse['horses_birthyear'] ?> years old<br/>
 
 Breeding Years: <?= ($horse['horses_birthyear'] + 3) ?> to <?= ($horse['horses_birthyear'] + 32) ?> inclusive<br/>
-Breeding Fee : $<?= $horse['horses_breeding_fee'] ?><br>
+
 
 <? if($horse['horses_bred'] == 1): ?>
     Horse Bred <?= date('Y') ?><br/>
-<? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Stallion" || $horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Mare"): ?>
-    <b><a href="/horses/breed/<?= $horse['horses_id'] ?>">Breed for $<?= number_format($horse['horses_breeding_fee']) ?></a></b><br/>
+<? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Stallion"): ?>
+	<b><a href="/horses/breed/<?= $horse['horses_id'] ?>">Breed for $<?= number_format($horse['horses_breeding_fee']) ?></a></b><br/>
+<? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Mare"): ?>
+		Breeding Fee : $<?= $horse['horses_breeding_fee'] ?><br>
 <? endif; ?>
 <? if($horse['horses_sale'] == 1): ?>
     <font color=green><b>For Sale</font></b><br />

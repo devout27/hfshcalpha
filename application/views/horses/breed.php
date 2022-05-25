@@ -15,56 +15,28 @@ Please choose a mare to breed with this stallion. Once you have made this reques
         </div>
 </div>
 <div class="col-md-6">
-	<div class="card mb-4">
-		<?php 
-			if($horse['horses_gender'] == "Stallion")
-			{
-		?>
-			<h5 class="card-header">Mares</h5>
-      <div class="card-body">
-					<form method="post" action="/horses/breed/<?= $horse['horses_id'] ?>">
-						<? if($errors = $this->session->flashdata('errors')): ?>
-							<? foreach((array)$this->session->flashdata('errors') AS $e): ?>
-								<div class="form-error"><?= $e ?></div>
-							<? endforeach; ?>
-						<? endif; ?>
-						<div class="row">
-							<div class="col-md-6">
-								<?= hf_dropdown('mare_id', '', $_POST, $mares, array('class' => 'col-sm-12'), $errors, 0) ?>										
-							</div>
-							<div class="col-md-6">
-								<?= hf_submit('breed', 'Place Request', array('class' => 'btn btn-primary col-sm-12')) ?>
-							</div>
-						</div>
-					</form>
+	<div class="card mb-4">		
+		<h5 class="card-header">Mares</h5>	
+		<div class="card-body">
+			<form method="post" action="/horses/breed/<?= $horse['horses_id'] ?>">
+				<? if($errors = $this->session->flashdata('errors')): ?>
+					<? foreach((array)$this->session->flashdata('errors') AS $e): ?>
+						<div class="form-error"><?= $e ?></div>
+					<? endforeach; ?>
+				<? endif; ?>
+				<div class="row">
+					<div class="col-md-6">
+						<?= hf_dropdown('mare_id', '', $_POST, $mares, array('class' => 'col-sm-12'), $errors, 0) ?>										
+					</div>
+					<div class="col-md-6">
+						<?= hf_submit('breed', 'Place Request', array('class' => 'btn btn-primary col-sm-12')) ?>
+					</div>
 				</div>
-		<?php	
-			}else
-			{
-		?>
-				<h5 class="card-header">Stallions</h5>
-      	<div class="card-body">
-					<form method="post" action="/horses/breed/<?= $horse['horses_id'] ?>">
-						<? if($errors = $this->session->flashdata('errors')): ?>							
-								<div class="form-error"><?= $errors[0] ?></div>							
-						<? endif; ?>
-						<div class="row">
-							<div class="col-md-6">
-								<?= hf_dropdown('stallion_id', '', $_POST, $stallions, array('class' => 'col-sm-12'), $errors, 0) ?>										
-							</div>
-							<div class="col-md-6">
-								<?= hf_submit('breed', 'Place Request', array('class' => 'btn btn-primary col-sm-12')) ?>
-							</div>
-						</div>
-					</form>
-				</div>
-		<?php	
-			}
-		?>			
+			</form>
+		</div>
 	</div>
 </div>
 </div>
-
 <div class="row">
 	<div class="col-sm-12">
         <div class="card mb-4">

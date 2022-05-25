@@ -71,6 +71,79 @@ Class Inventory_Model extends MY_Model {
             'rules' => 'max_length[500]',            
         ),
     );
+	public $admin_config_add = array(
+        array(
+            'field' => 'itemname',
+            'label' => 'Name',
+            'rules' => 'required|max_length[255]',
+            'errors' => array('required' => 'Please Enter Item Name.'),
+        ),
+        array(
+            'field' => 'itemtype',
+            'label' => 'Item Type',
+            'rules' => 'required|max_length[255]',
+            'errors' => array('required' => 'Please Select Item Type'),
+        ),
+        array(
+            'field' => 'itemrarity',
+            'label' => 'Item Rarity',
+            'rules' => 'required|max_length[255]',            
+            'errors' => array('required' => 'Please Select Item Rarity'),
+        ),
+        array(
+            'field' => 'itemimg',
+            'label' => 'Item Image',
+            'rules' => 'valid_url|max_length[2048]',            
+        ),
+        array(
+            'field' => 'itemdesc',
+            'label' => 'Item Description',
+            'rules' => 'max_length[500]',            
+        ),
+        array(
+            'field' => 'join_players_id',
+            'label' => 'Player',
+            'rules' => 'required',
+            'errors' => array('required' => 'Please Select Player'),
+        ),
+    );
+	
+	public $admin_config_edit = array(
+        array(
+            'field' => 'itemname',
+            'label' => 'Name',
+            'rules' => 'required|max_length[255]',
+            'errors' => array('required' => 'Please Enter Item Name.'),
+        ),
+        array(
+            'field' => 'itemtype',
+            'label' => 'Item Type',
+            'rules' => 'required|max_length[255]',
+            'errors' => array('required' => 'Please Select Item Type'),
+        ),
+        array(
+            'field' => 'itemrarity',
+            'label' => 'Item Rarity',
+            'rules' => 'required|max_length[255]',            
+            'errors' => array('required' => 'Please Select Item Rarity'),
+        ),
+        array(
+            'field' => 'itemimg',
+            'label' => 'Item Image',
+            'rules' => 'valid_url|max_length[2048]',            
+        ),
+        array(
+            'field' => 'itemdesc',
+            'label' => 'Item Description',
+            'rules' => 'max_length[500]',            
+        ),
+        array(
+            'field' => 'join_players_id',
+            'label' => 'Player',
+            'rules' => 'required',
+            'errors' => array('required' => 'Please Select Player'),
+        ),
+    );
 	public function getInventoryDataById($itemid){		        
         $inventory = $this->db->query("SELECT s.* FROM inventory s WHERE itemid=?", array($itemid))->row_array();
         return $inventory;
@@ -135,10 +208,10 @@ Class Inventory_Model extends MY_Model {
         $this->db->select('inventory.*,players.players_email');
         $this->db->join('players','players.players_id=inventory.join_players_id','left');
 		$condition=array();
-		if($player_id){
+		if($player_id !== true){
 			$condition['join_players_id']=$player_id;
             $this->db->where($condition);
-		}        
+		}
         if($where)
         {
             $this->db->where($where);

@@ -38,7 +38,15 @@
 							</a>
 						</li>
 					</ul>
-	            </li>
+	      </li>
+				<li class="treeview <?php if(in_array($CLASS_NAME,array('inventories'))) echo 'active'?>" style="display:<?php if(in_array($CLASS_NAME,array('inventories'))) echo 'block;'?>">
+					<a href="javascript:void(0)"><i class="las la-user-friends"></i> <span>Inventories Management</span> <i class="la la-angle-left pull-right"></i></a>
+					<ul class="treeview-menu" style="display:<?php if(in_array($CLASS_NAME,array('inventories'))) echo 'block;'?>">
+						<li  class="<?php echo $CLASS_NAME=='inventories' && $METHOD_NAME=='index'  ? 'active':''?>">
+							<a href="<?php echo $BASE_URL_ADMIN ?>Inventories"><i class="las la-circle"></i> Inventories List</a>
+						</li>
+					</ul>
+	      </li>
 				<li class="treeview <?php if(in_array($CLASS_NAME,array('stables','amenities','packages'))) echo 'active'?>"   style="display:<?php if(in_array($CLASS_NAME,array('stables','amenities','packages'))) echo 'block;'?>">
 	            	<a href="javascript:void(0)">
 	                	<i class="las la-award"></i>

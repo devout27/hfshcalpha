@@ -494,16 +494,16 @@ class Game extends MY_Controller {
                 }
                 redirect($this->class_name.'inventory');
             }else{                    
-				$postData = $_POST;
+								$postData = $_POST;
                 $this->session->set_flashdata('message_error','Missing information.');
-				$this->session->set_flashdata('errors',$this->form_validation->error_array());				
+								$this->session->set_flashdata('errors',$this->form_validation->error_array());				
             }            
         }
         $this->data['errors'] = $this->session->flashdata('errors');		
         $this->data['postData'] = $postData;
         $this->load->view('layout/header', $this->data);
-		$this->load->view('game/addEditInventory', $this->data);
-		$this->load->view('layout/footer');
+				$this->load->view('game/addEditInventory', $this->data);
+				$this->load->view('layout/footer');
     }
 	public function deleteInventory($id)
 	{

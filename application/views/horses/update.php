@@ -2,7 +2,8 @@
 <?
 $post = $this->session->flashdata('post');
 $errors = $this->session->flashdata('errors');
-if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
+//pre($horse);die;
+if($horse['horses_breeding_fee'] == 0) $horse['horses_breeding_fee'] = "";
 ?>
 <div class="row">
         <div class="col-lg-12">
@@ -12,53 +13,55 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
             <div class="card-body">
               <h2 class="card-title">Update Horse</h2>
               <p class="card-text">
-				<form method="post" action="/horses/update/<?= $horse['horses_id'] ?>">
-				<?= hf_hidden('horses_created', $horse['horses_created']) ?>
-				<?= hf_hidden('horses_registration_type', $horse['horses_registration_type']) ?>
-				<? if($player['privileges']['privileges_horses']): ?>
-					<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => ''), $errors) ?>
-				<? else: ?>
-					<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => '', 'disabled' => 'disabled'), $errors) ?>
-				<? endif; ?>				
-				<?= hf_checkbox('horses_sale', 'For Sale?', $_POST ?: $horse, array(), $errors) ?>
-                <?= hf_checkbox('horses_adoptable', 'Is Adoptable?', $_POST ?: $horse, array(), $errors) ?>
-                <?= hf_checkbox('horses_deceased', 'Is Deceased?', $_POST ?: $horse, array(), $errors) ?>
-				<?= hf_input('horses_sale_price', 'Sale Price', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for sale'), $errors) ?>
-				<?= hf_input('horses_breeding_fee', 'Breeding Fee', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for breeding'), $errors) ?>
+							<form method="post" action="/horses/update/<?= $horse['horses_id'] ?>">
+									<?= hf_hidden('horses_created', $horse['horses_created']) ?>
+									<?= hf_hidden('horses_registration_type', $horse['horses_registration_type']) ?>
+									<? if($player['privileges']['privileges_horses']): ?>
+										<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => ''), $errors) ?>
+									<? else: ?>
+										<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => '', 'disabled' => 'disabled'), $errors) ?>
+									<? endif; ?>				
+									<?= hf_checkbox('horses_sale', 'For Sale?', $_POST ?: $horse, array(), $errors) ?>
+													<?= hf_checkbox('horses_adoptable', 'Is Adoptable?', $_POST ?: $horse, array(), $errors) ?>
+													<?= hf_checkbox('horses_deceased', 'Is Deceased?', $_POST ?: $horse, array(), $errors) ?>
+									<?= hf_input('horses_sale_price', 'Sale Price', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for sale'), $errors) ?>
+									<?php if($horse['horses_gender'] == "Gelding"){ ?>
+										<?= hf_input('horses_breeding_fee', 'Breeding Fee', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for breeding'), $errors) ?>
+									<?php }else{ ?>
+										<?= hf_hidden('horses_breeding_fee',0); ?>
+									<?php } ?>
+									<? if($player['privileges']['privileges_horses']): ?>
+									<hr/>
+									<b>Admin Options:</b><br/>
+										<? if($horse['join_players_id'] == EXPORT_ID): ?>
+											<?= hf_input('horses_sale2', 'Import Fee', $_POST ?: $horse['horses_sale'], array(), $errors) ?>
+										<? endif; ?>
+										<?= hf_dropdown('horses_created', 'Reg. Type', $_POST ?: $horse, array(0 => 'Bred', 1 => 'Created'), array(), $errors) ?>
+										<?= hf_input('horses_birthyear', 'Year of Birth', $_POST ?: $horse, array(), $errors) ?>
+										<?= hf_dropdown('horses_gender', 'Gender', $_POST ?: $horse, array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
+
+										<?= hf_dropdown('horses_breed', 'Breed', $_POST ?: $horse, $breeds, array(), $errors, 1) ?>
+										<?= hf_input('horses_breed2', 'Secondary Breed/Pattern (optional)', $_POST ?: $horse, array(), $errors, 1) ?>
+										<?= hf_dropdown('horses_color', 'Base Color', $_POST ?: $horse, $base_colors, array(), $errors, 1) ?>
+										<?= hf_dropdown('horses_pattern', 'Pattern Color', $_POST ?: $horse, $base_patterns, array(), $errors, 1) ?>
+										<?= hf_dropdown('horses_line', 'Line (optional)', $_POST ?: $horse, $lines, array(), $errors, 1) ?>
+										<?= hf_input('horses_sire', 'Sire ID', $_POST ?: $horse, array(), $errors) ?>
+										<?= hf_input('horses_dam', 'Mare ID', $_POST ?: $horse, array(), $errors) ?>
 
 
-				<? if($player['privileges']['privileges_horses']): ?>
-				<hr/>
-				<b>Admin Options:</b><br/>
-					<? if($horse['join_players_id'] == EXPORT_ID): ?>
-						<?= hf_input('horses_sale2', 'Import Fee', $_POST ?: $horse['horses_sale'], array(), $errors) ?>
-					<? endif; ?>
-					<?= hf_dropdown('horses_created', 'Reg. Type', $_POST ?: $horse, array('0' => 'Bred', '1' => 'Created'), array(), $errors) ?>
-					<?= hf_input('horses_birthyear', 'Year of Birth', $_POST ?: $horse, array(), $errors) ?>
-					<?= hf_dropdown('horses_gender', 'Gender', $_POST ?: $horse, array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
-
-					<?= hf_dropdown('horses_breed', 'Breed', $_POST ?: $horse, $breeds, array(), $errors, 1) ?>
-					<?= hf_input('horses_breed2', 'Secondary Breed/Pattern (optional)', $_POST ?: $horse, array(), $errors, 1) ?>
-					<?= hf_dropdown('horses_color', 'Base Color', $_POST ?: $horse, $base_colors, array(), $errors, 1) ?>
-					<?= hf_dropdown('horses_pattern', 'Pattern Color', $_POST ?: $horse, $base_patterns, array(), $errors, 1) ?>
-					<?= hf_dropdown('horses_line', 'Line (optional)', $_POST ?: $horse, $lines, array(), $errors, 1) ?>
-					<?= hf_input('horses_sire', 'Sire ID', $_POST ?: $horse, array(), $errors) ?>
-					<?= hf_input('horses_dam', 'Mare ID', $_POST ?: $horse, array(), $errors) ?>
-
-
-					<?= hf_checkbox('horses_adoptable', 'Adoptable?', $_POST ?: $horse, array(), $errors) ?>
-					<? if($horse['horses_deceased']): ?>
-						<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $horse, array('disabled' => 'disabled'), $errors) ?>
-					<? else: ?>
-						<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $_POST ?: $horse, array(), $errors) ?>
-					<? endif; ?>
-					<?= hf_textarea('horses_notes', 'Comments/Notes', $_POST ?: $horse, array('class' => 'col-sm-12', 'rows' => '5'), $errors) ?>
-				<? endif; ?>
-              </p>
-            </div>
-            <div class="card-footer text-muted">
-				<?= hf_submit('update', 'Update Horse', array('class' => 'btn btn-primary col-sm-12')) ?>
-				</form>
+										<?= hf_checkbox('horses_adoptable', 'Adoptable?', $_POST ?: $horse, array(), $errors) ?>
+										<? if($horse['horses_deceased']): ?>
+											<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $horse, array('disabled' => 'disabled'), $errors) ?>
+										<? else: ?>
+											<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $_POST ?: $horse, array(), $errors) ?>
+										<? endif; ?>
+										<?= hf_textarea('horses_notes', 'Comments/Notes', $_POST ?: $horse, array('class' => 'col-sm-12', 'rows' => '5'), $errors) ?>
+									<? endif; ?>
+												</p>
+											</div>
+											<div class="card-footer text-muted">
+									<?= hf_submit('update', 'Update Horse', array('class' => 'btn btn-primary col-sm-12')) ?>
+							</form>
             </div>
           </div>
 
@@ -125,5 +128,6 @@ if($horse['horses_breeding_fee'] == 0){$horse['horses_breeding_fee'] = "";}
 
 </div> -->
 <!-- my comment end -->
+</div>
 
-<? //pre($genes);pre($horse['genes']); ?>
+</div> 

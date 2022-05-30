@@ -65,3 +65,6 @@ ALTER TABLE `log` ADD `players_nickname` VARCHAR(255) NULL DEFAULT NULL AFTER `j
 
 --24-May-2022--
 ALTER TABLE `horses_breedings` ADD `horses_breedings_owner_nickname` VARCHAR(255) NULL AFTER `horses_breedings_owner`;
+
+--30-May-2022--
+ALTER TABLE `horses_sale_purposals` ADD `join_horse_owner_id` INT(11) NOT NULL AFTER `join_horse_id`;

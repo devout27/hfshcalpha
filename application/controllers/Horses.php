@@ -52,7 +52,7 @@ class Horses extends MY_Controller {
 				$vetFerr = $v['horses_vet'].' '.$v['horses_farrier'];
 				$status = $v['horses_pending']==1 ? '<span class="badge badge-danger pb-1">Pending</span>' : '<span class="badge badge-success pb-1">Approved</span>';
 				$stable = $v['stables_name'];
-				$i = generateId($v["horses_id"]);
+				$i = generateId($v["horses_id"]);				
 				$data[] = array($i,$name,$stable,$v['horses_birthyear'],$v['horses_color'],$v['horses_breed'],$v['horses_gender'],$v['horses_hs'],$v['horses_fs'],$vetFerr,$status,$action);
 			}			
 			$output = array(
@@ -369,7 +369,7 @@ class Horses extends MY_Controller {
 		$this->load->view('layout/footer');
 	}
 
-	public function buy($id){				
+	/* public function buy($id){				
 		$this->data['horse'] = new Horse($id);
 		$this->data['horse'] = $this->data['horse']->horse;
 		$this->data['page']['title'] = "Update Horse";
@@ -399,7 +399,7 @@ class Horses extends MY_Controller {
 					$this->session->set_flashdata('post', $_POST);
 					$this->session->set_flashdata('errors', $response['errors']);				
 				}else{
-					$this->session->set_flashdata('notice', "Purposal Sent Successfully.");
+					$this->session->set_flashdata('notice', "Proposal Sent Successfully.");
 					redirect('horses/view/' . $id);
 				}			
 			}
@@ -407,9 +407,44 @@ class Horses extends MY_Controller {
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/buy', $this->data);
 		$this->load->view('layout/footer');
+	} */
+
+	public function buy($id){				
+		$this->data['horse'] = new Horse($id);
+		$this->data['horse'] = $this->data['horse']->horse;
+		if(!$this->data['horse']['horses_id']){
+			$this->session->set_flashdata('notice', "Invalid horse.");
+			redirect('horses');
+		}elseif($this->data['horse']['horses_pending']){
+			$this->session->set_flashdata('notice', "Horse is pending registration.");
+			redirect('horses');
+		}
+		if($this->data['horse']['horses_sale']==0)
+		{				
+			$this->session->set_flashdata('notice', "Horse is not available For Sale.");
+		}else{
+			if($this->purposal->checkPurposalAlreadySent($this->data['horse']['horses_id'],$this->data['horse']['join_players_id'],$this->data['player']['players_id']))
+			{
+				$this->session->set_flashdata('notice', "You have already sent proposal for this horse.");
+			}else
+			{				
+				$data = [
+					'title'=>$this->player->player['players_nickname'].' want to purchase your horse.',
+					'email'=>$this->player->player['players_email'],
+					'join_horses_name'=>$this->data['horse']['horses_name'],
+					'join_players_username'=>$this->data['player']['players_nickname'],
+					'join_players_id'=>$this->data['player']['players_id'],
+					'join_horse_owner_id'=>$this->data['horse']['join_players_id'],
+					'join_horse_id'=>$this->data['horse']['horses_id'],
+					'price' => $this->data['horse']['horses_sale_price'],
+					'description'=>'',
+				];
+				$response = $this->purposal->SavePurposal($this->data['player'], $this->data['horse'],$data);
+				$this->session->set_flashdata('notice', "Proposal Sent Successfully.");
+			}
+		}		
+		redirect('horses/view/' . $id);
 	}
-
-
 
 	public function transfer($id){
 		$this->data['horse'] = new Horse($id);

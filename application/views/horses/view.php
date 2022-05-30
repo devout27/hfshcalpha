@@ -23,7 +23,7 @@
 <? endif; ?>
 Owner: <a href="/game/profile/<?= $horse['join_players_id'] ?>"><?= $horse['players_nickname'] . " #" . $horse['join_players_id'] ?></a><br/>
 Stable: <a href="/game/stables/<?= $horse['join_stables_id'] ?>"><?= $horse['stables_name'] . " #" . $horse['join_stables_id'] ?></a><br/><br/>
-<?= date('Y') - $horse['horses_birthyear'] ?> years old<br/>
+<?= date('Y') - $horse['horses_birthyear'] ?> years old<br/>          
 
 Breeding Years: <?= ($horse['horses_birthyear'] + 3) ?> to <?= ($horse['horses_birthyear'] + 32) ?> inclusive<br/>
 
@@ -37,7 +37,8 @@ Breeding Years: <?= ($horse['horses_birthyear'] + 3) ?> to <?= ($horse['horses_b
 <? endif; ?>
 <? if($horse['horses_sale'] == 1): ?>
     <font color=green><b>For Sale</font></b><br />
-    <b><a href="<?php echo $horse['join_players_id'] == $this->session->userdata('players_id')  ? 'javascript:void(0);'  : '/horses/buy/'.$horse['horses_id'] ?>" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price']) ?></a></b><br/>
+    <b><a href="<?php echo $horse['join_players_id'] == $this->session->userdata('players_id')  ? 'javascript:void(0);'  : '/horses/buy/'.$horse['horses_id'] ?>" style="text-decoration:none;">Price $<?= number_format($horse['horses_sale_price'], 2, ".", ",") ?></a></b><br/>
+		
 <? endif; ?><br/><br/>
 
 Points: <?= $horse['horses_points'] ?><br/><br/>

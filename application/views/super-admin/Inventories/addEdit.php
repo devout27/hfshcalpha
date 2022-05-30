@@ -14,7 +14,7 @@
                             <div class="col-10">
                                 <div class="inner-head-section">
                                     <div class="title dark">
-                                        <h3>Package Information</h3>
+                                        <h3>Inventory Information</h3>
                                     </div>
                                 </div>
                                 <form method="post" action="<?=BASE_URL.$class_name?>addEdit/<?= $postData['itemid'] ?>">

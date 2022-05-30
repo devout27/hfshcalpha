@@ -7,7 +7,7 @@ if($horse['horses_breeding_fee'] == 0) $horse['horses_breeding_fee'] = "";
 ?>
 <div class="row">
         <div class="col-lg-12">
-        	<br/>   
+        	<br/>
 
           <div class="card mb-4">
             <div class="card-body">
@@ -20,16 +20,23 @@ if($horse['horses_breeding_fee'] == 0) $horse['horses_breeding_fee'] = "";
 										<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => ''), $errors) ?>
 									<? else: ?>
 										<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => '', 'disabled' => 'disabled'), $errors) ?>
-									<? endif; ?>				
-									<?= hf_checkbox('horses_sale', 'For Sale?', $_POST ?: $horse, array(), $errors) ?>
-													<?= hf_checkbox('horses_adoptable', 'Is Adoptable?', $_POST ?: $horse, array(), $errors) ?>
-													<?= hf_checkbox('horses_deceased', 'Is Deceased?', $_POST ?: $horse, array(), $errors) ?>
+									<? endif; 
+									$horse['horses_sale_price'] = number_format($horse['horses_sale_price'], 2, ".", ",");
+									$horse['horses_breeding_fee'] = number_format($horse['horses_breeding_fee'], 2, ".", ",");
+									?>
+									<?= hf_checkbox('horses_adoptable', 'Is Adoptable?', $_POST ?: $horse, array(), $errors) ?>																		
+									<?= hf_hidden('horses_sale',$horse); ?>
 									<?= hf_input('horses_sale_price', 'Sale Price', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for sale'), $errors) ?>
-									<?php if($horse['horses_gender'] == "Gelding"){ ?>
+									<?php if($horse['horses_gender'] != "Gelding"){ ?>
 										<?= hf_input('horses_breeding_fee', 'Breeding Fee', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for breeding'), $errors) ?>
 									<?php }else{ ?>
 										<?= hf_hidden('horses_breeding_fee',0); ?>
 									<?php } ?>
+									<? if($horse['horses_deceased']): ?>
+										<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $horse, array('disabled' => 'disabled'), $errors) ?>
+									<? else: ?>
+										<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $_POST ?: $horse, array(), $errors) ?>
+									<? endif; ?>									
 									<? if($player['privileges']['privileges_horses']): ?>
 									<hr/>
 									<b>Admin Options:</b><br/>
@@ -47,14 +54,8 @@ if($horse['horses_breeding_fee'] == 0) $horse['horses_breeding_fee'] = "";
 										<?= hf_dropdown('horses_line', 'Line (optional)', $_POST ?: $horse, $lines, array(), $errors, 1) ?>
 										<?= hf_input('horses_sire', 'Sire ID', $_POST ?: $horse, array(), $errors) ?>
 										<?= hf_input('horses_dam', 'Mare ID', $_POST ?: $horse, array(), $errors) ?>
-
-
-										<?= hf_checkbox('horses_adoptable', 'Adoptable?', $_POST ?: $horse, array(), $errors) ?>
-										<? if($horse['horses_deceased']): ?>
-											<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $horse, array('disabled' => 'disabled'), $errors) ?>
-										<? else: ?>
-											<?= hf_checkbox('horses_deceased', 'Deceased? (Checking this box is permanent!)', $_POST ?: $horse, array(), $errors) ?>
-										<? endif; ?>
+										
+										
 										<?= hf_textarea('horses_notes', 'Comments/Notes', $_POST ?: $horse, array('class' => 'col-sm-12', 'rows' => '5'), $errors) ?>
 									<? endif; ?>
 												</p>
@@ -130,4 +131,4 @@ if($horse['horses_breeding_fee'] == 0) $horse['horses_breeding_fee'] = "";
 <!-- my comment end -->
 </div>
 
-</div> 
+</div>

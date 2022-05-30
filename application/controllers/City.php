@@ -67,20 +67,44 @@ class City extends MY_Controller {
 	}
 
 	public function humane(){
-		$this->data['page']['title'] = "Humane Society";
-		$this->load->model('articles');
-		$this->load->model('horse');
-		$this->data['article'] = $this->articles->get_article(15);
-
-		$params = array(
-
-				'horses_adoptable' => 1,
-			);
-		$this->data['search'] = $this->horse->search($params);
-
-		$this->load->view('layout/header', $this->data);
-		$this->load->view('city/humane', $this->data);
-		$this->load->view('layout/footer');
+		if ($this->input->is_ajax_request()) {   	
+			$this->load->model('horse');
+			$res = $this->horse->getAdoptableHorsesList($this->data['player']['players_id'],$_POST);
+			$data = [];
+			foreach($res as $horse){     																
+				$sale =  $horse['horses_sale'] == 1 ? '<span class="badge badge-success">For Sale</span>' : '<span class="badge badge-info">Not For Sale</span>';
+				$salePrice = $horse['horses_sale'] == 1 ? '$ '.(float)$horse['horses_sale_price'] : 'N/A';
+				$data[] = array(
+					'<a href="/horses/view/'.$horse['horses_id'].'">'.generateId($horse['horses_id']).'</a>',
+					'<a href="/horses/view/'.$horse['horses_id'].'">'.$horse['horses_competition_title'].' '.$horse['horses_breeding_title'].' '.$horse['horses_name'].'</a>',
+					$horse['players_nickname'],
+					$horse['horses_birthyear'],
+					$horse['horses_color'],
+					$horse['horses_breed'],
+					$horse['horses_gender'],
+					$horse['horses_hs'],
+					$horse['horses_fs'],
+					$horse['horses_vet'].' '.$horse['horses_farrier'],
+					$sale,
+					$salePrice
+				);
+			}			
+			$output = array(
+                "draw" => $_POST['draw'],
+                "recordsTotal" => $this->horse->countAllAdoptable($this->data['player']['players_id'],$_POST),
+                "recordsFiltered" => $this->horse->countFilteredAdoptable($this->data['player']['players_id'],$_POST),
+                "data" => $data
+            );
+            echo json_encode($output);exit;			
+		}else{			
+			$this->data['post'] = $_POST;			
+			$this->data['page']['title'] = "Humane Society";
+			$this->data['dataTableElement'] = 'dt-horses-adopt';
+			$this->data['dataTableURL'] = base_url('city/humane');
+			$this->load->view('layout/header', $this->data);
+			$this->load->view('city/humane', $this->data);
+			$this->load->view('layout/footer');
+		}		
 	}
 
 	public function bank(){ 

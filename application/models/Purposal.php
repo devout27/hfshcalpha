@@ -35,8 +35,9 @@ class Purposal extends CI_Model {
 			{
 				$this->db->where($where);
 			}
+			$this->db->where('join_horse_owner_id',$player_id);
 			$i = $_POST['start'];
-			foreach($this->column_search as $item){            
+			foreach($this->column_search as $item){
 				if($postData['search']['value']){                
 					if($i==0){                    
 						$this->db->group_start();
@@ -69,50 +70,34 @@ class Purposal extends CI_Model {
 		return preg_match('/^[0-9]{10}+$/', $mobile);
 	}
 	public function SavePurposal($player, $horse,$data)
-	{
-		//allowed is the list of each breed, color, etc. that is allowed as an option
-		$CI =& get_instance();		
-		
-		//does player have adoption credit?
-		if(!$data['title']){
-			$errors['title'] = "Title is required.";
-		}
-		if(strlen($data['title']) > 255){
-			$errors['title'] = "Title Only Allowed Maximum 255 Charactors.";
-		}		
-		$email = $this->test_input($data["players_email"]);		
-		if(!$data['players_email']){
-			$errors['players_email'] = "Email Address is required.";
-		}else if (!filter_var($data["players_email"], FILTER_VALIDATE_EMAIL)) {			
-			$errors['players_email'] = "Invalid Email Address Format.";
-		}
-		if(!$data['description']){
-			$errors['description'] = "Title is required.";
-		}elseif(strlen($data['description']) > 5000){
-			$errors['description'] = "Title Only Allowed Maximum 5000 Charactors.";
-		}
-		$data['join_players_id'] = $player['players_id'];
-		$data['join_players_username'] = $player['players_username'];
-		$data['price'] = $horse['horses_sale_price'];
-		$data['join_horse_id'] = $horse['horses_id'];
-		$data['join_horses_name'] = $horse['horses_name']; 
-		$data['email'] = $data['players_email'];
-		if(count($errors) > 0){  
-			return array('errors' => $errors);
-		}
-		$allowed_fields = array(
-			'join_players_id',
-			'join_horse_id',
-			'join_horses_name',
-			'join_players_username',
-			'title',
-			'email',
-			'price',
-			'description',
-		);		
+	{		
+		$CI =& get_instance();
+		$allowed_fields = array('join_players_id','join_horse_id','join_horse_owner_id','join_horses_name','join_players_username','title','email','price','description',);
 		$update_data = filter_keys($data, $allowed_fields);		
 		$CI->db->insert('horses_sale_purposals', $update_data);
-		$horse_id = $CI->db->insert_id();								
-		return array('errors' => $errors, 'notices' => $notices, 'horse_id' => $horse_id);		
+		$horse_id = $CI->db->insert_id();
+		$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?);", array($data['join_horse_owner_id'],"You have received request "));
+		return array('errors' => $errors, 'notices' => [], 'horse_id' => $horse_id);		
+	}
+	public function checkPurposalAlreadySent($horse_id,$owner_id,$player_id)
+	{		
+		$this->db->from('horses_sale_purposals');
+		$this->db->where('join_players_id',$player_id);
+		$this->db->where('join_horse_owner_id',$owner_id);
+		$query = $this->db->where('join_horse_id',$horse_id)->get();
+		return $query->row();
+	}
+	public function getPurposal($purposal_id)
+	{
+		$this->db->from('horses_sale_purposals');
+		$this->db->where('id',$purposal_id);
+		$query = $this->db->get();
+		return $query->row();
+	}
+
+	public function delete($id)
+	{
+		$this->db->where('id', $id);
+		return $this->db->delete('horses_sale_purposals');
 	}
 }

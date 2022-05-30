@@ -70,6 +70,12 @@ Class Inventory_Model extends MY_Model {
             'label' => 'Item Description',
             'rules' => 'max_length[500]',            
         ),
+        array(
+            'field' => 'join_players_id',
+            'label' => 'Player',
+            'rules' => 'required',
+            'errors' => array('required' => 'Please Select Player'),
+        ),
     );
 	public $admin_config_add = array(
         array(

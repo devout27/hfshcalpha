@@ -22,6 +22,22 @@
                         </thead>
                         <tbody>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th scope="col">ID</th>                                
+                                <th scope="col">Name</th>
+                                <th scope="col">Stable</th>
+                                <th scope="col">Born</th>
+                                <th scope="col">Color</th>
+                                <th scope="col">Breed</th>
+                                <th scope="col">Gender</th>
+                                <th scope="col">HS</th>
+                                <th scope="col">FS</th>
+                                <th scope="col">V/F</th>
+                                <th scope="col">Status</th>                                
+                                <th scope="col">Action</th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -78,7 +94,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <? foreach((array)$requests AS $h): ?>
+                        <? foreach((array)$requests AS $h):                         
+                        $mare = new Horse($h['join_mares_id']);
+		                $mare = $mare->horse;
+                        ?>
                         <tr>
                             <? $post = $this->session->flashdata('post'); ?>
                         <? if($h['join_players_id'] == $this->session->userdata('players_id')): ?>
@@ -102,7 +121,7 @@
                                             <?= hf_dropdown('horses_gender', 'Gender', isset($post['horses_gender']) ? $post['horses_gender'] : '', array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
                                         </div>
                                         <div class="col-sm-6">
-                                            <?= hf_dropdown('horses_owner', 'Owner', isset($post['horses_owner']) ? $post['horses_owner'] : '', array('', 'Me', 'Mare\'s Owner'), array(), $errors, 1) ?>
+                                            <?= hf_dropdown('horses_owner', 'Owner', isset($post['horses_owner']) ? $post['horses_owner'] : '', array('', 'Sire\'s Owner ( Me )', 'Mare\'s Owner ( '.$mare['players_nickname'].' )'), array(), $errors, 1) ?>
                                         </div>
                                     </div>
                                     <div class="row">

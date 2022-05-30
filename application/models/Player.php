@@ -90,7 +90,7 @@ class Player extends CI_Model {
 		return $players;
 	}
 	function get_all_players(){
-		$players = $this->db->query('SELECT p.*,DATE_FORMAT(p.players_last_active, "%M %D, %Y at %l:%i %p") AS players_last_active2 FROM players p ORDER BY p.players_id ASC')->result_array();
+		$players = $this->db->query('SELECT p.*,DATE_FORMAT(p.players_last_active, "%M %D, %Y at %l:%i %p") AS players_last_active2 FROM players p where p.players_id > 0 ORDER BY p.players_id ASC')->result_array();
 		$res = [];
 		foreach ($players as $key => $value) {
 			$res[$value['players_id']] = ucFirst($value['players_nickname']);	

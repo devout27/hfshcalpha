@@ -9,10 +9,10 @@
                                 <th scope="col">Sr No.</th>
                                 <th scope="col">Personal Info</th>
                                 <th scope="col">Horse Info</th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Description</th>
+                                <th scope="col">Message</th>
                                 <th scope="col">Price</th>
                                 <th scope="col">Created On</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -22,10 +22,10 @@
                                 <th scope="col">Sr No.</th>
                                 <th scope="col">Personal Info</th>
                                 <th scope="col">Horse Info</th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Description</th>
+                                <th scope="col">Message</th>                                
                                 <th scope="col">Price</th>
                                 <th scope="col">Created On</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </tfoot>
                     </table>

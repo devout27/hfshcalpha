@@ -340,9 +340,14 @@ class Horse extends CI_Model {
 		// if player is regular player, only allow update of breeding fee & sale.
 
 		$data['players_nickname'] = new Player($horse['join_players_id']);		
-		$data['players_nickname'] = $data['players_nickname']->player['players_nickname'];
-		
-		$data['horses_sale_price']=(float)filter_var($data['horses_sale_price'], FILTER_SANITIZE_NUMBER_FLOAT);		
+		$data['players_nickname'] = $data['players_nickname']->player['players_nickname'];		
+		$data['horses_sale_price'] = preg_replace("/[^0-9.]/", "", $data['horses_sale_price']);						
+		$data['horses_breeding_fee'] = preg_replace("/[^0-9.]/", "", $data['horses_breeding_fee']);
+		$data['horses_sale'] = 0;
+		if((int)$data['horses_sale_price'] > 0)
+		{
+			$data['horses_sale'] = 1;
+		}
 		if($player['privileges']['privileges_horses']){ //admin can update everything else
 			$allowed_fields = array(
 				'horses_name',
@@ -498,7 +503,7 @@ class Horse extends CI_Model {
 				$errors['horses_breed'] = "Breed must match with sire or dam.";
 				}
 			}
-/* if($data['horses_sale'] != 1 AND $data['horses_sale2'] > 0){
+		/* if($data['horses_sale'] != 1 AND $data['horses_sale2'] > 0){
 				$data['horses_sale'] = $data['horses_sale2'];
 			}else{
 				$data['horses_sale'] = 0;
@@ -713,6 +718,7 @@ class Horse extends CI_Model {
 					'horses_adoptable',
 					'horses_sale',
 					'horses_sale_price',
+					'players_nickname'
 			));
 		}elseif($data['recipient'] == "Retirement Home"){
 			$data['join_players_id'] = $REITRE_ID;
@@ -724,6 +730,7 @@ class Horse extends CI_Model {
 					'horses_adoptable',
 					'horses_sale',
 					'horses_sale_price',
+					'players_nickname'
 			));
 		}elseif($data['recipient'] == "Cemetery"){
 			$data['join_players_id'] = $CEMETERY_ID;
@@ -737,6 +744,7 @@ class Horse extends CI_Model {
 					'horses_deceased',
 					'horses_sale',
 					'horses_sale_price',
+					'players_nickname'
 			));
 		}elseif($data['recipient'] == "Export"){
 			$data['horses_pending_export'] = 1;
@@ -748,6 +756,7 @@ class Horse extends CI_Model {
 					'horses_adoptable',
 					'horses_sale',
 					'horses_sale_price',
+					'players_nickname'
 			));
 			$skip_record_insert = true;
 		}else{
@@ -3092,5 +3101,63 @@ class Horse extends CI_Model {
 				$this->db->order_by(key($order),$order[key($order)]);
 			}
 		}
+		/* adoptable start */
+		public function getAdoptableHorsesList($player_id,$postData)
+		{
+			$this->get_adoptable_list_query($player_id,$postData);
+			if($postData['length'] != -1){
+			  $this->db->limit($postData['length'],$postData['start']);
+			}
+			$query = $this->db->get();
+			return $query->result_array();	
+		}
+		public function countAllAdoptable($player_id,$postData)
+		{
+			$this->get_adoptable_list_query($player_id,$postData);
+			return $this->db->count_all_results();
+		}
+		public function countFilteredAdoptable($player_id,$postData)
+		{			
+			$this->get_adoptable_list_query($player_id,$postData);
+			return $this->db->count_all_results();      
+		}
+		public function get_adoptable_list_query($player_id,$postData,$where=false)
+		{													
+			$this->db->select('horses.*,s.stables_name,p.players_username,p.players_id');
+			$this->db->join('stables s','s.stables_id=horses.join_stables_id','LEFT');
+			$this->db->join('players p','p.players_id=horses.join_players_id','LEFT');
+			$this->db->from('horses');						
+			if(is_numeric($player_id))
+			{							
+				$this->db->where('horses.join_players_id != ',$player_id);
+				$this->db->where('horses.horses_adoptable',1);
+			}			
+			if($where)
+			{
+				$this->db->where($where);
+			}
+			$i = $_POST['start'];
+			foreach($this->column_search as $item){            
+				if($postData['search']['value']){                
+					if($i==0){                    
+						$this->db->group_start();
+						$this->db->like($item, $postData['search']['value']);
+					}else{
+						$this->db->or_like($item, $postData['search']['value']);
+					}
+					if(count($this->column_search) - 1 == $i){
+						$this->db->group_end();
+					}
+				}
+				$i++;
+			}         
+			if(isset($postData['order'])){
+				$this->db->order_by($this->column_order[$postData['order']['0']['column']],$postData['order']['0']['dir']);
+			}else if(isset($this->order)){
+				$order = $this->order;
+				$this->db->order_by(key($order),$order[key($order)]);
+			}
+		}
+		/* adoptable end */
 	/* datatable  related functions end*/
 }

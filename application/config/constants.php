@@ -101,6 +101,9 @@ defined('SITE_FAV_LOGO')      		OR define('SITE_FAV_LOGO', '/img/favicon.ico');
 defined('SITE_LOGO')      		OR define('SITE_LOGO', '/img/logo.png');
 defined('USER_DEFAULT_IMAGE') or define('USER_DEFAULT_IMAGE','/assets/admin/images/user-male.png');
 defined('AMENITY_DEFAULT_IMAGE') or define('AMENITY_DEFAULT_IMAGE','/assets/images/amenity-placeholder.jpg');
+$root  = "https://".$_SERVER['HTTP_HOST'];
+$root .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
+defined('BASE_URL') or define('BASE_URL',$root);
 
 defined('INVENTRORY_DEFAULT_IMAGE') or define('INVENTRORY_DEFAULT_IMAGE','/assets/images/amenity-placeholder.jpg');
 defined('INVENTRORY_ITEM_TYPES') or define('INVENTRORY_ITEM_TYPES',[

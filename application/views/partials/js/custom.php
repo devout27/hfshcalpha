@@ -20,7 +20,7 @@
 				'fadeOut' : 400,
 				'clickable' : true,
 				'duration' : 4000
-			});
+			}); 
 		
 	}
 	function success(msg)

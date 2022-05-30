@@ -617,3 +617,11 @@ table {
 #admin-sortable-blueprint1, #admin-sortable-blueprint2{
     list-style-type: none;
     }*/
+
+.accept-btn, .reject-btn, .accept-btn:hover, .reject-btn:hover {
+  background: #cccea7;
+  color: #646827;
+  padding: 3px 10px;
+  border: 1px solid #8a8e4e;
+  border-radius: 2px;
+}

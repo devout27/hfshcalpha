@@ -94,12 +94,20 @@ Please choose a mare to breed with this stallion. Once you have made this reques
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-6">
-						<?= hf_dropdown('horses_color', ' Color', isset($post['horses_color']) ? $post['horses_color'] : '', $h['genes']['blueprints_available']['Color'], array(), $errors, 1) ?>
+					<!-- <div class="col-sm-6">
+						<? /* hf_dropdown('horses_color', ' Color', isset($post['horses_color']) ? $post['horses_color'] : '', $h['genes']['blueprints_available']['Color'], array(), $errors, 1) */ ?>
 					</div>
 					<div class="col-sm-6">
-						<?= hf_dropdown('horses_pattern', 'Pattern Color', isset($post['horses_pattern']) ? $post['horses_pattern'] : '', $h['genes']['blueprints_available']['Pattern'], array(), $errors, 1) ?>
+						<?/*  hf_dropdown('horses_pattern', 'Pattern Color', isset($post['horses_pattern']) ? $post['horses_pattern'] : '', $h['genes']['blueprints_available']['Pattern'], array(), $errors, 1)  */?>
+					</div> -->
+
+					<div class="col-sm-6">
+						<?= hf_dropdown('horses_breedings_color', 'Base Color', isset($post['horses_color']) ? $post['horses_color'] : '', $h['genes']['blueprints_available']['Color'], $base_colors, array(), $errors, 1) ?>
 					</div>
+					<div class="col-sm-6">
+						<?= hf_dropdown('horses_breedings_pattern', 'Pattern Color', isset($post['horses_pattern']) ? $post['horses_pattern'] : '', $h['genes']['blueprints_available']['Pattern'], $base_patterns, array(), $errors, 1) ?>
+					</div>
+					
 				</div>
 				<div class="row">
 					<div class="col-sm-6">

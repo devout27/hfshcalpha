@@ -56,18 +56,18 @@ if($horse['horses_id'] == $post['horses_id']){
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-6">
-						<?= hf_dropdown('horses_breedings_color', 'Base Color', $horse, $horse['genes']['blueprints_available']['Color'], array(), $errors, 1) ?>
+					<!-- <div class="col-sm-6">
+						<? //hf_dropdown('horses_breedings_color', 'Base Color', $horse, $horse['genes']['blueprints_available']['Color'], array(), $errors, 1) ?>
 					</div>
 					<div class="col-sm-6">
-						<?= hf_dropdown('horses_breedings_pattern', 'Pattern Color', $horse, $horse['genes']['blueprints_available']['Pattern'], array(), $errors, 1) ?>
-					</div>
-					<? /*<div class="col-sm-6">
+						<? //hf_dropdown('horses_breedings_pattern', 'Pattern Color', $horse, $horse['genes']['blueprints_available']['Pattern'], array(), $errors, 1) ?>
+					</div> -->
+					<div class="col-sm-6">
 						<?= hf_dropdown('horses_breedings_color', 'Base Color', $horse, $base_colors, array(), $errors, 1) ?>
 					</div>
 					<div class="col-sm-6">
 						<?= hf_dropdown('horses_breedings_pattern', 'Pattern Color', $horse, $base_patterns, array(), $errors, 1) ?>
-					</div>*/ ?>
+					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm-6">

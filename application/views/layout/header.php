@@ -101,7 +101,7 @@
 
 <?php if(!$this->data['page']['hide_logo']): ?>
     <header class="header-logo">
-    	<img src="/img/logo.png" class="img-fluid">
+    	<img src="<?= SITE_LOGO ?>" class="img-fluid">
       <div class="container text-center">
         <!--<h1>Hurricane Farms</h1>
         <p class="lead">a simulated horse club for the mature enthusiast</p>-->

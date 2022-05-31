@@ -98,7 +98,7 @@ defined('ADMIN_EMAIL')      	OR define('ADMIN_EMAIL', 'email@domain.com');
 defined('ADMIN_NAME')      		OR define('ADMIN_NAME', 'Support @ Hurricane Farm');
 
 defined('SITE_FAV_LOGO')      		OR define('SITE_FAV_LOGO', '/img/favicon.ico');
-defined('SITE_LOGO')      		OR define('SITE_LOGO', '/img/logo.png');
+defined('SITE_LOGO')      		OR define('SITE_LOGO', '/assets/img/logo.png');
 defined('USER_DEFAULT_IMAGE') or define('USER_DEFAULT_IMAGE','/assets/admin/images/user-male.png');
 defined('AMENITY_DEFAULT_IMAGE') or define('AMENITY_DEFAULT_IMAGE','/assets/images/amenity-placeholder.jpg');
 $root  = "https://".$_SERVER['HTTP_HOST'];

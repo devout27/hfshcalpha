@@ -8,21 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <title><?= SITE_ABBR ?>: <?= $this->data['page']['title'] ?></title>
-	<script src='/js/tinymce/tinymce.min.js'></script>
-
+    <title><?= SITE_ABBR ?>: <?= $this->data['page']['title'] ?></title>	  
     <!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<script src="https://kit.fontawesome.com/f2d012e2d7.js" crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css'); ?>">    
     <!-- Custom styles for this template -->
-    <link href="/css/jquery-ui.css" rel="stylesheet">
-	<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-	<!--<link rel="stylesheet" href="//cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">-->
-  <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-  <link href="/css/main.css?date=<?= date('YmdHis'); ?>" rel="stylesheet">
-  <link href="/assets/calendar/simple-calendar.css" rel="stylesheet">
+    <link href="<?= base_url('assets/css/jquery-ui.css'); ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('assets/css/jquery.dataTables.min.css'); ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/line-awesome.min.css'); ?>">
+    <link href="<?= base_url('assets/css/main.css?date='.date('YmdHis')); ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/calendar/simple-calendar.css'); ?>" rel="stylesheet">
+    <script src='<?= base_url('assets/js/tinymce/tinymce.min.js'); ?>'></script>
+    <script src="https://kit.fontawesome.com/f2d012e2d7.js" crossorigin="anonymous"></script>
   </head>
 
   <body>

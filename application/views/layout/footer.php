@@ -35,19 +35,12 @@
 
 
     <!-- Bootstrap core JavaScript -->
-	<script
-  src="https://code.jquery.com/jquery-3.3.1.min.js"
-  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  crossorigin="anonymous"></script>
-  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-  <!--<script src="//cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>-->
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-	<script
-  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-  crossorigin="anonymous"></script>
-  <script src="/assets/admin/js/flash.js"></script>
-  <script src="/assets/calendar/jquery.simple-calendar.js"></script>
+	<script src="<?= base_url('assets/js/jquery-3.3.1.min.js') ?>" ></script>
+  <script src="<?= base_url('assets/js/jquery.dataTables.min.js'); ?>" ></script>  
+	<script src="<?= base_url('assets/js/bootstrap.min.js'); ?>" ></script>
+	<script src="<?= base_url('assets/js/jquery-ui.min.js'); ?>" ></script>
+  <script src="<?= base_url('assets/admin/js/flash.js'); ?>"></script>
+  <script src="<?= base_url('assets/calendar/jquery.simple-calendar.js'); ?>"></script>
   <? $this->load->view("partials/js/datatables")?>
   <? $this->load->view("partials/js/custom")?>
   <? $this->load->view("partials/js/main")?>
@@ -71,10 +64,6 @@
     })
         
   </script>
-
-
-  <script src="/js/main.js?<?= rand(999,84589385743) ?>"></script>
-
+  <script src="<?= base_url('assets/js/main.js?v='.rand(999,84589385743));  ?>"></script>
   </body>
-
 </html>

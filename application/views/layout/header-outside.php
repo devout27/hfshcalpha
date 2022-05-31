@@ -11,14 +11,11 @@
     <title><?= SITE_NAME; ?></title>
 
     <!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
+	  <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css') ?>">
     <!-- Custom styles for this template -->
-    <link href="/css/jquery-ui.css" rel="stylesheet">
-    <link href="/css/main.css?date=<?= date('YmdHis'); ?>" rel="stylesheet">
-
+    <link href="<?= base_url('assets/css/jquery-ui.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/main.css?date='.date('YmdHis')) ?>" rel="stylesheet">
   </head>
-
   <body>
 
     <!-- Navigation -->

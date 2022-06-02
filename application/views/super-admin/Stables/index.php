@@ -8,6 +8,11 @@
                     </div>
                 </div>
                 <div class="col-md-7">
+                    <div class="all-vol-btn text-right main-btn">						
+                        <a href="<?= $BASE_URL_ADMIN ?>Stables/addEdit">
+                            <button type="button"><i class="las la-plus-circle"></i> <?=$sub_page_title?></button>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>        

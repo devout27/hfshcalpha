@@ -369,7 +369,8 @@ class Horse extends CI_Model {
 				'horses_breeding_fee',
 				'horses_sale_price',				
 				'horses_registration_type',
-				'players_nickname'
+				'players_nickname',
+				'join_stables_id'
 			);
 
 			
@@ -520,7 +521,8 @@ class Horse extends CI_Model {
 				'horses_sale_price',
 				'horses_adoptable',
 				'horses_deceased',
-				'players_nickname'
+				'players_nickname',
+				'join_stables_id'
 			);
 		}else{
 			$errors['horses_name'] = "You do not own this horse.";
@@ -1020,7 +1022,8 @@ class Horse extends CI_Model {
 			'horses_dam',
 			'horses_pending',
 			'horses_registration_type',
-			'horses_created'
+			'horses_created',
+			'join_stables_id',
 		);
 		$horse['horses_created']=$horse['horses_registration_type'] == "creation" ? 1 : 0;
 		$update_data = filter_keys($horse, $allowed_fields);
@@ -2798,6 +2801,7 @@ class Horse extends CI_Model {
 			'horses_dam',
 			'horses_pending_date',
 			'horses_registration_type',
+			'join_stables_id',
 		);
 		$horse['horses_created'] = $horse['horses_registration_type'] == "creation" ? 1 : 0;
 		$update_data = filter_keys($horse, $allowed_fields);				
@@ -3224,4 +3228,17 @@ class Horse extends CI_Model {
 		}
 		/* adoptable end */
 	/* datatable  related functions end*/
+	public function getMyStables($player_id)
+	{
+		$this->db->from('stables');
+		$this->db->where('join_players_id = ',$player_id);
+		$this->db->or_where('join_players_id = ',-1);
+		$query = $this->db->get();
+		$data = $query->result_array();
+		$res = [];
+		foreach ($data as $key => $value) {
+			$res[$value['stables_id']] = $value['stables_name'];
+		}		
+		return $res;
+	}
 }

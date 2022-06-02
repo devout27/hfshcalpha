@@ -51,7 +51,7 @@
             <div class="container h-100 py-2">
                <ul class="nav nav-tabs nav-fill border-0" id="myTab" role="tablist">
                   <li class="nav-item">
-                     <a class="nav-link   <?= count($errors) == 0 ? 'active' : '' ?>   border border-muted border-bottom-0" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
+                     <a class="nav-link <?= count($errors) == 0 ? 'active' : '' ?> border border-muted border-bottom-0" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="<?= count($errors) == 0 ? 'true' : 'false' ?>">Overview</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link border border-muted border-bottom-0" id="outgoing-tab" data-toggle="tab" href="#outgoing" role="tab" aria-controls="outgoing" aria-selected="false">Pending Outgoing</a>
@@ -60,7 +60,7 @@
                      <a class="nav-link border border-muted border-bottom-0" id="incoming-tab" data-toggle="tab" href="#incoming" role="tab" aria-controls="incoming" aria-selected="false">Pending Incoming</a>
                   </li>
                   <li class="nav-item">
-                     <a class="nav-link border border-muted border-bottom-0  <?= count($errors) > 0 ? 'active' : '' ?>" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit" aria-selected="false">Edit</a>
+                     <a class="nav-link border border-muted border-bottom-0  <?= count($errors) > 0 ? 'active' : '' ?>" id="edit" data-toggle="tab" href="#edit-tab" role="tab" aria-controls="edit-tab" aria-selected="<?= count($errors) > 0 ? 'true' : 'false' ?>">Edit</a>
                   </li>
                </ul>
                <div class="tab-content h-75">

@@ -60,6 +60,7 @@
                 <a class="dropdown-item" href="/city/vet">Veterinary Office</a>
                 <a class="dropdown-item" href="/city/farrier">Farrier Office</a>
                 <a class="dropdown-item" href="/manage-horses">Manage Horses</a>
+                <a class="dropdown-item" href="/stables">Manage Stables</a>
                 <a class="dropdown-item" href="/manage-sale-purposals">My Horses for Sale</a>
                 <a class="dropdown-item" href="/horses">Horses</a>
                 <a class="dropdown-item" href="/game/profile/search">Stables</a>

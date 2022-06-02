@@ -14,7 +14,7 @@
                             <div class="col-10">
                                 <div class="inner-head-section">
                                     <div class="title dark">
-                                        <h3>Bank Information</h3>
+                                        <h3>Bank Account Information</h3>
                                     </div>
                                 </div>
                                 <form method="post" action="<?=BASE_URL.$class_name?>addEdit/<?= $account['bank_id'] ?>">
@@ -26,7 +26,7 @@
                                     </div>
                                     <div class="row">
                                       <div class="col-12">
-                                        <label for="name">Name*</label>
+                                        <label for="bank_nickname">Account Name</label>
                                       </div>
                                       <div class="col-12">
                                         <?= hf_input('bank_nickname', '', $account ?: $postData, array(), $errors) ?>
@@ -34,39 +34,39 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                          <label for="name">Bank Balance*</label>
+                                          <label for="bank_balance">Bank Balance</label>
                                         </div>
                                         <div class="col-12">
-                                          <?= hf_input('bank_balance', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0), $errors,'number') ?>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                          <label for="bank_interest_accrued">Interest Accrued*</label>
-                                        </div>
-                                        <div class="col-12">
-                                          <?= hf_input('bank_interest_accrued', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0), $errors,'number') ?>
+                                          <?= hf_input('bank_balance', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0,"max"=>100), $errors,'number') ?>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                          <label for="bank_interest_incurred">Interest Incurred*</label>
+                                          <label for="bank_interest_accrued">Interest Accrued</label>
                                         </div>
                                         <div class="col-12">
-                                          <?= hf_input('bank_interest_incurred', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0), $errors,'number') ?>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                          <label for="bank_credit_payment_due">Account Credit Payment Due*</label>
-                                        </div>
-                                        <div class="col-12">
-                                          <?= hf_input('bank_credit_payment_due', '', $account ?: $postData, array('placeholder' => '','min'=>0), $errors) ?>
+                                          <?= hf_input('bank_interest_accrued', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0,"max"=>100), $errors,'number') ?>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                          <label for="name">Bank Credit Limit*</label>
+                                          <label for="bank_interest_incurred">Interest Incurred</label>
+                                        </div>
+                                        <div class="col-12">
+                                          <?= hf_input('bank_interest_incurred', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0,"max"=>100), $errors,'number') ?>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                          <label for="bank_credit_payment_due">Account Credit Payment Due</label>
+                                        </div>
+                                        <div class="col-12">
+                                          <?= hf_input('bank_credit_payment_due', '', $account ?: $postData, array('placeholder' => ''), $errors,'date') ?>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                          <label for="name">Bank Credit Limit</label>
                                         </div>
                                         <div class="col-12">
                                           <?= hf_input('bank_credit_limit', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0), $errors,'number') ?>
@@ -103,7 +103,6 @@
                                         <div class="col-6 text-right">                                    
                                           <?= hf_dropdown('bank_pending', '', $account ?: $postData, array('0' => 'Active', '1' => 'Inactive'), array(), $errors, 0, 0) ?>
                                         </div>
-                                        
                                     </div>
                                     <div class="row">
                                         <div class="col-12">

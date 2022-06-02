@@ -625,3 +625,20 @@ table {
   border: 1px solid #8a8e4e;
   border-radius: 2px;
 }
+
+a.create-stable-btn button, a.create-stable-btn button:hover {
+  background: #c6c99d;
+  text-align: right;
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 9px 8px;
+  margin-bottom: 12px;
+  cursor:pointer;
+}
+.create-stable-btn-container
+{
+  text-align: right;
+}
+ul li{
+  list-style: none;
+}

@@ -10,52 +10,18 @@ Class Stable_Model extends MY_Model {
         $this->column_search=['stables_id','join_players_id','players_nickname','players_email'];
         $this->column_order=['stables_id','join_players_id','players_nickname','players_email'];
         $this->order = ['stables_id' => 'desc'];
-    } 
-	public $config = array(
-        array(
-                'field' => 'name',
-                'label' => 'Name',
-                'rules' => 'required|max_length[50]',
-                'errors' => array(
-                        'required' => 'Enter name',
-                ),
-        ),
-		array(
-                'field' => 'email',
-                'label' => 'email id',
-                'rules' => 'required|valid_email|max_length[150]|is_unique[stables.email]',
-                'errors' => array(
-                        'required' => 'Enter email id',
-						'is_unique'=>'Email id already registered'
-                ),
-        ),
-		array(
-			'field' => 'mobile',
-			'label' => 'Phone',
-			'rules' => 'min_length[5]|max_length[20]',
-			
-     	),
-		array(
-                'field' => 'password',
-                'label' => 'password',
-                'rules' => 'required|max_length[20]|min_length[8]',
-                'errors' => array(
-                        'required' => 'Enter Password',
-                ),
-        ),
-		array(
-				'field'  => 'confirm_password',
-				'label'  => 'Confirm Password',
-				'rules'  => 'required|matches[password]',
-	    ),
-    );
-	
-	public $config_edit = array(
+    } 		
+	public $admin_config_add = array(
         array(
             'field' => 'stables_name',
             'label' => 'Stable Name',
             'rules' => 'required|max_length[50]',
             'errors' => array('required' => 'Enter Stable Name',),
+        ),
+        array(
+            'field' => 'stables_boarding_public',
+            'label' => 'Boarding Public',
+            'rules' => 'required|max_length[1]',
         ),
         array(
             'field' => 'stables_description',
@@ -66,6 +32,41 @@ Class Stable_Model extends MY_Model {
             'field' => 'stables_boarding_fee',
             'label' => 'Stable Barding Fee',
             'rules' => 'is_natural',
+        ),
+        array(
+            'field' => 'join_players_id',
+            'label' => 'Player',
+            'rules' => 'required',
+            'errors' => array('required' => 'Please Select Player'),
+        ),
+    );
+	public $admin_config_edit = array(
+        array(
+            'field' => 'stables_name',
+            'label' => 'Stable Name',
+            'rules' => 'required|max_length[50]',
+            'errors' => array('required' => 'Enter Stable Name',),
+        ),
+        array(
+            'field' => 'stables_boarding_public',
+            'label' => 'Boarding Public',
+            'rules' => 'required|max_length[1]',
+        ),
+        array(
+            'field' => 'stables_description',
+            'label' => 'Stable Description',
+            'rules' => 'max_length[10000]',
+        ),
+        array(
+            'field' => 'stables_boarding_fee',
+            'label' => 'Stable Barding Fee',
+            'rules' => 'is_natural',
+        ),
+        array(
+            'field' => 'join_players_id',
+            'label' => 'Player',
+            'rules' => 'required',
+            'errors' => array('required' => 'Please Select Player'),
         ),
     );
 	public function getStableDataById($stables_id){		        

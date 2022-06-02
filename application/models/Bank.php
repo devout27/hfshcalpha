@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Bank extends CI_Model {
-
+    public $table;
     public $admin_config_add = array(
         array(
             'field' => 'bank_nickname',
@@ -13,25 +13,61 @@ class Bank extends CI_Model {
             'field' => 'bank_balance',
             'label' => 'Account Balance',
             'rules' => 'required|max_length[11]|numeric',
-            'errors' => array('required' => 'Please Select Account Balance'),
+            'errors' => array('required' => 'Please enter Account Balance'),
         ),        
         array(
             'field' => 'bank_interest_accrued',
             'label' => 'Account interest accrued',
             'rules' => 'required|max_length[11]|numeric',
-            'errors' => array('required' => 'Please Select Account interest accrued'),
+            'errors' => array('required' => 'Please enter Account interest accrued'),
         ),        
         array(
             'field' => 'bank_interest_incurred',
             'label' => 'Account interest incurred',
             'rules' => 'required|max_length[11]|numeric',
-            'errors' => array('required' => 'Please Select Account interest incurred'),
+            'errors' => array('required' => 'Please enter Account interest incurred'),
+        ),        
+        array(
+            'field' => 'bank_credit_limit',
+            'label' => 'Credit Limit',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please enter Credit Limit'),
         ),        
         array(
             'field' => 'bank_credit_payment_due',
             'label' => 'Account credit payment due',
-            'rules' => 'required|max_length[11]|numeric',
-            'errors' => array('required' => 'Please Select Account interest incurred'),
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Account credit payment due'),
+        ),
+        array(
+            'field' => 'bank_tier',
+            'label' => 'Bank Tier',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Gank Tier'),
+        ),
+        array(
+            'field' => 'bank_default',
+            'label' => 'Bank default',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Bank Default'),
+        ),
+        array(
+            'field' => 'bank_type',
+            'label' => 'Bank type',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Bank type'),
+        ),
+        array(
+            'field' => 'bank_closed',
+            'label' => 'Bank closed',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Bank closed'),
+        ),
+        array(
+            'field' => 'bank_pending',
+            'label' => 'status',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Account status'),
         ),
         array(
             'field' => 'join_players_id',
@@ -43,32 +79,70 @@ class Bank extends CI_Model {
 	
 	public $admin_config_edit = array(
         array(
-            'field' => 'itemname',
+            'field' => 'bank_nickname',
             'label' => 'Name',
             'rules' => 'required|max_length[255]',
-            'errors' => array('required' => 'Please Enter Item Name.'),
+            'errors' => array('required' => 'Please Enter Name.'),
         ),
         array(
-            'field' => 'itemtype',
-            'label' => 'Item Type',
-            'rules' => 'required|max_length[255]',
-            'errors' => array('required' => 'Please Select Item Type'),
+            'field' => 'bank_balance',
+            'label' => 'Account Balance',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please enter Account Balance'),
+        ),        
+        array(
+            'field' => 'bank_interest_accrued',
+            'label' => 'Account interest accrued',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please enter Account interest accrued'),
+        ),        
+        array(
+            'field' => 'bank_interest_incurred',
+            'label' => 'Account interest incurred',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please enter Account interest incurred'),
+        ),        
+        array(
+            'field' => 'bank_credit_limit',
+            'label' => 'Credit Limit',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please enter Credit Limit'),
+        ),        
+        array(
+            'field' => 'bank_credit_payment_due',
+            'label' => 'Account credit payment due',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Account credit payment due'),
         ),
         array(
-            'field' => 'itemrarity',
-            'label' => 'Item Rarity',
-            'rules' => 'required|max_length[255]',            
-            'errors' => array('required' => 'Please Select Item Rarity'),
+            'field' => 'bank_tier',
+            'label' => 'Bank Tier',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Gank Tier'),
         ),
         array(
-            'field' => 'itemimg',
-            'label' => 'Item Image',
-            'rules' => 'valid_url|max_length[2048]',            
+            'field' => 'bank_default',
+            'label' => 'Bank default',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Bank Default'),
         ),
         array(
-            'field' => 'itemdesc',
-            'label' => 'Item Description',
-            'rules' => 'max_length[500]',            
+            'field' => 'bank_type',
+            'label' => 'Bank type',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Bank type'),
+        ),
+        array(
+            'field' => 'bank_closed',
+            'label' => 'Bank closed',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Bank closed'),
+        ),
+        array(
+            'field' => 'bank_pending',
+            'label' => 'status',
+            'rules' => 'required|max_length[12]',
+            'errors' => array('required' => 'Please Select Account status'),
         ),
         array(
             'field' => 'join_players_id',
@@ -85,6 +159,7 @@ class Bank extends CI_Model {
         $this->checks_column_search=['bank_checks_id','bank_checks_date','bank_checks_status'];
         $this->checks_column_order=['bank_checks_id','bank_checks_date','bank_checks_status'];
         $this->checks_order = ['bc.join_bank_id' => 'desc'];
+        $this->table = "bank";
     }
 
 
@@ -1297,4 +1372,23 @@ class Bank extends CI_Model {
                 /* transactions functions end */
 
     /* datatable  related functions end*/
+    public function saveBank($data) {         
+		$id=!empty($data['bank_id']) ? $data['bank_id']:'';        
+		if(!empty($id)){			
+			$this->db->where('bank_id', $id);
+			$query = $this->db->update($this->table, $data);
+			if ($query) {
+               return $id;
+			} else {
+				return 0;
+			}
+		}else{			
+			$query = $this->db->insert($this->table, $data);
+			if ($query) {
+               return $insert_id = $this->db->insert_id();
+			} else {
+				return 0;
+			}
+		}
+    }    
 }

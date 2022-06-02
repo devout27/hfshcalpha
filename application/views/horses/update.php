@@ -7,23 +7,25 @@ if($horse['horses_breeding_fee'] == 0) $horse['horses_breeding_fee'] = "";
 ?>
 <div class="row">
         <div class="col-lg-12">
-        	<br/>
-
+					<br/>
+					
           <div class="card mb-4">
-            <div class="card-body">
-              <h2 class="card-title">Update Horse</h2>
+						<div class="card-body">
+							<h2 class="card-title">Update Horse</h2>
               <p class="card-text">
-							<form method="post" action="/horses/update/<?= $horse['horses_id'] ?>">
+								<form method="post" action="/horses/update/<?= $horse['horses_id'] ?>">
 									<?= hf_hidden('horses_created', $horse['horses_created']) ?>
 									<?= hf_hidden('horses_registration_type', $horse['horses_registration_type']) ?>
+									
 									<? if($player['privileges']['privileges_horses']): ?>
 										<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => ''), $errors) ?>
-									<? else: ?>
-										<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => '', 'disabled' => 'disabled'), $errors) ?>
-									<? endif; 
+										<? else: ?>
+											<?= hf_input('horses_name', 'Name', $_POST ?: $horse, array('placeholder' => '', 'disabled' => 'disabled'), $errors) ?>
+											<? endif; 
 									$horse['horses_sale_price'] = number_format($horse['horses_sale_price'], 2, ".", ",");
 									$horse['horses_breeding_fee'] = number_format($horse['horses_breeding_fee'], 2, ".", ",");
 									?>
+									<?= hf_dropdown('join_stables_id', 'Stable', $_POST ?: $horse, $my_stables, array(), $errors) ?>									
 									<?= hf_checkbox('horses_adoptable', 'Is Adoptable?', $_POST ?: $horse, array(), $errors) ?>																		
 									<?= hf_hidden('horses_sale',$horse); ?>
 									<?= hf_input('horses_sale_price', 'Sale Price', $_POST ?: $horse, array('placeholder' => 'Enter a number higher than 0 to put horse up for sale'), $errors) ?>

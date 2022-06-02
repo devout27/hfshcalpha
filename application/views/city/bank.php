@@ -28,7 +28,7 @@
 					<? if($a['bank_type'] != "Loan"): ?>
 						<td>$<?= number_format($a['bank_available_balance']) ?></td>
 					<? else: ?>
-						<td>$<?= number_format($a['bank_credit_limit'] - $a['bank_balance']) ?></td>
+						<td>$<?= $a['bank_balance'] == $a['bank_credit_limit'] ? number_format($a['bank_available_balance']) : number_format($a['bank_credit_limit'] - $a['bank_balance']) ?></td>
 					<? endif; ?>
 				</tr>
 				<? endforeach; ?>

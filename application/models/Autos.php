@@ -19,7 +19,7 @@ class Autos extends CI_Model {
 		if($last_day == $day){
 			//if it's the last day of the month, ensure transactions that would be run on the remaining days in a longer month would also be run (ie, the 31st)
 			for($i = $day; $i <= 31; $i++){
-				$day_query []= "EXTRACT(DAY FROM br.bank_recurring_start_date)=" .$i;
+				$day_query[] = "EXTRACT(DAY FROM br.bank_recurring_start_date)=" .$i;
 			}
 			$day_query = implode(' OR ', $day_query);
 			$day_query = " OR " . $day_query;

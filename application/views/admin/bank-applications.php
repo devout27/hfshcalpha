@@ -90,6 +90,7 @@
 
 <form method="post" action="/admin/bank/applications/process">
 	<?= hf_hidden('bank_id', $a['bank_id']) ?>
+	<?= hf_hidden('bank_type', $a['bank_type']) ?>
 	<div class="col-xs-12 button-wrapper">
 		<?= hf_submit('accept', 'Accept', array('class' => 'btn btn-success col-md-5 float-left')) ?>
 		<?= hf_submit('reject', 'X', array('class' => 'btn btn-danger col-md-3 float-right')) ?>

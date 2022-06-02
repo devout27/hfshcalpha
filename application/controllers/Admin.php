@@ -966,14 +966,14 @@ class Admin extends MY_Controller {
 		$this->data['errors'] = $this->session->flashdata('errors');
 		$this->data['breedings'] = Horse::admin_get_breedings();
 		$this->data['breeds'] = $this->horse->get_breeds();
-		/*$this->data['base_colors'] = $this->horse->get_base_colors();
-		$this->data['base_patterns'] = $this->horse->get_base_patterns();*/
+		$this->data['base_colors'] = $this->horse->get_base_colors();
+		$this->data['base_patterns'] = $this->horse->get_base_patterns();
 		$this->data['lines'] = $this->horse->get_lines();
 		$this->data['disciplines'] = $this->horse->get_disciplines();
 		$allowed = array(
 				'breeds' => $this->data['breeds'],
-				/*'base_colors' => $this->data['base_colors'],
-				'base_patterns' => $this->data['base_patterns'],*/
+				'base_colors' => $this->data['base_colors'],
+				'base_patterns' => $this->data['base_patterns'],
 				'lines' => $this->data['lines'],
 				'disciplines' => $this->data['disciplines']
 			);

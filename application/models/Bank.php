@@ -2,6 +2,81 @@
 
 class Bank extends CI_Model {
 
+    public $admin_config_add = array(
+        array(
+            'field' => 'bank_nickname',
+            'label' => 'Name',
+            'rules' => 'required|max_length[255]',
+            'errors' => array('required' => 'Please Enter Name.'),
+        ),
+        array(
+            'field' => 'bank_balance',
+            'label' => 'Account Balance',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please Select Account Balance'),
+        ),        
+        array(
+            'field' => 'bank_interest_accrued',
+            'label' => 'Account interest accrued',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please Select Account interest accrued'),
+        ),        
+        array(
+            'field' => 'bank_interest_incurred',
+            'label' => 'Account interest incurred',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please Select Account interest incurred'),
+        ),        
+        array(
+            'field' => 'bank_credit_payment_due',
+            'label' => 'Account credit payment due',
+            'rules' => 'required|max_length[11]|numeric',
+            'errors' => array('required' => 'Please Select Account interest incurred'),
+        ),
+        array(
+            'field' => 'join_players_id',
+            'label' => 'Player',
+            'rules' => 'required',
+            'errors' => array('required' => 'Please Select Player'),
+        ),
+    );
+	
+	public $admin_config_edit = array(
+        array(
+            'field' => 'itemname',
+            'label' => 'Name',
+            'rules' => 'required|max_length[255]',
+            'errors' => array('required' => 'Please Enter Item Name.'),
+        ),
+        array(
+            'field' => 'itemtype',
+            'label' => 'Item Type',
+            'rules' => 'required|max_length[255]',
+            'errors' => array('required' => 'Please Select Item Type'),
+        ),
+        array(
+            'field' => 'itemrarity',
+            'label' => 'Item Rarity',
+            'rules' => 'required|max_length[255]',            
+            'errors' => array('required' => 'Please Select Item Rarity'),
+        ),
+        array(
+            'field' => 'itemimg',
+            'label' => 'Item Image',
+            'rules' => 'valid_url|max_length[2048]',            
+        ),
+        array(
+            'field' => 'itemdesc',
+            'label' => 'Item Description',
+            'rules' => 'max_length[500]',            
+        ),
+        array(
+            'field' => 'join_players_id',
+            'label' => 'Player',
+            'rules' => 'required',
+            'errors' => array('required' => 'Please Select Player'),
+        ),
+    );
     function __construct(){
         $this->data['player_id'] = $this->session->userdata('players_id');
         $this->column_search=['bank_nickname','bank_balance','bank_id','join_players_id','bank_type'];
@@ -361,8 +436,6 @@ class Bank extends CI_Model {
                 FROM bank
                 '. $wheres .'
             ', $params)->result_array();
-        //pre($CI->db->last_query());exit;
-
         //pending balance and whwatnot
         foreach((array)$accounts AS $k => $v){
             if($v['bank_pending']){
@@ -473,6 +546,50 @@ class Bank extends CI_Model {
         $CI->db->query("UPDATE bank SET bank_nickname=? WHERE bank_id=?", array($data['bank_nickname'], $account['bank_id'])); //increase money
         //pre($CI->db->last_query());
 
+        return array('errors' => $errors, 'notice' => "Account updated.");
+    }
+    public static function edit_account_balance($player, $account, $data){
+        // transfer money from one account to another with a log: create the check & messages
+        $CI =& get_instance();        
+        //data checks
+        if($player['players_id'] != $account['join_players_id']){
+            $errors['bank_nickname'] = "You don't own this account.";
+        }
+        if(strlen($data['bank_nickname']) < 4 || strlen($data['bank_nickname']) > 50){
+            $errors['bank_nickname'] = "Invalid nickname.";
+        }
+        if(!$data['bank_balance'] || !is_numeric($data['bank_balance'])){
+            $errors['bank_balance'] = "Invalid bank account balance.";
+        }        
+        if(!$data['bank_credit_limit']  || !is_numeric($data['bank_credit_limit'])){
+            $errors['bank_credit_limit'] = "Invalid bank account credit limit.";
+        }
+        if(count($errors) > 0){
+            return array('errors' => $errors);
+        }
+        if($data['bank_default'] == 1){
+            $CI->db->query("UPDATE bank SET bank_default=0 WHERE join_players_id=?", array($player['players_id']));            
+            $CI->db->query("UPDATE bank SET bank_default=1 WHERE bank_id=?", array($account['bank_id']));
+        }
+        $query = 'bank_nickname = ?';
+        $queryData = [$data['bank_nickname']];
+        if($data['bank_tier'])
+        {
+            $query .= ', bank_tier = ?';
+            $queryData[]  = $data['bank_tier'];
+        }
+        if($data['bank_balance'])
+        {
+            $query .= ', bank_balance = ?';
+            $queryData[]  = $data['bank_balance'];
+        }
+        if($data['bank_credit_limit'])
+        {
+            $query .= ', bank_credit_limit = ?';
+            $queryData[]  = $data['bank_credit_limit'];
+        }
+        $queryData[] = $account['bank_id'];
+        $CI->db->query("UPDATE bank SET $query WHERE bank_id = ?", $queryData);
         return array('errors' => $errors, 'notice' => "Account updated.");
     }
 
@@ -745,6 +862,23 @@ class Bank extends CI_Model {
         $notice = "Your bank account has been accepted.";
         $CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $loan['join_players_id']));
         $CI->db->query("UPDATE bank SET bank_pending=0 WHERE bank_id=?", array($data['bank_id']));
+        if($data['bank_type'] == "Loan")
+        {
+            $loan = $CI->db->query("SELECT * FROM bank_loans WHERE join_bank_id=? ORDER BY bank_loans_id desc", array($data['bank_id']))->row_array();
+            if($loan['pending'] == 0)
+            {                                
+                $notice = "Your loan has been approved.";
+                $CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $loan['join_players_id']));                
+                $CI->db->query("UPDATE bank_loans SET pending=0 WHERE bank_loans_id=?", array($loan['bank_loans_id']));
+                $insert_data['bank_balance'] = $loan['amount_requested'];                
+                $insert_data['bank_credit_limit'] = $loan['amount_requested'];
+                $insert_data['bank_credit_payment_due'] = date("Y-m-t", strtotime("+1 month"));
+                /* $insert_data['bank_nickname'] = 'Loan'; */
+                $insert_data['bank_pending'] = '0';
+                $insert_data['bank_interest_incurred'] = '0.02';                
+                $CI->db->update('bank', $insert_data,['bank_id'=>$data['bank_id']]);
+            }
+        }
         return true;
     }
 
@@ -768,16 +902,19 @@ class Bank extends CI_Model {
         $insert_data['join_players_id'] = $loan['join_players_id'];
         $insert_data['players_nickname'] = $loan['players_nickname'];
         $insert_data['bank_type'] = 'Loan';
-        $insert_data['bank_balance'] = $loan['amount_requested'];
+        $insert_data['bank_balance'] = $loan['amount_requested'];        
         $insert_data['bank_credit_limit'] = $loan['amount_requested'];
         $insert_data['bank_credit_payment_due'] = date("Y-m-t", strtotime("+1 month"));
-        $insert_data['bank_nickname'] = 'Loan';
+        /* $insert_data['bank_nickname'] = 'Loan'; */
         $insert_data['bank_pending'] = '0';
         $insert_data['bank_interest_incurred'] = '0.02';
 
-        $CI->db->insert('bank', $insert_data);
+        /* $CI->db->insert('bank', $insert_data); */
+
+        $CI->db->update('bank', $insert_data,['bank_id'=>$loan['join_bank_id']]);
 
         $notice = "Your loan has been approved.";
+
         $CI->db->query("INSERT INTO notices(notices_body, join_players_id) VALUES(?,?)", array($notice, $loan['join_players_id']));
 
         $CI->db->query("UPDATE bank_loans SET pending=1 WHERE bank_loans_id=?", array($data['bank_loans_id']));
@@ -1071,7 +1208,7 @@ class Bank extends CI_Model {
                         $this->db->select("bc.*,DATE_FORMAT(bc.bank_checks_date, '%Y/%m/%d') AS bank_checks_date,b1.bank_nickname AS b1_nickname,b2.bank_nickname AS b2_nickname");
                         $this->db->join('bank b1','b1.bank_id=bc.join_bank_id','LEFT');
                         $this->db->join('bank b2','b2.bank_id=bc.bank_checks_to_id','LEFT');
-                        $this->db->from('bank_checks bc');                        
+                        $this->db->from('bank_checks bc');                                                
                         //checking
                         if($bankType=="checking" && $txnType=="overview")
                         {                                                        
@@ -1124,11 +1261,11 @@ class Bank extends CI_Model {
                             $this->db->where('bank_checks_status','Pending');
                         }                                                
                         //loan
-                        if($bankType=="laon" && $txnType=="overview")
-                        {                                                        
+                        if($bankType=="loan" && $txnType=="overview")
+                        {
                             $this->db->where('join_bank_id',$bank_id);
                             $this->db->or_where('bank_checks_to_id',$bank_id);
-                            $this->db->where('bank_checks_status !=','Pending');
+                            $this->db->where('bank_checks_status !=','Pending');                            
                         }          
                         if($bankType=="loan" && $txnType=="outgoing")
                         {                                             

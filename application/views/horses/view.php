@@ -32,8 +32,8 @@ Breeding Years: <?= ($horse['horses_birthyear'] + 3) ?> to <?= ($horse['horses_b
     Horse Bred <?= date('Y') ?><br/>
 <? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Stallion"): ?>
 	<b><a href="/horses/breed/<?= $horse['horses_id'] ?>">Breed for $<?= number_format($horse['horses_breeding_fee']) ?></a></b><br/>
-<? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Mare"): ?>
-		Breeding Fee : $<?= $horse['horses_breeding_fee'] ?><br>
+<? elseif($horse['horses_breeding_fee'] > 0 AND $horse['horses_gender'] == "Mare"): ?>		
+		<b><a href="/horses/breed/<?= $horse['horses_id'] ?>">Breed for $<?= number_format($horse['horses_breeding_fee']) ?></a></b><br/>
 <? endif; ?>
 <? if($horse['horses_sale'] == 1): ?>
     <font color=green><b>For Sale</font></b><br />

@@ -73,7 +73,7 @@ class Horses extends MY_Controller {
 			$this->data['page']['title'] = "Manage Horses";
 			$this->data['dataTableElement'] = 'dt-my-horses-list';
 			$this->data['dataTableURL'] = base_url('manage-horses');
-			$this->data['stables'] = Player::get_stables($this->data['profile']['players_id']);
+			$this->data['stables'] = Player::get_stables($this->data['profile']['players_id']);			
 			$this->load->view('layout/header', $this->data);
 			$this->load->view('horses/manageHorses',$this->data);
 			$this->load->view('layout/footer');
@@ -186,7 +186,13 @@ class Horses extends MY_Controller {
 		}
 
 		if($this->input->post('breed')){
-			$response = $this->horse->submit_breed_request($this->player, $this->data['horse'], $_POST);
+			if(isset($_POST['stallion_id']))
+			{				
+				$response = $this->horse->submit_mare_breed_request($this->player, $this->data['horse'], $_POST);
+			}else
+			{
+				$response = $this->horse->submit_breed_request($this->player, $this->data['horse'], $_POST);
+			}			
 			if(count($response['errors']) > 0){				
 				$this->session->set_flashdata('notice', "There was a problem submitting the breeding request. because ".$response['errors'][0]);
 				$this->session->set_flashdata('post', $_POST);
@@ -221,7 +227,6 @@ class Horses extends MY_Controller {
 			-is stallion of proper age for breeding
 			-is mare of proper age for breeding
 			-create notice of breeding request
-
 			-owner can accept/reject pending requests
 			--if accepted, create pending horse
 		*/

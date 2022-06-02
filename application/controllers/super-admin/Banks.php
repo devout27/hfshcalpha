@@ -44,6 +44,7 @@ class Banks extends Admin_Controller
             echo json_encode($output);exit;
 		}else{
 			$this->data['page_title'] = 'Bank Accounts';
+			$this->data['sub_page_title'] = 'Create Account';
             $this->data['dataTableElement'] = 'myBankAccountsList';
             $this->data['dataTableURL'] = BASE_URL.$this->data['class_name'];
 		    $this->render($this->class_name.'index');
@@ -80,10 +81,21 @@ class Banks extends Admin_Controller
 			}
 			$this->session->set_flashdata('message_success', "Bank Account Updated Successfully.");
 			redirect($this->class_name.'view/'.$id);
-		}                
+		}
+        if($this->input->post('update_bank_balance_details')){
+			$response = $this->Bank::edit_account_balance($member,$this->data['account'], $_POST);
+			if(count($response['errors']) > 0){
+				$this->session->set_flashdata('message_error', "There was a problem updating the bank account.");
+				$this->session->set_flashdata('post', $_POST);
+				$this->session->set_flashdata('errors', $response['errors']);
+                redirect($this->class_name.'view/'.$id);
+			}
+			$this->session->set_flashdata('message_success', "Bank Account Updated Successfully.");
+			redirect($this->class_name.'view/'.$id);
+		}        
         $this->data['page_title'] = $this->data['account']['bank_type'] . " Statement: " . $this->data['account']['bank_nickname'] . " #" . $this->data['account']['bank_id'];
         $this->data['main_page_url'] = $this->data['BASE_URL'].$this->class_name.'view/'.$this->data['account']['join_players_id'];
-        $this->load->model('Player');        
+        $this->load->model('Player');
         $this->data['member'] = $member;                
         if($this->data['account']['bank_type'] == "Checking"){                                    
             $this->data['dataTableElement'] = 'accountOverviewList';
@@ -159,7 +171,7 @@ class Banks extends Admin_Controller
         }
         if($bankType=="checking" && $txnType=="outgoing")
         {       
-            $result=[];            
+            $result=[];
 		    $checks = $this->Bank->getChecksList($bank_id,$bankType,$txnType,$_POST);
             $i=$_POST['start'];            
             foreach($checks AS $i => $v){                
@@ -520,4 +532,62 @@ class Banks extends Admin_Controller
         $sub_page_view_url = 'view';
         redirect($this->data['BASE_URL'].$this->data['class_name'].$sub_page_view_url.'/'.$bank_id,'refresh');
 	}
+
+
+    public function addEdit($id=false)
+    {
+        $this->load->model('Bank');	
+        $this->load->model('Player');
+        if($id){
+            $postData = $this->Bank->getBankDataById($id);
+            if(empty($postData))
+            {
+                $this->session->set_flashdata('message_error','Bank Not Found.');
+                redirect($this->class_name.'inventory');
+            }
+            $this->data['page']['title'] = $postData['bank_nickname'] . " #" . $postData['bank_id'];
+        }else
+        {            
+			$this->data['page']['title'] = 'Create Bank Item';
+            $postData=[];
+        }
+        
+        $this->load->helper('form');
+        $this->data['players'] = $this->Player->get_all_players();
+        $this->data['main_page_url'] =  $this->data['BASE_URL'].$this->class_name;
+        if($this->input->post()){			
+            $this->load->library('form_validation');
+			$this->data['page']['title']="Bank Created";
+            $set_rules = $this->Bank->admin_config_add;
+            if(!empty($postData['itemid']))
+            {
+				$this->data['page']['title']="Bank Updated";
+                $set_rules = $this->Bank->admin_config_edit;
+            }
+            $this->form_validation->set_rules($set_rules);
+            
+            if($this->form_validation->run()===TRUE)
+            {                
+                unset($_POST['submit']);
+                $_POST['players_nickname'] = new Player($_POST['join_players_id']);
+                $_POST['players_nickname'] = $_POST['players_nickname']->player['players_nickname'];                
+                $response = $this->Bank->saveBank($_POST);
+                if($response)
+                {
+                    $this->session->set_flashdata('message_success',$this->data['page']['title'].' Successfully.');
+                }else
+                {
+                    $this->session->set_flashdata('message_error',$this->data['page']['title'].' Unsuccessfully.');
+                }
+                redirect($this->class_name);
+            }else{
+				$postData = $_POST;
+                $this->session->set_flashdata('message_error','Missing information.');
+				$this->session->set_flashdata('errors',$this->form_validation->error_array());				
+            }
+        }
+        $this->data['errors'] = $this->session->flashdata('errors');
+        $this->data['postData'] = $postData;
+        $this->render($this->class_name . 'addEdit');
+    }
 }

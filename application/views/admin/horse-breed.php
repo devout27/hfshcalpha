@@ -36,6 +36,7 @@ if($horse['horses_id'] == $post['horses_id']){
 				        	<?= $horse['h2_birthyear'] ?> <?= $horse['h2_gender'] ?> <?= $horse['h2_breed'] ?>
 				        <br/><br/><b>FOAL</b><br/>				         
 								<b>Owner :</b> <?= $horse['horses_breedings_owner_nickname'].' #'.$horse['horses_breedings_owner'] ?><br/>
+								<b>Name :</b> <?= $horse['horses_breedings_name'] ?><br/>
 								<b>Gender :</b> <?= $horse['horses_breedings_gender'] ?><br/>
 								<b>Birth Year: </b><?= $horse['horses_birthyear'] ?><br/> 
 								<b>Breeding Fee: </b>$<?= number_format($horse['horses_breedings_fee']) ?><br/>

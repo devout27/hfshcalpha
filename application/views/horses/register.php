@@ -28,7 +28,7 @@ $errors = $this->session->flashdata('errors');
 					You have Daily <b><?= $player['per_day_credits'] ?: '0' ?></b> creation credit(s).<br/>
 					You have Today <b><?= $player['today_adoption'] ?: '0' ?></b> adoption credit(s).<br/>
 					<a href="/city/articles/13">Buy More</a>
-				</div>
+				</div>				
 				<div class="row">
 					<div class="col-sm-6">
 						<?= hf_input('horses_name', 'Name', $post, array(), $errors) ?>

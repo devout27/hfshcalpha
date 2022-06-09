@@ -95,12 +95,13 @@
                     </thead>
                     <tbody>
                         <? 
-                        foreach((array)$requests AS $request):                                                        
+                        foreach((array)$requests AS $request):                                  
                             $mare = $request['mare'];
                             $stallion = $request['stallion'];
                             $mare_owner = $mare['join_players_id'] == $this->session->userdata('players_id') ? 'Mare\'s Owner ( Me )': 'Mare\'s Owner ( '.$mare['players_nickname'].' )';
                             $stallion_owner = $stallion['join_players_id'] == $this->session->userdata('players_id') ? 'Sire\'s Owner ( Me )': 'Sire\'s Owner ( '.$stallion['players_nickname'].' )';
-                            $h = $stallion['join_players_id'] == $this->session->userdata('players_id') ? $stallion : $mare;                            
+                            $h = $stallion['join_players_id'] == $this->session->userdata('players_id') ? $stallion : $mare;
+                            $request['horses_owner'] = strpos($stallion_owner,"( Me )") !== false ? $stallion_owner : $mare_owner;
                         ?>
                             <tr>                                
                                 <? if($h['join_players_id'] == $this->session->userdata('players_id')): 
@@ -114,47 +115,47 @@
                                             <form method="post" action="/horses/breed/<?= $request['join_horses_id'] ?>">
                                                 <?= hf_hidden('horses_breedings_id', $request['horses_breedings_id']) ?>
                                                 <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <?= hf_input('horses_name', 'Name', isset($post['horses_name']) ? $post['horses_name'] : '', array(), $errors) ?>
+                                                        <div class="col-sm-6">
+                                                            <?= hf_input('horses_name', 'Name', isset($post['horses_name']) ? $post['horses_name'] : $request['horses_breedings_name'], array(), $errors) ?>
+                                                        </div>
+                                                        <div class="col-sm-6">						
+                                                            <?= hf_input('horses_birthyear', 'Birth Year', isset($post['horses_birthyear']) ? $post['horses_birthyear']  : $request['horses_birthyear'], array('placeholder' => '1984'), $errors,'number') ?>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-sm-6">						
-                                                        <?= hf_input('horses_birthyear', 'Birth Year', isset($post['horses_birthyear']) ? $post['horses_birthyear'] : '', array('placeholder' => '1984'), $errors,'number') ?>
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <?= hf_dropdown('horses_gender', 'Gender', isset($post['horses_gender']) ? $post['horses_gender'] : $request['horses_breedings_gender'], array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <?= hf_dropdown('horses_owner', 'Owner', isset($post['horses_owner']) ? $post['horses_owner'] : $request['horses_owner'], array("Sire's Owner" => $stallion_owner,"Mare's Owner"=>$mare_owner), array(), $errors, 1) ?>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <?= hf_dropdown('horses_gender', 'Gender', isset($post['horses_gender']) ? $post['horses_gender'] : '', array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <?= hf_dropdown('horses_breed', 'Breed', isset($post['horses_breed']) ? $post['horses_breed'] : $request['horses_breedings_breed'], $breeds, array(), $errors, 1) ?>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <?= hf_input('horses_breed2', 'Secondary Breed/Pattern (optional)', isset($post['horses_breed2']) ? $post['horses_breed2'] : $request['horses_breedings_breed2'], array(), $errors) ?>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-sm-6">
-                                                        <?= hf_dropdown('horses_owner', 'Owner', isset($post['horses_owner']) ? $post['horses_owner'] : '', array('',"Sire's Owner" => $stallion_owner,"Mare's Owner"=>$mare_owner), array(), $errors, 1) ?>
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <!-- <?//= hf_dropdown('horses_color', 'Base Color', $post, $h['genes']['blueprints_available']['Color'], array(), $errors, 1) ?> -->
+                                                            <?= hf_dropdown('horses_color', 'Base Color', isset($post['horses_color']) ? $post['horses_color'] : $request['horses_breedings_color'], $base_colors, array(), $errors, 1) ?>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <!-- <?//= hf_dropdown('horses_pattern', 'Pattern Color', $post, $h['genes']['blueprints_available']['Pattern'], array(), $errors, 1) ?>-->
+                                                            <?= hf_dropdown('horses_pattern', 'Pattern Color', isset($post['horses_pattern']) ? $post['horses_pattern'] : $request['horses_breedings_pattern'], $base_patterns, array(), $errors, 1) ?>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <?= hf_dropdown('horses_breed', 'Breed', isset($post['horses_breed']) ? $post['horses_breed'] : '', $breeds, array(), $errors, 1) ?>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <?= hf_input('horses_breed2', 'Secondary Breed/Pattern (optional)', isset($post['horses_breed2']) ? $post['horses_breed2'] : '', array(), $errors) ?>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <!-- <?//= hf_dropdown('horses_color', 'Base Color', $post, $h['genes']['blueprints_available']['Color'], array(), $errors, 1) ?> -->
-                                                        <?= hf_dropdown('horses_color', 'Base Color', isset($post['horses_color']) ? $post['horses_color'] : '', $base_colors, array(), $errors, 1) ?>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <!-- <?//= hf_dropdown('horses_pattern', 'Pattern Color', $post, $h['genes']['blueprints_available']['Pattern'], array(), $errors, 1) ?>-->
-                                                        <?= hf_dropdown('horses_pattern', 'Pattern Color', isset($post['horses_pattern']) ? $post['horses_pattern'] : '', $base_patterns, array(), $errors, 1) ?>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <?= hf_dropdown('horses_line', 'Line (optional)', isset($post['horses_line']) ? $post['horses_line'] : '', $lines, array(), $errors, 1) ?>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <?= hf_multiselect('disciplines[]', 'Discipline', isset($post['disciplines']) ? $post['disciplines'] : '', $disciplines, array(), $errors, 1) ?>
-                                                    </div>
-                                                </div>                    
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <?= hf_dropdown('horses_line', 'Line (optional)', isset($post['horses_line']) ? $post['horses_line'] : $request['horses_breedings_line'], $lines, array(), $errors, 1) ?>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <?= hf_multiselect('disciplines[]', 'Discipline', isset($post['disciplines']) ? $post['disciplines'] : explode(",",$request['horses_breedings_disciplines']), $disciplines, array(), $errors, 1) ?>
+                                                        </div>
+                                                    </div>                                  
                                                 <?= hf_submit('accept', 'Accept', array('class' => 'btn btn-success col-sm-12')) ?>
                                             </form>
                                         <? endif; ?>

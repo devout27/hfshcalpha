@@ -35,7 +35,7 @@ class Admin extends MY_Controller {
 		$this->data['page']['hide_logo'] = 1;
 		$this->load->model('stables');
 		$this->data['articles'] = $this->articles->get_articles();
-		$this->data['vets'] = $this->player->get_vets();
+		$this->data['vets'] = $this->player->get_vets();		
 		$this->data['farriers'] = $this->player->get_farriers();
 		$this->data['pending_applications'] = $this->player->admin_get_pending();
 		$this->data['pending_deletions'] = $this->player->admin_get_pending_delete();
@@ -48,8 +48,6 @@ class Admin extends MY_Controller {
 		$this->data['pending_events'] = $this->events->admin_get_pending();
 		$this->data['pending_orders'] = $this->stables->admin_get_pending();
 		$this->data['admins'] = $this->player->get_admins();
-
-
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('admin/index', $this->data);
 		$this->load->view('layout/footer');
@@ -1230,7 +1228,7 @@ class Admin extends MY_Controller {
 		$this->data['post'] = $this->session->flashdata('post');
 		$this->data['errors'] = $this->session->flashdata('errors');
 		$this->data['page']['hide_logo'] = 1;
-		$this->data['vets'] = $this->player->get_vets();
+		$this->data['vets'] = $this->player->get_vets();		
 
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('admin/member-vets', $this->data);

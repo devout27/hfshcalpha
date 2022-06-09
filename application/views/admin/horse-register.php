@@ -26,6 +26,7 @@ if($horse['horses_id'] == $post['horses_id']){
 }else{
 	$errors = "";
 }
+$my_stables = $this->horse->getMyStables($horse['join_players_id']);
 ?>
 
 <form method="post" action="/admin/horses/register">
@@ -41,12 +42,9 @@ if($horse['horses_id'] == $post['horses_id']){
 						<?= hf_hidden('horses_created', $horse['horses_created']) ?>						
 						<?= hf_input('horses_name', 'Name', $horse, array(), $errors) ?>
 					</div>
-					<div class="col-sm-3">
-						<?= hf_dropdown('horses_gender', 'Gender', $horse, array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?>
-					</div>
-					<div class="col-sm-3">
-						<?= hf_input('horses_birthyear', 'Birth Year', $horse, array('placeholder' => '1984'), $errors) ?>
-					</div>
+					<div class="col-sm-3"><?= hf_dropdown('horses_gender', 'Gender', $horse, array('', 'Stallion', 'Mare', 'Gelding'), array(), $errors, 1) ?></div>
+					<div class="col-sm-3"><?= hf_input('horses_birthyear', 'Birth Year', $horse, array('placeholder' => '1984'), $errors) ?></div>					
+					<div class="col-md-6"><?= hf_dropdown('join_stables_id', 'Stable', $horse, $my_stables, array(), $errors) ?></div>
 				</div>
 				<div class="row">
 					<div class="col-sm-6">

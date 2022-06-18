@@ -642,3 +642,27 @@ a.create-stable-btn button, a.create-stable-btn button:hover {
 ul li{
   list-style: none;
 }
+
+@media only screen and (max-width: 767px) {
+  .m-tabs .nav-link {
+    padding: 0.5rem 14px;
+  }
+}
+
+@media only screen and (max-width: 535px) {
+  .m-tabs .nav-link {
+    padding: 0.5rem 7px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .navbar-brand {
+      font-size: 16px;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+  .navbar-brand {
+    font-size: 14px;
+  }
+}

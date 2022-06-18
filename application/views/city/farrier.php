@@ -57,6 +57,9 @@ $errors = $this->session->flashdata('errors');
 	<div class="col-md-12">
         <div class="card mb-4">
 			<h5 class="card-header">Pending Appointments</h5>
+			<?php foreach ((array)$errors as $key => $value) { ?>
+				<div style="color:red;font-weight:bold;text-align:center;"><?= $value; ?></div>
+			<?php }?>
 			<div class="card-body">
 				<? $this->load->view('partials/farrier-table', array('appts' => $appts, 'title' => 'search')); ?>
         	</div>

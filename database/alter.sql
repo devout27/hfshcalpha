@@ -71,3 +71,6 @@ ALTER TABLE `horses_sale_purposals` ADD `join_horse_owner_id` INT(11) NOT NULL A
 
 --01-June-2022--
 ALTER TABLE `horses_breedings` ADD `sender_player_id` INT(11) NOT NULL AFTER `join_mares_id`, ADD `receiver_player_id` INT(11) NOT NULL AFTER `sender_player_id`;
+
+--18-June-2022--
+ALTER TABLE `horses_breedings` CHANGE `horses_breedings_disciplines` `horses_breedings_disciplines` TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;

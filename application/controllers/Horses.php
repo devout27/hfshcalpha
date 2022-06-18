@@ -28,14 +28,10 @@ class Horses extends MY_Controller {
 		$this->data['base_patterns'] = $this->horse->get_base_patterns();
 		$this->data['lines'] = $this->horse->get_lines();
 		$this->data['disciplines'] = $this->horse->get_disciplines();
-		if($this->input->post('search')){
-			$this->data['search'] = $this->horse->search($_POST);
-		}
+		if($this->input->get('search')){ $this->data['search'] = $this->horse->search($_GET); }
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/index', $this->data);
-		if($this->input->post('search')){
-			$this->load->view('partials/horse-search', $this->data['search']);
-		}
+		if($this->input->get('search')){ $this->load->view('partials/horse-search', $this->data['search']); }
 		$this->load->view('layout/footer');
 	}
 	public function manageHorses()
@@ -230,7 +226,63 @@ class Horses extends MY_Controller {
 		$this->load->view('layout/footer');
 
 	}
-
+	public function breeding($action,$breeding_id)
+	{
+		if($action == "accept" && !empty($breeding_id))
+		{			
+			$breeding = $this->horse->get_breeding_request($breeding_id);
+			if(@$breeding['receiver_player_id'])
+			{
+				$player = new Player($breeding['receiver_player_id']);
+				$player = $player->player;
+				$horse = new Horse($id);
+				$horse = $horse->horse;
+				$breeding['horses_name'] = $breeding['horses_breedings_name'];
+				$breeding['horses_owner'] = $breeding['horses_breedings_owner'];
+				$breeding['horses_gender'] = $breeding['horses_breedings_gender'];
+				$breeding['disciplines'] = $breeding['horses_breedings_disciplines'];
+				$breeding['horses_birthyear'] = $breeding['horses_birthyear'];
+				$breeding['horses_breed'] = $breeding['horses_breedings_breed'];
+				$breeding['horses_breed2'] = $breeding['horses_breedings_breed2'];
+				$breeding['horses_color'] = $breeding['horses_breedings_color'];
+				$breeding['horses_pattern'] = $breeding['horses_breedings_pattern'];
+				$breeding['horses_line'] = $breeding['horses_breedings_line'];
+				$breeding['horses_breedings_id'] = $breeding['horses_breedings_id'];
+				$response = $this->horse->accept_breed_request($player, $horse, $breeding);
+				if(count($response['errors']) > 0){
+					$this->session->set_flashdata('notice', "There was a problem accepting the request. because ".array_values($response['errors'])[0]);
+					$this->session->set_flashdata('errors', $response['errors']);
+					redirect($_SERVER['HTTP_REFERER']);
+				}else
+				{
+					$this->session->set_flashdata('notice', "Breeding request accepted.");
+				}
+			}			
+		}elseif($action == "reject" &&  !empty($breeding_id)){
+			$breeding = $this->horse->get_breeding_request($breeding_id);
+			if(@$breeding['receiver_player_id'])
+			{
+				$player = new Player($breeding['receiver_player_id']);
+				$player = $player->player;
+				$horse = new Horse($id);
+				$horse = $horse->horse;
+				$response = $this->horse->reject_breed_request($player, $horse, $breeding);
+				if(count($response['errors']) > 0){
+					$this->session->set_flashdata('notice', "There was a problem rejecting the request.");				
+					$this->session->set_flashdata('errors', $response['errors']);
+					redirect($_SERVER['HTTP_REFERER']);
+				}else
+				{
+					$this->session->set_flashdata('notice', "Breeding request Rejected.");
+				}
+				
+			}
+		}else
+		{
+			$this->session->set_flashdata('notice', "Missing Information.");
+		}		
+		redirect('manage-horses');
+	}
 	public function view_offspring_genes($id){
 		$this->data['horse1'] = new Horse($id);
 		$this->data['horse1'] = $this->data['horse1']->horse;
@@ -255,11 +307,16 @@ class Horses extends MY_Controller {
 			$this->session->set_flashdata('notice', "Horse is pending registration.");
 			redirect('horses');
 		}
-		$this->data['horses'] = Horse::get_horses_dropdown($this->session->userdata('players_id'));
-		//pre($this->data['horses']);exit;
-
+		if($status = Horse::get_horses_vet_status($id))
+		{
+			$this->data['horse']['horses_vet'] = $status;	
+		}
+		if($status = Horse::get_horses_farrier_status($id))
+		{
+			$this->data['horse']['horses_farrier'] = $status;	
+		}
+		$this->data['horses'] = Horse::get_horses_dropdown($this->session->userdata('players_id'));		
 		$this->data['page']['title'] = $this->data['horse']['horses_name'] . " #" . generateId($this->data['horse']['horses_id']);
-
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/view', $this->data);
 		$this->load->view('layout/footer');

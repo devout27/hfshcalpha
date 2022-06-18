@@ -572,16 +572,7 @@ class Player extends CI_Model {
 
 	public static function get_vet_appts(){
 		$CI =& get_instance();
-
-		$appts = $CI->db->query('
-				SELECT
-					ha.*, h.horses_id, h.horses_name, h.horses_birthyear, h.horses_gender, h.horses_vet
-				FROM horse_appointments ha
-				LEFT JOIN horses h ON h.horses_id=ha.join_horses_id
-				WHERE ha.horse_appointments_type = "Vet" AND ha.horse_appointments_completed = "0000-00-00 00:00:00"
-				ORDER BY ha.horse_appointments_id ASC
-			')->result_array();
-
+		$appts = $CI->db->query('SELECT ha.*, h.horses_id, h.horses_name, h.horses_birthyear, h.horses_gender, h.horses_vet FROM horse_appointments ha LEFT JOIN horses h ON h.horses_id=ha.join_horses_id WHERE ha.horse_appointments_type = "Vet" AND ha.horse_appointments_completed = "0000-00-00 00:00:00" ORDER BY ha.horse_appointments_id ASC')->result_array();
 		return $appts;
 	}
 
@@ -635,21 +626,32 @@ class Player extends CI_Model {
 
 		if(!$appt['horse_appointments_id']){
 			$errors['general'] = "Invalid appointment.";
+		}		
+		$bank = $CI->db->query('SELECT * FROM bank WHERE join_players_id=? AND bank_default=1 limit 1', array($appt['join_players_id']))->row_array();
+		if(!@$bank['bank_id']) { $errors['general'] = $appt['players_nickname']." bank not found."; }
+		elseif(($appt["horse_appointments_description"] === "Disaster Care Package" && @$bank['bank_balance'] < 2000)){
+			$errors['general'] = "Insufficient funds in ".$appt['players_nickname']."'s default bank account.";
+			
+		}elseif(($appt["horse_appointments_description"] === "Required Annual Care" && @$bank['bank_balance'] < 300)){
+			$errors['general'] = "Insufficient funds in ".$appt['players_nickname']."'s default bank account.";
+			
 		}
-
-		if(count($errors) > 0){
-			return array('errors' => $errors);
-		}
-
+		if(count($errors) > 0){ return array('errors' => $errors); }	
+		if($appt["horse_appointments_description"] === "Required Annual Care")
+		{
+			$balance = 300;			
+		}elseif($appt["horse_appointments_description"] === "Disaster Care Package")
+		{
+			$balance = 2000;
+		}		
 		//complete appt
-		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . generateId($appt['horses_id']) . "</a> has been seen by the Vet.";
+		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . generateId($appt['horses_id']) . "</a> has been seen by the Vet and Vet Procedure fee $".$balance." debited from your default bank account.";
 		$CI->db->query('UPDATE horse_appointments SET horse_appointments_completed=NOW() WHERE horse_appointments_id=?', array($horse_appointments_id));
 		$CI->db->query('UPDATE horses SET horses_vet=? WHERE horses_id=?', array($appt['horse_appointments_date'], $appt['horses_id']));
 		$CI->db->query("INSERT INTO horse_records(join_players_id, join_horses_id, horse_records_type, horse_records_date, horse_records_notes) VALUES(?, ?, ?, ?, ?)", array($appt['join_players_id'], $appt['horses_id'], "Vet", $appt['horse_appointments_date'], $appt['horse_appointments_description']));
 		$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($appt['join_players_id'], $message));
-
 		$CI->session->set_flashdata('notice', "Appointment completed.");
-
+		$CI->db->query("UPDATE bank SET bank_balance=bank_balance-? WHERE bank_id=?", array($balance,$bank['bank_id']));
 		return array('errors' => $errors, 'notices' => $notices, 'horse_id' => $horse_id);
 	}
 
@@ -712,20 +714,33 @@ class Player extends CI_Model {
 		if(!$appt['horse_appointments_id']){
 			$errors['general'] = "Invalid appointment.";
 		}
-
+		$bank = $CI->db->query('SELECT * FROM bank WHERE join_players_id=? AND bank_default=1 limit 1', array($appt['join_players_id']))->row_array();
+		if(!@$bank['bank_id']) { $errors['general'] = $appt['players_nickname']."'s bank account not found."; }
+		elseif(($appt["horse_appointments_description"] === "Required Annual Care" && @$bank['bank_balance'] < 1000)){
+			$errors['general'] = "Insufficient funds in ".$appt['players_nickname']."'s default bank account.";
+			
+		}elseif(($appt["horse_appointments_description"] === "Basic Care" && @$bank['bank_balance'] < 450)){
+			$errors['general'] = "Insufficient funds in ".$appt['players_nickname']."'s default bank account.";
+		
+		}
 		if(count($errors) > 0){
 			return array('errors' => $errors);
 		}
-
+		if($appt["horse_appointments_description"] === "Basic Care")
+		{
+			$balance = 450;		
+		}elseif($appt["horse_appointments_description"] === "Required Annual Care")
+		{
+			$balance = 1000;
+		}		
 		//complete appt
-		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . generateId($appt['horses_id']) . "</a> has been seen by the Farrier.";
+		$message = "<a href='/horses/view/" . $appt['horses_id'] . "'>". $appt['horses_competition_title'] . " " . $appt['horses_breeding_title'] . " " . $appt['horses_name'] . " #" . generateId($appt['horses_id']) . "</a> has been seen by the Farrier and farrier Procedure fee $".$balance." debited from your default bank account.";
 		$CI->db->query('UPDATE horse_appointments SET horse_appointments_completed=NOW() WHERE horse_appointments_id=?', array($horse_appointments_id));
 		$CI->db->query('UPDATE horses SET horses_farrier=? WHERE horses_id=?', array($appt['horse_appointments_date'], $appt['horses_id']));
 		$CI->db->query("INSERT INTO horse_records(join_players_id, join_horses_id, horse_records_type, horse_records_date, horse_records_notes) VALUES(?, ?, ?, ?, ?)", array($appt['join_players_id'], $appt['horses_id'], "Farrier", $appt['horse_appointments_date'], $appt['horse_appointments_description']));
 		$CI->db->query("INSERT INTO notices(join_players_id, notices_body) VALUES(?, ?)", array($appt['join_players_id'], $message));
-
+		$CI->db->query("UPDATE bank SET bank_balance=bank_balance-? WHERE bank_id=?", array($balance,$bank['bank_id']));
 		$CI->session->set_flashdata('notice', "Appointment completed.");
-
 		return array('errors' => $errors, 'notices' => $notices, 'horse_id' => $horse_id);
 	}
 

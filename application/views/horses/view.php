@@ -1,9 +1,11 @@
+
+
 <? if($horse['horses_deceased']): ?>
 <h2>Horse is deceased.</h2>
 <? endif; ?>
-
-
 <div class="row">
+	<div class="col-lg-8"></div>
+	<div class="col-lg-4 text-right"><a class="btn btn-primary mb-3" href="<?php echo @$_SERVER['HTTP_REFERER'] ?? base_url('/'); ?>">Go Back</a></div>
     <div class="col-lg-12">
           <div class="card mb-4">
             <!--<img class="card-img-top" src="<?= $profile['players_banner'] ?: "http://placehold.it/750x300" ?>" alt="Card image cap">-->
@@ -203,14 +205,14 @@ Disciplines:<br/>
               	<? if($horse['horses_vet'] == "0000-00-00"): ?>
               		(Never Visited Vet)
               	<? else: ?>
-              		(Last Visited <?= $horse['horses_vet'] ?>)
+              		( <?= $horse['horses_vet'] != "Pending Approval" ? "Pending Approval" : $horse['horses_vet'] ?> )
               	<? endif; ?>
               	<br/>
               <a href="/horses/farrier/<?= $horse['horses_id'] ?>">Farrier</a>
               	<? if($horse['horses_farrier'] == "0000-00-00"): ?>
               		(Never Visited Farrier)
-              	<? else: ?>
-              		(Last Visited <?= $horse['horses_farrier'] ?>)
+              	<? else: ?>              		
+					( <?= $horse['horses_farrier'] != "Pending Approval" ? "Pending Approval" : $horse['horses_farrier'] ?> )
               	<? endif; ?>
               	<br/>
             </div>

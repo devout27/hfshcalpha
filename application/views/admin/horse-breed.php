@@ -35,7 +35,7 @@
 								<b>Owner :</b> <?= $horse['horses_breedings_owner_nickname'].' #'.$horse['horses_breedings_owner'] ?><br/>
 								<b>Name :</b> <?= $horse['horses_breedings_name'] ?><br/>
 								<b>Gender :</b> <?= $horse['horses_breedings_gender'] ?><br/>
-								<b>Birth Year: </b><?= $horse['horses_birthyear'] ?><br/> 
+								<b>Birth Year: </b><?= $horse['horses_breedings_birthyear'] ?><br/> 
 								<b>Breeding Fee: </b>$<?= number_format($horse['horses_breedings_fee']) ?><br/>
 								<b>Breeding Date : </b><?= $horse['horses_breedings_date'] ?><br/> 
 				        </td>

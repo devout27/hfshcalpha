@@ -547,7 +547,6 @@ class Admin extends MY_Controller {
 		$this->data['page']['title'] = "Admin - Modify Breeds, etc.";
 		$this->data['post'] = $this->session->flashdata('post');
 		$this->data['errors'] = $this->session->flashdata('errors');
-
 		if(!$this->data['player']['privileges']['privileges_horses']){
 			$this->session->set_flashdata('notice', "You don't have permission to access this.");
 			redirect('admin');

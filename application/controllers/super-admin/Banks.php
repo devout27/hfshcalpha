@@ -15,6 +15,7 @@ class Banks extends Admin_Controller
         if ($this->input->is_ajax_request()) {            
 			$res = $this->Bank->getMyBankAccountsList($players_id,$_POST);
             $sub_page_view_url="view";
+            $sub_page_url="addEdit";
             $result=[];
             $i=$_POST['start'];
 			foreach($res as $v){             
@@ -30,10 +31,12 @@ class Banks extends Admin_Controller
                 $name=$v['bank_nickname'];
                 $ID='<a href="'.$this->data['BASE_URL'].$this->data['class_name'].$sub_page_view_url.'/'.$v['bank_id'].'">'.$v['bank_id'].'</a>';
                 $bal = '$'.number_format($v['bank_credit_limit'] - $v['bank_balance']);
-                if($v['bank_type'] != "Loan"):
-                    $bal = '$'.number_format($v['bank_available_balance']);                 
-                endif;
-				$result[] = array($i,$ID,$name,$v['bank_type'],$v['bank_status'],'$'.number_format($v['bank_balance']),$bal);
+                if($v['bank_type'] != "Loan"): $bal = '$'.number_format($v['bank_available_balance']); endif;
+                $action = '<div class="action-btns">';                
+                $action .= '<a class="view-btn" href="'.BASE_URL.$this->data['class_name'].$sub_page_view_url."/".$v['bank_id'].'" title="View"><i class="las la-eye"></i></a> ';
+                $action .= '<a class="view-btn" href="'.BASE_URL.$this->data['class_name'].$sub_page_url."/".$v['bank_id'].'" title="Edit"><i class="las la-edit"></i></a>';
+                $action .= '</div>';
+				$result[] = array($i,$ID,$name,$v['bank_type'],$v['bank_status'],'$'.number_format($v['bank_balance']),$bal,$action);
 			}
 			$output = array(
                 "draw" => $_POST['draw'],
@@ -539,7 +542,7 @@ class Banks extends Admin_Controller
         $this->load->model('Bank');	
         $this->load->model('Player');
         if($id){
-            $postData = $this->Bank->getBankDataById($id);
+            $postData = $this->Bank->get($id,"no");
             if(empty($postData))
             {
                 $this->session->set_flashdata('message_error','Bank Not Found.');
@@ -549,7 +552,7 @@ class Banks extends Admin_Controller
         }else
         {            
 			$this->data['page']['title'] = 'Create Bank Item';
-            $postData=[];
+            $postData=['bank_interest_accrued'=>0,'bank_interest_incurred'=>0];
         }
         
         $this->load->helper('form');

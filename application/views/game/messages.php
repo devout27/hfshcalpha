@@ -1,6 +1,6 @@
 
 <div class="container h-100 py-2">
-    <ul class="nav nav-tabs nav-fill border-0" id="myTab" role="tablist">
+    <ul class="m-tabs nav nav-tabs nav-fill border-0" id="myTab" role="tablist">
         <li class="nav-item">
             <a class="nav-link active border border-muted border-bottom-0" id="inbox-tab" data-toggle="tab" href="#inbox" role="tab" aria-controls="inbox" aria-selected="true">Inbox (<?= $msg_inbox_unread ?: '0' ?>)</a>
         </li>

@@ -727,6 +727,22 @@ class City extends MY_Controller {
 				redirect('city/vet');
 			}
 
+		}elseif(count((array)json_decode($this->input->post('perform_appts'),true)) > 0 AND $this->data['player']['players_vet']){			
+			$permform_appts = (array)json_decode($this->input->post('perform_appts'),true);						
+			$e = false;
+			foreach ($permform_appts as $key => $value){ $response = Player::perform_vet($value);  
+				if(count($response['errors']) > 0){
+					$this->session->set_flashdata('notice', "There was a problem performing the appointment.");
+					$this->session->set_flashdata('post', $_POST);
+					$this->session->set_flashdata('errors', $response['errors']);
+					$e = true;
+				}
+			}
+			if(!$e)
+			{
+				$this->session->set_flashdata('notice', "Appointment completed.");
+			}
+			redirect('city/vet');
 		}elseif($this->input->post('reject') AND $this->data['player']['players_vet']){
 			$response = Player::reject_vet($_POST['horse_appointments_id']);
 			if(count($response['errors']) > 0){
@@ -775,6 +791,22 @@ class City extends MY_Controller {
 				redirect('city/farrier');
 			}
 
+		}elseif(count((array)json_decode($this->input->post('perform_farrier_appts'),true)) > 0 AND $this->data['player']['players_farrier']){
+			$permform_appts = (array)json_decode($this->input->post('perform_farrier_appts'),true);						
+			$e = false;
+			foreach ($permform_appts as $key => $value){ $response = Player::perform_farrier($value);  
+				if(count($response['errors']) > 0){
+					$this->session->set_flashdata('notice', "There was a problem performing the appointment.");
+					$this->session->set_flashdata('post', $_POST);
+					$this->session->set_flashdata('errors', $response['errors']);
+					$e = true;
+				}
+			}
+			if(!$e)
+			{
+				$this->session->set_flashdata('notice', "Appointment completed.");
+			}
+			redirect('city/farrier');
 		}elseif($this->input->post('reject') AND $this->data['player']['players_farrier']){
 			$response = Player::reject_farrier($_POST['horse_appointments_id']);
 			if(count($response['errors']) > 0){
@@ -791,23 +823,6 @@ class City extends MY_Controller {
 		$this->load->view('city/farrier', $this->data);
 		$this->load->view('layout/footer');
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public function ajax($method){
 		if($method == "update-class"){

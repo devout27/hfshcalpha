@@ -84,10 +84,8 @@ class Autos extends CI_Model {
 		foreach((array)$accounts AS $a){
 			if($a['bank_type'] == "Loan"){
 				$interest = $a['bank_balance'] * .02;
-
 				$this->db->query("UPDATE bank SET bank_interest_incurred=?, bank_balance=bank_balance+? WHERE bank_id=?", array($interest, $interest, $a['bank_id']));
 				$this->db->query("INSERT INTO bank_checks(join_bank_id, bank_checks_to_id, bank_checks_amount, bank_checks_memo, bank_checks_status) VALUES(?,?,?,?,?)", array($a['bank_id'], $a['bank_id'], $interest, 'Interest Incurred', 'Deposited')); //create log
-
 			}elseif($a['bank_type'] == "Savings"){
 				$interest = $a['bank_balance'] * .01;
 

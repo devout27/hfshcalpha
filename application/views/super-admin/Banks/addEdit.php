@@ -37,7 +37,7 @@
                                           <label for="bank_balance">Bank Balance</label>
                                         </div>
                                         <div class="col-12">
-                                          <?= hf_input('bank_balance', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0,"max"=>100), $errors,'number') ?>
+                                          <?= hf_input('bank_balance', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0), $errors,'number') ?>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -45,7 +45,7 @@
                                           <label for="bank_interest_accrued">Interest Accrued</label>
                                         </div>
                                         <div class="col-12">
-                                          <?= hf_input('bank_interest_accrued', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0,"max"=>100), $errors,'number') ?>
+                                          <?= hf_input('bank_interest_accrued', '', $account ?: $postData, array('placeholder' => '0.00',"step"=>"0.01","max"=>100), $errors,'number') ?>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -53,7 +53,7 @@
                                           <label for="bank_interest_incurred">Interest Incurred</label>
                                         </div>
                                         <div class="col-12">
-                                          <?= hf_input('bank_interest_incurred', '', $account ?: $postData, array('placeholder' => '0.00','min'=>0,"max"=>100), $errors,'number') ?>
+                                          <?= hf_input('bank_interest_incurred', '', $account ?: $postData, array('placeholder' => '0.00',"step"=>"0.01","max"=>100), $errors,'number') ?>
                                         </div>
                                     </div>
                                     <div class="row">

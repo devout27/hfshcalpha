@@ -100,6 +100,7 @@ class Stables extends Admin_Controller
             if($this->form_validation->run() === TRUE)
             {                
                 unset($_POST['submit']);
+                unset($_POST['action']);
                 $_POST['players_nickname'] = new Player($_POST['join_players_id']);
                 $_POST['players_email'] = $_POST['players_nickname']->player['players_email'];
                 $_POST['players_nickname'] = $_POST['players_nickname']->player['players_nickname'];

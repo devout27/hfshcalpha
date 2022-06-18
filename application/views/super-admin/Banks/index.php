@@ -29,6 +29,7 @@
                                 <th>Status</th>
                                 <th>Balance</th>
                                 <th>Available</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>

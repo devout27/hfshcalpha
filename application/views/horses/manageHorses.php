@@ -104,14 +104,15 @@
                             $request['horses_owner'] = strpos($stallion_owner,"( Me )") !== false ? $stallion_owner : $mare_owner;
                         ?>
                             <tr>                                
-                                <? if($h['join_players_id'] == $this->session->userdata('players_id')): 
-                                    $post = $this->session->flashdata('post');
-                                ?>
+                                <? $post = $this->session->flashdata('post'); ?>
                                     <td class="w-50">
                                         <? if($request['horses_breedings_accepted']): ?>
                                             <i>Pending Approval<br/>
-                                                <?= $request['horses_breedings_gender'] ?> to Player #<?= $request['horses_breedings_owner'] ?></i>
-                                        <? else: ?>
+                                            <?= $request['horses_breedings_gender'] ?> to Player #<?= $request['horses_breedings_owner'] ?></i>
+                                        <? elseif($request['receiver_player_id'] != $this->session->userdata('players_id') && !$request['horses_breedings_accepted']): ?>
+                                            <i>Request Sent<br/>
+                                            <?= $request['horses_breedings_gender'] ?> to Player #<?= $request['horses_breedings_owner'] ?></i>
+                                        <? elseif($request['receiver_player_id'] == $this->session->userdata('players_id')): ?>
                                             <form method="post" action="/horses/breed/<?= $request['join_horses_id'] ?>">
                                                 <?= hf_hidden('horses_breedings_id', $request['horses_breedings_id']) ?>
                                                 <div class="row">
@@ -159,8 +160,7 @@
                                                 <?= hf_submit('accept', 'Accept', array('class' => 'btn btn-success col-sm-12')) ?>
                                             </form>
                                         <? endif; ?>
-                                    </td>
-                                <? endif; ?>
+                                    </td>                                
                                 <td><a href="/horses/view/<?= $h['horses_id'] ?>"><?= $h['horses_id'] ?></a></td>
                                 <td><a href="/horses/view/<?= $h['horses_id'] ?>"><?= $h['horses_name'] ?></a></td>
                                 <td><?= $h['horses_birthyear'] ?></td>

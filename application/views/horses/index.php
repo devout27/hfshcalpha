@@ -87,8 +87,11 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-12">
+					<div class="col-sm-6">
 						<?= hf_checkbox('for_sale', 'For Sale', $_GET, array(), $errors) ?>
+					</div>
+					<div class="col-sm-6">
+						<?= hf_checkbox('show_all', 'All horses', $_GET, array(), $errors) ?>
 					</div>
 				</div>
 

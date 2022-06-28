@@ -3338,4 +3338,23 @@ class Horse extends CI_Model {
 		$appt = $CI->db->query('SELECT * FROM horse_appointments ha WHERE ha.join_horses_id=? AND ha.horse_appointments_type = "Farrier" AND ha.horse_appointments_completed = "0000-00-00 00:00:00" ORDER BY ha.horse_appointments_id ASC', array($id))->row_array();
 		return count($appt) > 0 ? "Pending Approval" : false;
 	}
+
+	public function getMyVetHorsesList($player_id,$type)
+	{
+		$this->db->select('horses_name,horses_id');
+		$this->db->from('horses');
+		$this->db->where('join_players_id',$player_id);		
+		$this->db->order_by('horses_id','desc');		
+		$query = $this->db->get();
+		$data = $query->result_array();
+		$res = [];
+		
+		foreach ($data as $key => $horse) {
+			if(($type == "vet" && self::get_horses_vet_status($horse['horses_id']) === false) || ($type == "farrier" && self::get_horses_farrier_status($horse['horses_id']) === false))
+			{
+				array_push($res,$horse);
+			}
+		}
+		return $res;		
+	}
 }

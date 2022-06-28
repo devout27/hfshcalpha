@@ -1,7 +1,12 @@
 <div class="row">
     <div class="col-sm-12">
-        <div class="card mb-4">
-            <div class="card-body">
+        <div class="manage-horses-vet-and-farrier-container text-right pb-3 row">
+            <div class="col-md-8"></div>
+            <div class="col-md-2"><a class="btn btn-primary" href="<?php echo base_url('manage-horses-care/farrier'); ?>">Manage Horses Farrier</a></div>
+            <div class="col-md-2"><a class="btn btn-primary" href="<?php echo base_url('manage-horses-care/vet'); ?>">Manage Horses Vet</a></div>
+        </div>
+        <div class="card mb-4">            
+            <div class="card-body">                
                 <div class="table-responsive">
                     <table class="table table-hover no-wrap" id="dt-my-horses-list">
                         <thead>
@@ -32,7 +37,7 @@
                                 <th scope="col">Breed</th>
                                 <th scope="col">Gender</th>
                                 <th scope="col">HS</th>
-                                <th scope="col">FS</th>
+                                <th scope=01"col">FS</th>
                                 <th scope="col">V/F</th>
                                 <th scope="col">Status</th>                                
                                 <th scope="col">Action</th>

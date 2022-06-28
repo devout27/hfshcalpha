@@ -28,10 +28,13 @@ class Horses extends MY_Controller {
 		$this->data['base_patterns'] = $this->horse->get_base_patterns();
 		$this->data['lines'] = $this->horse->get_lines();
 		$this->data['disciplines'] = $this->horse->get_disciplines();
-		if($this->input->get('search')){ $this->data['search'] = $this->horse->search($_GET); }
+        if($this->input->get('search')){ $this->data['search'] = $this->horse->search($_GET); }
+		$this->data['searchDataTableEntity'] = @$_GET['show_all'] ? "show-all-results" : "dt-horses-search";
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('horses/index', $this->data);
-		if($this->input->get('search')){ $this->load->view('partials/horse-search', $this->data['search']); }
+		if($this->input->get('search')){
+			$this->load->view('partials/horse-search', $this->data); 
+		}
 		$this->load->view('layout/footer');
 	}
 	public function manageHorses()
@@ -73,6 +76,58 @@ class Horses extends MY_Controller {
 		}
 		
 	}
+	public function manageHorsesVetAndFarrier($type="farrier")
+	{
+		if ($this->input->is_ajax_request()) {   	
+			$res = $this->horse->getMyVetHorsesList($this->data['player']['players_id'],$type);
+			$html = "";
+			if(count($res) > 1)
+			{				
+				$html = "<div class='form-input-container row'>";
+				foreach ($res as $key => $horse) {								
+					$html .= "<div class='col-md-3'><div class='form-check form-check-inline'>
+								<input class='form-check-input' type='checkbox' id='inlineCheckbox".$horse['horses_id']."' value='".$horse['horses_id']."' checked name='horses[]'>
+								<label class='form-check-label' for='inlineCheckbox".$horse['horses_id']."'>".$horse['horses_name']."</label>
+							</div>
+						</div>";
+				}
+				$html .= "</div>";
+			}
+			echo $html;die;
+		}elseif($this->input->server('REQUEST_METHOD') === 'POST'){						
+			if(@$_POST['appointment'] !== "Required Annual Care" && @$_POST['appointment'] !== "Disaster Care Package" &&  @$_POST['appointment'] !== "Basic Care" &&  @$_POST['appointment'] !== "Performance/Race Package")
+			{	
+				$this->session->set_flashdata('notice', "Please select an appointment.");
+			}elseif($type=="vet" && count($_POST['horses']) > 0){
+				$error = false;
+				foreach ($_POST['horses'] as $key => $horse_id) {					
+					$horse = new Horse($horse_id);
+					$this->horse->vet($this->data['player'],$horse->horse,$_POST);
+				}
+			}elseif($type=="farrier" && count($_POST['horses']) > 0){
+				foreach ($_POST['horses'] as $key => $horse_id) {
+					$horse = new Horse($horse_id);
+					$this->horse->farrier($this->data['player'],$horse->horse,$_POST);
+				}
+			}else
+			{
+				$this->session->set_flashdata('notice', "Please select atleast one horse.");
+			}			
+			$this->data['post'] = $_POST;
+			$this->data['type'] = $type;
+			$this->data['page']['title'] = "Manage Horses ".ucFirst($type);
+			$this->load->view('layout/header', $this->data);
+			$this->load->view('horses/manage-horses-vet-and-farrier',$this->data);
+			$this->load->view('layout/footer');
+		}else{
+			$this->data['post'] = $_POST;
+			$this->data['type'] = $type;
+			$this->data['page']['title'] = "Manage Horses ".ucFirst($type);		
+			$this->load->view('layout/header', $this->data);
+			$this->load->view('horses/manage-horses-vet-and-farrier',$this->data);
+			$this->load->view('layout/footer');
+		}		
+	}	
 	public function register(){			
 		$this->data['player']['today_adoption'] = $this->horse->getTodayAdoption($this->player->player_id);
 		$this->data['page']['title'] = "Register Horse";
@@ -593,4 +648,5 @@ class Horses extends MY_Controller {
 		$this->load->view('horses/farrier', $this->data);
 		$this->load->view('layout/footer');
 	}
+	
 }

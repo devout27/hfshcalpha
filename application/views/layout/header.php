@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css'); ?>">    
     <!-- Custom styles for this template -->
     <link href="<?= base_url('assets/css/jquery-ui.css'); ?>" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('assets/css/jquery.dataTables.min.css'); ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/dataTables.min.css'); ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/line-awesome.min.css'); ?>">
     <link href="<?= base_url('assets/css/main.css?date='.date('YmdHis')); ?>" rel="stylesheet">
     <link href="<?= base_url('assets/calendar/simple-calendar.css'); ?>" rel="stylesheet">
@@ -30,8 +30,8 @@
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+        <ul class="navbar-nav ml-auto">
         <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ml-auto">
             <!--<li class="nav-item">
               <a class="nav-link" href="about.html">About</a>
             </li>-->

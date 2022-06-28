@@ -5,7 +5,7 @@
         <div class="card mb-4">
           	<h4 class="card-header">Search Results</h4>
             <div class="card-body">
-				<? $this->load->view('partials/horse-table', array('horses' => $search, 'title' => 'search')); ?>
+				<? $this->load->view('partials/horse-table', array('horses' => $search, 'title' => $searchDataTableEntity)); ?>
             </div>
         </div>
     </div>

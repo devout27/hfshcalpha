@@ -52,19 +52,15 @@ $('#dt-horses-enter-class').DataTable({
 	"order": [[ 1, "desc" ]],
 });
 
-$('#dt-appts-search').DataTable({
-	"order": [[ 0, "desc" ]],
-	"columnDefs": [
-		{
-			"targets": [ 0 ],
-			"visible": false,
-			"searchable": false
-		}
-		]});
+$('#dt-appts-search').DataTable({"order": [[ 0, "desc" ]],"columnDefs": [{"targets": [ 0 ],"visible": true,"searchable": false}]});
 
 $('#dt-horses').DataTable({
 });
 $('#dt-horses-search').DataTable({"autoWidth": true});
+$('#show-all-results').DataTable({"autoWidth": true, lengthMenu: [[10, 25, 50, -1],[10, 25, 50, 'All']],"iDisplayLength": -1});
+
+
+
 $('#dt-events-search').DataTable({
 	"autoWidth": true,
 	"aaSorting": [],
@@ -141,6 +137,7 @@ $("#dt-horses").css("width","100%");
 $("#dt-cabs").css("width","100%");
 $("#dt-bank-ledger").css("width","100%");
 $('#dt-horses-search').css("width", "100%");
+$('#show-all-results').css("width", "100%");
 
 
 
@@ -732,3 +729,71 @@ $(function () {
 })
 });
 
+
+
+$(document).ready(function(){
+	$("#perform_appts_form").submit(function(e){		
+		var data = [];	
+		var d = 0;
+		$(".horse_appointments_id").each(function(v,i){						
+			if($(this).prop("checked"))
+			{
+				data[d++] = $(this).val()
+			}							
+		})						
+		$("#perform_appts").val(JSON.stringify(data))
+		if(data.length)
+		{			
+			return true;
+		}else
+		{
+			e.preventDefault()
+		}
+	})
+	$("#perform_farrier_appts_form").submit(function(e){		
+		var data = []; d = 0;
+		$(".horse_appointments_id").each(function(v,i){ if($(this).prop("checked")){ data[d++] = $(this).val() } })
+		$("#perform_farrier_appts").val(JSON.stringify(data))
+		if(data.length){ return true; }else{ e.preventDefault() }
+	})
+
+	if($(".vet-container").length){
+		$.ajax({
+			url: "/manage-horses-care/vet",			
+			method: "POST",
+			success:function(response)
+			{
+				if(response.length)
+				{
+					$(".vet-container .dynamic-form-data").html(response)
+					$(".data-not-found").addClass("d-none")
+					$(".vet-container").removeClass("d-none")
+					$(".vet-container .dynamic-form-data").fadeIn()
+				}else
+				{
+					$(".vet-container").addClass("d-none")
+					$(".data-not-found").removeClass("d-none")
+				}
+			}
+		})
+	}else if($(".farrier-container").length){
+		$.ajax({
+			url: "/manage-horses-care/farrier",
+			method: "POST",
+			success:function(response)
+			{
+				if(response.length)
+				{
+					$(".data-not-found").addClass("d-none")
+					$(".farrier-container .dynamic-form-data").html(response)
+					$(".farrier-container").removeClass("d-none")
+					$(".vet-container .dynamic-form-data").fadeIn()
+				}else
+				{
+					$(".farrier-container").addClass("d-none")
+					$(".data-not-found").removeClass("d-none")
+				}
+			}
+		})
+	}
+})

@@ -102,12 +102,13 @@ $route['city/articles/(:num)'] = "city/articles_view/$1";
 
 $route['horses/adopt/(:num)/(:any)'] = "horses/adopt/$1/$2";
 $route['horses/view/offspring-genes/(:num)'] = "horses/view_offspring_genes/$1";
-$route['horses/buy/(:num)'] = "horses/buy/$1";
+$route['horses/buy/(:num)'] = "horses/buy/$1";  
 $route['horses/buy/(:num)'] = "horses/buy/$1";
 $route['manage-sale-purposals'] = "purposals/managePurposals";
 
 //my routes
 $route['manage-horses'] = "horses/manageHorses";
+$route['manage-horses-care/(:any)'] = "horses/manageHorsesVetAndFarrier/$1";
 
 $route['admin/mods/add'] = "admin/add_mod";
 $route['admin/mods/edit/(:num)'] = "admin/edit_mod/$1";

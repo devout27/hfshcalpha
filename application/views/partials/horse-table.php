@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="table-responsive">
-<table class="table table-sm table-hover table-responsive no-wrap" id="dt-horses-<?= $title ?>">
+<table class="table table-sm table-hover table-responsive no-wrap" id="<?= $title ?>">
   <thead>
     <tr>
       <th scope="col">ID</th>

@@ -1,4 +1,3 @@
-
 <div class="row">
 	<div class="col-md-12">
 
@@ -14,7 +13,8 @@
 					</tr>
 					</thead>
 					<tbody>
-						<? foreach((array)$breedings AS $horse): ?>
+						<? foreach((array)$breedings AS $horse): 
+							if($horse['horses_breeding_is_rejected_temporarily'] == 1) continue; ?>
 						<tr>
 							<?
 								// hacky way to swap errors for only the applicable horse :/
@@ -72,13 +72,15 @@
 											<?= hf_multiselect('horses_breedings_disciplines[]', 'Discipline', explode(',', $horse['horses_breedings_disciplines']), $disciplines, array(), $errors, 1) ?>
 										</div>
 									</div>
-									Message to Players (optional):
+									Message to Players:
 									<?= hf_textarea('body', '', $post, array('class' => 'col-sm-12', 'placeholder' => '', 'rows' => '6'), $errors) ?>
 									<br/>
-									<div class="col-xs-12 button-wrapper">
-										<?= hf_submit('accept', 'Accept Breeding', array('class' => 'btn btn-success col-md-5 float-left')) ?>
-										<?= hf_submit('reject', 'Reject ', array('class' => 'btn btn-danger col-md-5 offset-md-2')) ?>
-									</div>										
+									<div class="col-12"><p><b class="text-danger">Note:- </b>Reject Temporarily for give them the option to fix it.</p></div>
+									<div class="col-xs-12 row button-wrapper">																				
+										<?= hf_submit('accept', 'Accept Breeding', array('class' => 'btn btn-success mr-4')) ?>
+										<?= hf_submit('reject_temporarily', 'Reject Temporarily', array('class' => 'btn btn-warning mr-4')) ?>
+										<?= hf_submit('reject_permanently', 'Reject Permanently', array('class' => 'btn btn-danger')) ?>
+									</div>																	
         				</td>
 							</form>
 						</tr>

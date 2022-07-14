@@ -200,7 +200,7 @@ class Horses extends MY_Controller {
 		$this->load->view('layout/footer');
 	}
 
-	public function breed($id){
+	public function breed($id){		
 		$this->data['horse'] = new Horse($id);
 		$this->data['horse'] = $this->data['horse']->horse;
 		$this->data['breeds'] = $this->horse->get_breeds();
@@ -244,15 +244,35 @@ class Horses extends MY_Controller {
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			redirect($_SERVER['HTTP_REFERER']);
-		}elseif($this->input->post('reject')){
-			$response = $this->horse->reject_breed_request($this->player, $this->data['horse'], $_POST);
+		}elseif($this->input->post('reject_temporarily')){
+			$response = $this->horse->reject_breed_request($this->player, $this->data['horse'], $_POST, true);
 			if(count($response['errors']) > 0){
-				$this->session->set_flashdata('notice', "There was a problem rejecting the request.");
+				$this->session->set_flashdata('notice', "There was a problem in rejecting the breeding request.");
 				$this->session->set_flashdata('post', $_POST);
 				$this->session->set_flashdata('errors', $response['errors']);
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			$this->session->set_flashdata('notice', "Rejected.");
+			redirect($_SERVER['HTTP_REFERER']);
+		}elseif($this->input->post('reject_permanently')){
+			$response = $this->horse->reject_breed_request($this->player, $this->data['horse'], $_POST);
+			if(count($response['errors']) > 0){
+				$this->session->set_flashdata('notice', "There was a problem rejecting the breeding request.");
+				$this->session->set_flashdata('post', $_POST);
+				$this->session->set_flashdata('errors', $response['errors']);
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			$this->session->set_flashdata('notice', "Rejected.");
+			redirect($_SERVER['HTTP_REFERER']);
+		}elseif($this->input->post('resend_breeding_request')){
+			$response = $this->horse->accept_breed_request($this->player, $this->data['horse'], $_POST, true);
+			if(count($response['errors']) > 0){
+				$this->session->set_flashdata('notice', "There was a problem in resending your breeding request. because ".$response['errors'][0]);
+				$this->session->set_flashdata('post', $_POST);
+				$this->session->set_flashdata('errors', $response['errors']);
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			$this->session->set_flashdata('notice', "Your breeding request has been resend successfully.");
 			redirect($_SERVER['HTTP_REFERER']);
 		}elseif($this->input->post('accept')){
 			$response = $this->horse->accept_breed_request($this->player, $this->data['horse'], $_POST);

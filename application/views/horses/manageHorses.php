@@ -101,23 +101,28 @@
                     <tbody>
                         <? 
                         foreach((array)$requests AS $request):                                  
-                            $mare = $request['mare'];
-                            $stallion = $request['stallion'];
-                            $mare_owner = $mare['join_players_id'] == $this->session->userdata('players_id') ? 'Mare\'s Owner ( Me )': 'Mare\'s Owner ( '.$mare['players_nickname'].' )';
-                            $stallion_owner = $stallion['join_players_id'] == $this->session->userdata('players_id') ? 'Sire\'s Owner ( Me )': 'Sire\'s Owner ( '.$stallion['players_nickname'].' )';
-                            $h = $stallion['join_players_id'] == $this->session->userdata('players_id') ? $stallion : $mare;
-                            $request['horses_owner'] = strpos($stallion_owner,"( Me )") !== false ? $stallion_owner : $mare_owner;
+                            if(($request['horses_breeding_is_rejected_temporarily'] == 1 && $request['horses_breeding_user_id_fixes'] == $this->session->userdata('players_id')) || $request['horses_breeding_is_rejected_temporarily'] == 0)
+                            {
+                                $mare = $request['mare'];
+                                $stallion = $request['stallion'];
+                                $mare_owner = $mare['join_players_id'] == $this->session->userdata('players_id') ? 'Mare\'s Owner ( Me )': 'Mare\'s Owner ( '.$mare['players_nickname'].' )';
+                                $stallion_owner = $stallion['join_players_id'] == $this->session->userdata('players_id') ? 'Sire\'s Owner ( Me )': 'Sire\'s Owner ( '.$stallion['players_nickname'].' )';
+                                $h = $stallion['join_players_id'] == $this->session->userdata('players_id') ? $stallion : $mare;
+                                $request['horses_owner'] = strpos($stallion_owner,"( Me )") !== false ? $stallion_owner : $mare_owner;
                         ?>
                             <tr>                                
                                 <? $post = $this->session->flashdata('post'); ?>
                                     <td class="w-50">
-                                        <? if($request['horses_breedings_accepted']): ?>
+                                        <? if($request['horses_breedings_accepted'] && $request['horses_breeding_is_rejected_temporarily'] == 0): ?>
                                             <i>Pending Approval<br/>
                                             <?= $request['horses_breedings_gender'] ?> to Player #<?= $request['horses_breedings_owner'] ?></i>
-                                        <? elseif($request['receiver_player_id'] != $this->session->userdata('players_id') && !$request['horses_breedings_accepted']): ?>
+                                        <? elseif($request['receiver_player_id'] != $this->session->userdata('players_id') && !$request['horses_breedings_accepted'] && $request['horses_breeding_is_rejected_temporarily'] == 0): ?>
                                             <i>Request Sent<br/>
                                             <?= $request['horses_breedings_gender'] ?> to Player #<?= $request['horses_breedings_owner'] ?></i>
-                                        <? elseif($request['receiver_player_id'] == $this->session->userdata('players_id')): ?>
+                                        <? elseif(($request['receiver_player_id'] == $this->session->userdata('players_id')) || ($request['horses_breeding_is_rejected_temporarily'] == 1 && $request['horses_breeding_user_id_fixes'] == $this->session->userdata('players_id'))): ?>
+                                            <? if($request['horses_breeding_is_rejected_temporarily'] == 1 && $request['horses_breeding_user_id_fixes'] == $this->session->userdata('players_id')): ?>                                    
+                                                <p class="text-center"><b class="text-danger">Note: </b> <?= $request['horses_breeding_reject_reason'] ?></p>
+                                            <? endif; ?>
                                             <form method="post" action="/horses/breed/<?= $request['join_horses_id'] ?>">
                                                 <?= hf_hidden('horses_breedings_id', $request['horses_breedings_id']) ?>
                                                 <div class="row">
@@ -162,7 +167,12 @@
                                                             <?= hf_multiselect('disciplines[]', 'Discipline', isset($post['disciplines']) ? $post['disciplines'] : explode(",",$request['horses_breedings_disciplines']), $disciplines, array(), $errors, 1) ?>
                                                         </div>
                                                     </div>                                  
-                                                <?= hf_submit('accept', 'Accept', array('class' => 'btn btn-success col-sm-12')) ?>
+                                                
+                                                <? if($request['horses_breeding_is_rejected_temporarily'] == 1 && $request['horses_breeding_user_id_fixes'] == $this->session->userdata('players_id')): ?>
+                                                    <?= hf_submit('resend_breeding_request', 'Resend Breeding Request', array('class' => 'btn btn-success col-sm-12')) ?>
+                                                <? else: ?>
+                                                    <?= hf_submit('accept', 'Accept', array('class' => 'btn btn-success col-sm-12')) ?>
+                                                <? endif; ?>
                                             </form>
                                         <? endif; ?>
                                     </td>                                
@@ -171,19 +181,25 @@
                                 <td><?= $h['horses_birthyear'] ?></td>
                                 <td><?= $h['horses_breed'] ?></td>
                                 <td>$<?= number_format($request['horses_breedings_fee']) ?></td>
-                                <? if($request['receiver_player_id'] == $this->session->userdata('players_id')): ?>
+                                <? if($request['receiver_player_id'] == $this->session->userdata('players_id')): 
+                                        $_POST['message'] = @$_POST['message'] ? $_POST['message'] : $request['horses_breeding_reject_reason'];
+                                    ?>
                                     <td>
                                         <? if(!$request['horses_breedings_accepted']): ?>
                                             <form method="post" action="/horses/breed/<?= $h['horses_id'] ?>">
                                                 <?= hf_hidden('horses_breedings_id', $request['horses_breedings_id']) ?>
-                                                <?= hf_textarea('message', 'Message', $_POST, array('placeholder' => 'Describe why are you Reject this Breeding.','cols'=>"30","rows"=>"5"), $errors) ?>
-                                                <?= hf_submit('reject', 'Reject', array('class' => 'btn btn-danger col-sm-12')) ?>
+                                                <?= hf_textarea('message', 'Message', $_POST, array('placeholder' => 'Describe why are you Reject this Breeding.','cols'=>"50","rows"=>"10"), $errors) ?>
+                                                <p><b class="text-danger">Note:- </b>As well as Give them the option to fix it.</p> 
+                                                <?= hf_submit('reject_temporarily', 'Reject Temporarily', array('class' => 'btn btn-warning col-sm-12')) ?>
+                                                <p  class="text-center mt-3"><b>OR</b></p>
+                                                <?= hf_submit('reject_permanently', 'Reject Permanently', array('class' => 'btn btn-danger col-sm-12')) ?>
                                             </form>
                                         <? endif; ?>
-                                    </td>
-                                <? endif;?>
-                            </tr>                    
-                        <? endforeach; ?>
+                                    </td>                                
+                                <? endif; ?>
+                            </tr>
+                        <? }
+                            endforeach; ?>
                         <? if(!count($requests)): ?>
                             <tr><td colspan="7">No requests</td></tr>
                         <? endif; ?>

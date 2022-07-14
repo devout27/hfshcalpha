@@ -979,7 +979,6 @@ class Admin extends MY_Controller {
 			$this->session->set_flashdata('notice', "You don't have permission to access this.");
 			redirect('admin');
 		}
-
 		if($this->input->post('accept')){
 			$this->player = new Player($this->player_id);
 			$response = $this->horse->admin_accept_breeding($_POST, $this->player_id, $allowed);
@@ -989,10 +988,8 @@ class Admin extends MY_Controller {
 				$this->session->set_flashdata('errors', $response['errors']);
 			}else{
 				$this->session->set_flashdata('notice', "Breeding accepted.");
-			}
-			redirect('admin/horses/breed');
-
-		}elseif($this->input->post('reject')){
+			}			
+		}elseif($this->input->post('reject_permanently')){
 			$response = $this->horse->admin_reject_breeding($_POST, $this->player_id);
 			if(count($response['errors']) > 0){
 				$this->session->set_flashdata('notice', "There was a problem rejecting the request.");
@@ -1000,10 +997,17 @@ class Admin extends MY_Controller {
 				$this->session->set_flashdata('errors', $response['errors']);
 			}else{
 				$this->session->set_flashdata('notice', "Rejected.");
-			}
-			redirect('admin/horses/breed');
-		}
-
+			}			
+		}elseif($this->input->post('reject_temporarily')){			
+			$response = $this->horse->admin_reject_breeding($_POST, $this->player_id, true);
+			if(count($response['errors']) > 0){				
+				$this->session->set_flashdata('notice', "There was a problem in rejecting the breeding request.");
+				$this->session->set_flashdata('post', $_POST);
+				$this->session->set_flashdata('errors', $response['errors']);
+			}else{
+				$this->session->set_flashdata('notice', "Rejected.");
+			}			
+		}		
 		$this->load->view('layout/header', $this->data);
 		$this->load->view('admin/horse-breed', $this->data);
 		$this->load->view('layout/footer');

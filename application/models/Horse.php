@@ -1739,7 +1739,7 @@ class Horse extends CI_Model {
 				FROM horses_breedings hb
 					LEFT JOIN horses h1 ON h1.horses_id=hb.join_horses_id
 					LEFT JOIN horses h2 ON h2.horses_id=hb.join_mares_id					
-				WHERE hb.horses_breedings_accepted=1 AND horses_breeding_is_rejected_temporarily = 0
+				WHERE hb.horses_breedings_accepted=1 AND hb.horses_breeding_is_rejected_temporarily = 0
 				ORDER BY hb.horses_breedings_date ASC")->result_array();
 		foreach((array)$breedings AS $k => $v){
 			$dam = new Horse($v['join_mares_id']);
@@ -2247,7 +2247,7 @@ class Horse extends CI_Model {
 		{
 			$player = new Player($post['horses_owner']);
 			$players_nickname = $player->player['players_nickname'];
-			$CI->db->query("UPDATE horses_breedings SET  horses_breedings_name=?,horses_birthyear=?, horses_breedings_gender=?, horses_breedings_owner=?,horses_breedings_owner_nickname = ?, horses_breedings_breed=?, horses_breedings_breed2=?, horses_breedings_color=?, horses_breedings_pattern=?, horses_breedings_line=?, horses_breedings_disciplines=?, horses_breeding_is_rejected_temporarily=0, horses_breeding_user_id_fixes=0 WHERE horses_breedings_id=? AND horses_breedings_accepted=0 LIMIT 1", array($post['horses_name'],$post['horses_birthyear'], $post['horses_gender'], $post['horses_owner'],$players_nickname, $post['horses_breed'], $post['horses_breed2'], $post['horses_color'], $post['horses_pattern'], $post['horses_line'], $post['disciplines'], $data['horses_breedings_id']));
+			$CI->db->query("UPDATE horses_breedings SET  horses_breedings_name=?,horses_birthyear=?, horses_breedings_gender=?, horses_breedings_owner=?,horses_breedings_owner_nickname = ?, horses_breedings_breed=?, horses_breedings_breed2=?, horses_breedings_color=?, horses_breedings_pattern=?, horses_breedings_line=?, horses_breedings_disciplines=?, horses_breeding_is_rejected_temporarily=0, horses_breeding_user_id_fixes=0 WHERE horses_breedings_id=? LIMIT 1", array($post['horses_name'],$post['horses_birthyear'], $post['horses_gender'], $post['horses_owner'],$players_nickname, $post['horses_breed'], $post['horses_breed2'], $post['horses_color'], $post['horses_pattern'], $post['horses_line'], $post['disciplines'], $data['horses_breedings_id']));
 			return array('errors' => $errors, 'notices' => $notices, 'horse_id' => $horse['horses_id']);
 		}else
 		{
